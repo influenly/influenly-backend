@@ -1,6 +1,7 @@
 import { Creator } from './creator.entity';
+import { Advertiser } from './advertiser.entity';
 
-const entities = [Creator];
+const entities = [Creator, Advertiser];
 
-export { Creator };
+export { Creator, Advertiser };
 export default entities;
