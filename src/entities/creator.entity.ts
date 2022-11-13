@@ -24,7 +24,7 @@ export class Creator extends BaseEntity {
   @Column({ type: 'varchar', length: 100 })
   password: string;
 
-  @Column({ type: 'text'})
+  @Column({ type: 'text' })
   country: string;
 
   @Column({ type: 'varchar' })
