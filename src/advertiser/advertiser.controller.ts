@@ -1,5 +1,18 @@
-import { Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpException,
+  HttpStatus,
+  Param,
+  Patch,
+  Post,
+  UsePipes,
+  ValidationPipe
+} from '@nestjs/common';
 import { AdvertiserService } from './advertiser.service';
+import { CreateAdvertiserDto, UpdateAdvertiserDto } from './dto';
 
 @Controller('advertiser')
 export class AdvertiserController {
@@ -17,13 +30,32 @@ export class AdvertiserController {
   }
 
   @Post()
-  createAdvertiser(): string {
-    return this.advertiserService.createAdvertiser();
+  @UsePipes(ValidationPipe)
+  async createAdvertiser(@Body() createAdvertiserDto: CreateAdvertiserDto) {
+    try {
+      const advertiser = await this.advertiserService.createAdvertiser(
+        createAdvertiserDto
+      );
+      return advertiser;
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
   }
 
   @Patch()
-  updateAdvertiser(): string {
-    return this.advertiserService.updateAdvertiser();
+  @UsePipes(ValidationPipe)
+  async updateAdvertiser(@Body() updateAdvertiserDto: UpdateAdvertiserDto) {
+    try {
+      const updatedAdvertiser = await this.advertiserService.updateAdvertiser(
+        updateAdvertiserDto
+      );
+      if (!updatedAdvertiser) {
+        throw new Error('Problem at updating');
+      }
+      return updatedAdvertiser;
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
   }
 
   @Delete(':id')
