@@ -6,6 +6,7 @@ import {
   HttpException,
   HttpStatus,
   Param,
+  ParseIntPipe,
   Patch,
   Post,
   UsePipes,
@@ -19,14 +20,28 @@ export class AdvertiserController {
   constructor(private readonly advertiserService: AdvertiserService) {}
 
   @Get()
-  getAdvertisers(): string {
-    return this.advertiserService.getAdvertisers();
+  async getAdvertisers() {
+    try {
+      const advertisers = await this.advertiserService.getAdvertisers();
+      return advertisers;
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
   }
 
   @Get(':id')
-  getAdvertiser(@Param() params): string {
-    const advertiserId = params.id;
-    return this.advertiserService.getAdvertiser(advertiserId);
+  async getAdvertiser(@Param('id', ParseIntPipe) advertiserId: number) {
+    try {
+      const advertiser = await this.advertiserService.getAdvertiser(
+        advertiserId
+      );
+      if (!advertiser) {
+        throw new Error(`Advertiser with id ${advertiserId} not found`);
+      }
+      return advertiser;
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
   }
 
   @Post()
@@ -59,8 +74,17 @@ export class AdvertiserController {
   }
 
   @Delete(':id')
-  deleteAdvertiser(@Param() params): string {
-    const advertiserId = params.id;
-    return this.advertiserService.deleteAdvertiser(advertiserId);
+  async deleteAdvertiser(@Param('id', ParseIntPipe) advertiserId: number) {
+    try {
+      const deletedAdvertiser = await this.advertiserService.deleteAdvertiser(
+        advertiserId
+      );
+      if (!deletedAdvertiser) {
+        throw new Error('Problem at deleting');
+      }
+      return deletedAdvertiser;
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
   }
 }

@@ -30,6 +30,9 @@ export class Advertiser extends BaseEntity {
   @Column({ type: 'varchar', length: 500, nullable: true })
   description: string;
 
+  @Column({ type: 'boolean', default: false })
+  validated: Boolean;
+
   @Column({ type: 'int', default: 10 })
   credits: number;
 

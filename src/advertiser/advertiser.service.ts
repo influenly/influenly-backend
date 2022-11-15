@@ -9,12 +9,16 @@ export class AdvertiserService {
     @InjectRepository(Advertiser)
     private readonly advertiserRepository: Repository<Advertiser>
   ) {}
-  getAdvertisers(): string {
-    return 'Get advertisers!';
+  async getAdvertisers(): Promise<Advertiser[]> {
+    const advertisers = await this.advertiserRepository.find();
+    return advertisers;
   }
 
-  getAdvertiser(id: string): string {
-    return `Get advertiser with id ${id}!`;
+  async getAdvertiser(id: number): Promise<Advertiser> {
+    const advertiser = await this.advertiserRepository.findOne({
+      where: { id }
+    });
+    return advertiser;
   }
 
   async createAdvertiser(
@@ -40,7 +44,16 @@ export class AdvertiserService {
     return queryResult.raw[0];
   }
 
-  deleteAdvertiser(id: string): string {
-    return `Delete advertiser with id ${id}!`;
+  async deleteAdvertiser(id: number) {
+    const queryResult = await this.advertiserRepository
+      .createQueryBuilder()
+      .delete()
+      .where({
+        id
+      })
+      .returning('*')
+      .execute();
+
+    return queryResult.raw[0];
   }
 }

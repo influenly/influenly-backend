@@ -4,7 +4,8 @@ import {
   MinLength,
   IsString,
   IsNumber,
-  IsOptional
+  IsOptional,
+  IsBoolean
 } from 'class-validator';
 
 export class UpdateAdvertiserDto {
@@ -49,4 +50,9 @@ export class UpdateAdvertiserDto {
   @IsNotEmpty()
   @IsNumber()
   credits?: number;
+
+  @IsOptional()
+  @IsNotEmpty()
+  @IsBoolean()
+  validated?: Boolean;
 }
