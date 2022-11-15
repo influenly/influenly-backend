@@ -18,7 +18,7 @@ export class Creator extends BaseEntity {
   @Column({ type: 'varchar', length: 50 })
   lastName: string;
 
-  @Column({ type: 'varchar', length: 50 })
+  @Column({ unique: true, type: 'varchar', length: 50 })
   userName: string;
 
   @Column({ unique: true, type: 'varchar', length: 120 })

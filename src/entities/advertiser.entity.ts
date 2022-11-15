@@ -12,7 +12,7 @@ export class Advertiser extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: 'varchar', length: 100 })
+  @Column({ unique: true, type: 'varchar', length: 100 })
   userName: string;
 
   @Column({ type: 'varchar', length: 100 })
