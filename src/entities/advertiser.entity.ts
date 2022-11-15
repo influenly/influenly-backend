@@ -13,7 +13,7 @@ export class Advertiser extends BaseEntity {
   id: number;
 
   @Column({ type: 'varchar', length: 100 })
-  username: string;
+  userName: string;
 
   @Column({ type: 'varchar', length: 100 })
   password: string;

@@ -44,7 +44,7 @@ export class AdvertiserService {
     return queryResult.raw[0];
   }
 
-  async deleteAdvertiser(id: number) {
+  async deleteAdvertiser(id: number): Promise<Advertiser> {
     const queryResult = await this.advertiserRepository
       .createQueryBuilder()
       .delete()

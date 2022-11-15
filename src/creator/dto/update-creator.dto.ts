@@ -8,10 +8,22 @@ import {
   IsBoolean
 } from 'class-validator';
 
-export class UpdateAdvertiserDto {
+export class UpdateCreatorDto {
   @IsNotEmpty()
   @IsNumber()
   id: number;
+
+  @IsOptional()
+  @IsNotEmpty()
+  @IsString()
+  @MinLength(3)
+  firstName?: string;
+
+  @IsOptional()
+  @IsNotEmpty()
+  @IsString()
+  @MinLength(3)
+  lastName?: string;
 
   @IsOptional()
   @IsNotEmpty()
@@ -48,11 +60,11 @@ export class UpdateAdvertiserDto {
 
   @IsOptional()
   @IsNotEmpty()
-  @IsNumber()
-  credits?: number;
+  @IsBoolean()
+  youtubeLinked?: Boolean;
 
   @IsOptional()
   @IsNotEmpty()
   @IsBoolean()
-  validated?: Boolean;
+  twitchLinked?: Boolean;
 }

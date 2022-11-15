@@ -18,7 +18,10 @@ export class Creator extends BaseEntity {
   @Column({ type: 'varchar', length: 50 })
   lastName: string;
 
-  @Column({ type: 'varchar', length: 120 })
+  @Column({ type: 'varchar', length: 50 })
+  userName: string;
+
+  @Column({ unique: true, type: 'varchar', length: 120 })
   email: string;
 
   @Column({ type: 'varchar', length: 100 })
@@ -27,10 +30,10 @@ export class Creator extends BaseEntity {
   @Column({ type: 'text' })
   country: string;
 
-  @Column({ type: 'varchar' })
+  @Column({ type: 'varchar', nullable: true })
   profileImage: string;
 
-  @Column({ type: 'varchar', length: 500 })
+  @Column({ type: 'varchar', length: 500, nullable: true })
   description: string;
 
   @Column({ type: 'boolean', default: false })

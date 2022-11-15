@@ -1,24 +1,56 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Creator } from 'src/entities';
+import { Repository } from 'typeorm';
+import { CreateCreatorDto, UpdateCreatorDto } from './dto';
 
 @Injectable()
 export class CreatorService {
-  getCreators(): string {
-    return 'Get Creators!';
+  constructor(
+    @InjectRepository(Creator)
+    private readonly creatorRepository: Repository<Creator>
+  ) {}
+  async getCreators(): Promise<Creator[]> {
+    const creators = await this.creatorRepository.find();
+    return creators;
   }
 
-  getCreator(id: string): string {
-    return `Get creator with id ${id}!`;
+  async getCreator(id: number): Promise<Creator> {
+    const creator = await this.creatorRepository.findOne({
+      where: { id }
+    });
+    return creator;
   }
 
-  createCreator(): string {
-    return 'Create Creator!';
+  async createCreator(createCreatorDto: CreateCreatorDto): Promise<Creator> {
+    const newCreator = this.creatorRepository.create(createCreatorDto);
+    await this.creatorRepository.save(newCreator);
+    return newCreator;
   }
 
-  updateCreator(): string {
-    return 'Update Creator!';
+  async updateCreator(updateCreatorDto: UpdateCreatorDto): Promise<Creator> {
+    const queryResult = await this.creatorRepository
+      .createQueryBuilder()
+      .update(updateCreatorDto)
+      .where({
+        id: updateCreatorDto.id
+      })
+      .returning('*')
+      .execute();
+
+    return queryResult.raw[0];
   }
 
-  deleteCreator(id: string): string {
-    return `Delete Creator with id ${id}!`;
+  async deleteCreator(id: number): Promise<Creator> {
+    const queryResult = await this.creatorRepository
+      .createQueryBuilder()
+      .delete()
+      .where({
+        id
+      })
+      .returning('*')
+      .execute();
+
+    return queryResult.raw[0];
   }
 }

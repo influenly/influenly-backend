@@ -1,6 +1,16 @@
 import { IsEmail, IsNotEmpty, MinLength, IsString } from 'class-validator';
 
-export class CreateAdvertiserDto {
+export class CreateCreatorDto {
+  @IsNotEmpty()
+  @IsString()
+  @MinLength(3)
+  firstName: string;
+
+  @IsNotEmpty()
+  @IsString()
+  @MinLength(3)
+  lastName: string;
+
   @IsNotEmpty()
   @IsString()
   @MinLength(3)
@@ -8,13 +18,13 @@ export class CreateAdvertiserDto {
 
   @IsNotEmpty()
   @IsString()
-  @MinLength(8)
-  password: string;
+  @IsEmail()
+  email: string;
 
   @IsNotEmpty()
   @IsString()
-  @IsEmail()
-  email: string;
+  @MinLength(8)
+  password: string;
 
   @IsNotEmpty()
   @IsString()
