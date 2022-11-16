@@ -3,9 +3,13 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn
 } from 'typeorm';
+import { Analytics } from './analytics.entity';
+import { Connection } from './connection.entity';
+import { Contract } from './contract.entity';
 
 @Entity('creator')
 export class Creator extends BaseEntity {
@@ -41,6 +45,15 @@ export class Creator extends BaseEntity {
 
   @Column({ type: 'boolean', default: false })
   twitchLinked: Boolean;
+
+  @OneToMany(() => Connection, (connection) => connection.creator)
+  connections!: Connection[];
+
+  @OneToMany(() => Contract, (contract) => contract.creator)
+  contracts!: Contract[];
+
+  @OneToMany(() => Analytics, (analytics) => analytics.creator)
+  analytics!: Analytics[];
 
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;

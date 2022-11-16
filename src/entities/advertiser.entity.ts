@@ -4,8 +4,11 @@ import {
   CreateDateColumn,
   Entity,
   PrimaryGeneratedColumn,
-  UpdateDateColumn
+  UpdateDateColumn,
+  OneToMany
 } from 'typeorm';
+import { Connection } from './connection.entity';
+import { Contract } from './contract.entity';
 
 @Entity('advertiser')
 export class Advertiser extends BaseEntity {
@@ -35,6 +38,12 @@ export class Advertiser extends BaseEntity {
 
   @Column({ type: 'int', default: 10 })
   credits: number;
+
+  @OneToMany(() => Connection, (connection) => connection.advertiser)
+  connections!: Connection[];
+
+  @OneToMany(() => Contract, (contract) => contract.advertiser)
+  contracts!: Contract[];
 
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
