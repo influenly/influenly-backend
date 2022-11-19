@@ -25,4 +25,9 @@ import { CreatorModule } from './creator/creator.module';
     CreatorModule
   ]
 })
-export class AppModule {}
+export class AppModule {
+  static port: number
+  constructor(configService: ConfigService) {
+    AppModule.port = configService.get('API_PORT')
+  }
+}
