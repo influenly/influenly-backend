@@ -12,9 +12,11 @@ import {
   UsePipes,
   ValidationPipe
 } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { CreatorService } from './creator.service';
 import { CreateCreatorDto, UpdateCreatorDto } from './dto';
 
+@ApiTags('creator')
 @Controller('creator')
 export class CreatorController {
   constructor(private readonly creatorService: CreatorService) {}

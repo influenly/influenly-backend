@@ -12,9 +12,11 @@ import {
   UsePipes,
   ValidationPipe
 } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { AdvertiserService } from './advertiser.service';
 import { CreateAdvertiserDto, UpdateAdvertiserDto } from './dto';
 
+@ApiTags('advertiser')
 @Controller('advertiser')
 export class AdvertiserController {
   constructor(private readonly advertiserService: AdvertiserService) {}

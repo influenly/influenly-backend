@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
   IsEmail,
   IsNotEmpty,
@@ -15,66 +15,66 @@ export class UpdateCreatorDto {
   @IsNumber()
   id: number;
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   @IsOptional()
   @IsNotEmpty()
   @IsString()
   @MinLength(3)
   firstName?: string;
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   @IsOptional()
   @IsNotEmpty()
   @IsString()
   @MinLength(3)
   lastName?: string;
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   @IsOptional()
   @IsNotEmpty()
   @IsString()
   @MinLength(3)
   userName?: string;
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   @IsOptional()
   @IsNotEmpty()
   @IsString()
   @MinLength(8)
   password?: string;
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   @IsOptional()
   @IsNotEmpty()
   @IsString()
   @IsEmail()
   email?: string;
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   @IsOptional()
   @IsNotEmpty()
   @IsString()
   country?: string;
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   @IsOptional()
   @IsNotEmpty()
   @IsString()
   profileImage?: string;
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   @IsOptional()
   @IsNotEmpty()
   @IsString()
   description?: string;
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   @IsOptional()
   @IsNotEmpty()
   @IsBoolean()
   youtubeLinked?: Boolean;
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   @IsOptional()
   @IsNotEmpty()
   @IsBoolean()
