@@ -12,6 +12,7 @@ import {
 import { AnalyticsTwitch } from './analytics-twitch.entity';
 import { AnalyticsYoutube } from './analytics-youtube.entity';
 import { Creator } from './creator.entity';
+import { YoutubeTokenInfo } from './youtube-token-info.entity';
 
 @Entity('analytics')
 export class Analytics extends BaseEntity {
@@ -27,8 +28,8 @@ export class Analytics extends BaseEntity {
   @Column({ type: 'int', nullable: true, default: null })
   analyticsTwitchId!: number;
 
-  @Column({ type: 'text' })
-  platform!: string;
+  @Column({ type: 'int', nullable: true, default: null })
+  youtubeTokenInfoId!: number;
 
   @ManyToOne(() => Creator, (creator) => creator.analytics)
   @JoinColumn({ name: 'creatorId', referencedColumnName: 'id' })
@@ -41,6 +42,10 @@ export class Analytics extends BaseEntity {
   @OneToOne(() => AnalyticsTwitch)
   @JoinColumn({ name: 'analyticsTwitchId', referencedColumnName: 'id' })
   analyticsTwitch!: AnalyticsTwitch;
+
+  @OneToOne(() => YoutubeTokenInfo)
+  @JoinColumn({ name: 'youtubeTokenInfoId', referencedColumnName: 'id' })
+  youtubeTokenInfo!: YoutubeTokenInfo;
 
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
