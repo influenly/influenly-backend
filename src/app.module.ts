@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import entities from './entities';
 import { AdvertiserModule } from './advertiser/advertiser.module';
 import { CreatorModule } from './creator/creator.module';
+import { ConnectionModule } from './connection/connection.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -22,7 +23,8 @@ import { CreatorModule } from './creator/creator.module';
       inject: [ConfigService]
     }),
     AdvertiserModule,
-    CreatorModule
+    CreatorModule,
+    ConnectionModule
   ]
 })
 export class AppModule {
