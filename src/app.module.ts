@@ -6,6 +6,7 @@ import { AdvertiserModule } from './advertiser/advertiser.module';
 import { CreatorModule } from './creator/creator.module';
 import { ConnectionModule } from './connection/connection.module';
 import { ContractModule } from './contract/contract.module';
+import { AnalyticsModule } from './analytics/analytics.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -26,7 +27,8 @@ import { ContractModule } from './contract/contract.module';
     AdvertiserModule,
     CreatorModule,
     ConnectionModule,
-    ContractModule
+    ContractModule,
+    AnalyticsModule
   ]
 })
 export class AppModule {
