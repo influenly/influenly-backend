@@ -6,6 +6,7 @@ import { Stage } from './stage.entity';
 import { Analytics } from './analytics.entity';
 import { AnalyticsYoutube } from './analytics-youtube.entity';
 import { AnalyticsTwitch } from './analytics-twitch.entity';
+import { YoutubeTokenInfo } from './youtube-token-info.entity';
 
 const entities = [
   Creator,
@@ -15,7 +16,8 @@ const entities = [
   Stage,
   Analytics,
   AnalyticsYoutube,
-  AnalyticsTwitch
+  AnalyticsTwitch,
+  YoutubeTokenInfo
 ];
 
 export {
@@ -26,6 +28,7 @@ export {
   Stage,
   Analytics,
   AnalyticsYoutube,
-  AnalyticsTwitch
+  AnalyticsTwitch,
+  YoutubeTokenInfo
 };
 export default entities;
