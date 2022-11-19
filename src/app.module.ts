@@ -5,6 +5,7 @@ import entities from './entities';
 import { AdvertiserModule } from './advertiser/advertiser.module';
 import { CreatorModule } from './creator/creator.module';
 import { ConnectionModule } from './connection/connection.module';
+import { ContractModule } from './contract/contract.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -24,7 +25,8 @@ import { ConnectionModule } from './connection/connection.module';
     }),
     AdvertiserModule,
     CreatorModule,
-    ConnectionModule
+    ConnectionModule,
+    ContractModule
   ]
 })
 export class AppModule {
