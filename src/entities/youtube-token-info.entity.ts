@@ -19,7 +19,7 @@ import {
     expireToken!: number;
   
     @Column({ type: 'varchar' })
-    refreshToken!: number;
+    refreshToken!: string;
   
     @CreateDateColumn({ type: 'timestamp' })
     createdAt: Date;

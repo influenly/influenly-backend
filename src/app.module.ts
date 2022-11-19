@@ -7,6 +7,7 @@ import { CreatorModule } from './creator/creator.module';
 import { ConnectionModule } from './connection/connection.module';
 import { ContractModule } from './contract/contract.module';
 import { AnalyticsModule } from './analytics/analytics.module';
+import { YoutubeTokenInfoModule } from './youtube-token-info/youtube-token-info.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -28,7 +29,8 @@ import { AnalyticsModule } from './analytics/analytics.module';
     CreatorModule,
     ConnectionModule,
     ContractModule,
-    AnalyticsModule
+    AnalyticsModule,
+    YoutubeTokenInfoModule
   ]
 })
 export class AppModule {
