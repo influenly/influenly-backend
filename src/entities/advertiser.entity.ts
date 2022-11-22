@@ -18,23 +18,41 @@ export class Advertiser extends BaseEntity {
   @Column({ unique: true, type: 'varchar', length: 100 })
   userName: string;
 
-  @Column({ type: 'varchar', length: 100 })
+  @Column({ type: 'varchar', length: 50 })
   password: string;
 
   @Column({ unique: true, type: 'varchar', length: 120 })
   email: string;
 
-  @Column({ type: 'text' })
+  @Column({ type: 'varchar', length: 100 })
   country: string;
 
-  @Column({ type: 'varchar', nullable: true })
+  @Column({ type: 'text', nullable: true })
   profileImage: string;
 
   @Column({ type: 'varchar', length: 500, nullable: true })
   description: string;
 
+  @Column({ type: 'varchar', length: 300, nullable: true })
+  webPageUrl: string;
+
+  @Column({ type: 'varchar', length: 300, nullable: true })
+  youtubeUrl: string;
+
+  @Column({ type: 'varchar', length: 300, nullable: true })
+  instagramUrl: string;
+
+  @Column({ type: 'varchar', length: 300, nullable: true })
+  facebookUrl: string;
+
+  @Column({ type: 'varchar', length: 300, nullable: true })
+  twitterUrl: string;
+
   @Column({ type: 'boolean', default: false })
   validated: Boolean;
+
+  @Column({ type: 'boolean', default: false })
+  emailConfirmed: Boolean;
 
   @Column({ type: 'int', default: 10 })
   credits: number;

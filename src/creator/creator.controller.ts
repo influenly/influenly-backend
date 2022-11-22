@@ -8,13 +8,12 @@ import {
   Param,
   ParseIntPipe,
   Patch,
-  Post,
   UsePipes,
   ValidationPipe
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { CreatorService } from './creator.service';
-import { CreateCreatorDto, UpdateCreatorDto } from './dto';
+import { UpdateCreatorDto } from './dto';
 
 @ApiTags('creator')
 @Controller('creator')
@@ -38,17 +37,6 @@ export class CreatorController {
       if (!creator) {
         throw new Error(`Creator with id ${creatorId} not found`);
       }
-      return creator;
-    } catch (error) {
-      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
-    }
-  }
-
-  @Post()
-  @UsePipes(ValidationPipe)
-  async createCreator(@Body() createCreatorDto: CreateCreatorDto) {
-    try {
-      const creator = await this.creatorService.createCreator(createCreatorDto);
       return creator;
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);

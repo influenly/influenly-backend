@@ -8,6 +8,7 @@ import { ConnectionModule } from './connection/connection.module';
 import { ContractModule } from './contract/contract.module';
 import { AnalyticsModule } from './analytics/analytics.module';
 import { YoutubeTokenInfoModule } from './youtube-token-info/youtube-token-info.module';
+import { AuthModule } from './auth/auth.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -30,7 +31,8 @@ import { YoutubeTokenInfoModule } from './youtube-token-info/youtube-token-info.
     ConnectionModule,
     ContractModule,
     AnalyticsModule,
-    YoutubeTokenInfoModule
+    YoutubeTokenInfoModule,
+    AuthModule
   ]
 })
 export class AppModule {

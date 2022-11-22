@@ -16,28 +16,22 @@ export class Creator extends BaseEntity {
   @PrimaryGeneratedColumn('increment')
   id: number;
 
-  @Column({ type: 'varchar', length: 50 })
-  firstName: string;
-
-  @Column({ type: 'varchar', length: 50 })
-  lastName: string;
-
-  @Column({ unique: true, type: 'varchar', length: 50 })
+  @Column({ unique: true, type: 'varchar', length: 100 })
   userName: string;
 
   @Column({ unique: true, type: 'varchar', length: 120 })
   email: string;
 
-  @Column({ type: 'varchar', length: 100 })
+  @Column({ type: 'varchar', length: 50 })
   password: string;
 
-  @Column({ type: 'text' })
+  @Column({ type: 'varchar', length: 100 })
   country: string;
 
-  @Column({ type: 'varchar', nullable: true })
+  @Column({ type: 'text', nullable: true })
   profileImage: string;
 
-  @Column({ type: 'varchar', length: 500, nullable: true })
+  @Column({ type: 'text', nullable: true })
   description: string;
 
   @Column({ type: 'boolean', default: false })
@@ -45,6 +39,9 @@ export class Creator extends BaseEntity {
 
   @Column({ type: 'boolean', default: false })
   twitchLinked: Boolean;
+
+  @Column({ type: 'boolean', default: false })
+  emailConfirmed: Boolean;
 
   @OneToMany(() => Connection, (connection) => connection.creator)
   connections!: Connection[];

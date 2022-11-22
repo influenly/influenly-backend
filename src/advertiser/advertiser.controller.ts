@@ -8,13 +8,12 @@ import {
   Param,
   ParseIntPipe,
   Patch,
-  Post,
   UsePipes,
   ValidationPipe
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { AdvertiserService } from './advertiser.service';
-import { CreateAdvertiserDto, UpdateAdvertiserDto } from './dto';
+import { UpdateAdvertiserDto } from './dto';
 
 @ApiTags('advertiser')
 @Controller('advertiser')
@@ -40,19 +39,6 @@ export class AdvertiserController {
       if (!advertiser) {
         throw new Error(`Advertiser with id ${advertiserId} not found`);
       }
-      return advertiser;
-    } catch (error) {
-      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
-    }
-  }
-
-  @Post()
-  @UsePipes(ValidationPipe)
-  async createAdvertiser(@Body() createAdvertiserDto: CreateAdvertiserDto) {
-    try {
-      const advertiser = await this.advertiserService.createAdvertiser(
-        createAdvertiserDto
-      );
       return advertiser;
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
