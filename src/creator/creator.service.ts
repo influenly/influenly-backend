@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { SignUpCreatorRequestDto } from 'src/auth/dto';
 import { Creator } from 'src/entities';
 import { Repository } from 'typeorm';
-import { CreateCreatorDto, UpdateCreatorDto } from './dto';
+import { UpdateCreatorDto } from './dto';
 
 @Injectable()
 export class CreatorService {
@@ -22,8 +23,10 @@ export class CreatorService {
     return creator;
   }
 
-  async createCreator(createCreatorDto: CreateCreatorDto): Promise<Creator> {
-    const newCreator = this.creatorRepository.create(createCreatorDto);
+  async createCreator(
+    signUpCreatorRequestDto: SignUpCreatorRequestDto
+  ): Promise<Creator> {
+    const newCreator = this.creatorRepository.create(signUpCreatorRequestDto);
     await this.creatorRepository.save(newCreator);
     return newCreator;
   }

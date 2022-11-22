@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { SignUpAdvertiserRequestDto } from 'src/auth/dto';
 import { Advertiser } from 'src/entities';
 import { Repository } from 'typeorm';
-import { CreateAdvertiserDto, UpdateAdvertiserDto } from './dto';
+import { UpdateAdvertiserDto } from './dto';
 @Injectable()
 export class AdvertiserService {
   constructor(
@@ -22,9 +23,11 @@ export class AdvertiserService {
   }
 
   async createAdvertiser(
-    createAdvertiserDto: CreateAdvertiserDto
+    signUpAdvertiserRequestDto: SignUpAdvertiserRequestDto
   ): Promise<Advertiser> {
-    const newAdvertiser = this.advertiserRepository.create(createAdvertiserDto);
+    const newAdvertiser = this.advertiserRepository.create(
+      signUpAdvertiserRequestDto
+    );
     await this.advertiserRepository.save(newAdvertiser);
     return newAdvertiser;
   }
