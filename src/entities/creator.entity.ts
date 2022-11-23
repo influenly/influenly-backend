@@ -22,7 +22,7 @@ export class Creator extends BaseEntity {
   @Column({ unique: true, type: 'varchar', length: 120 })
   email: string;
 
-  @Column({ type: 'varchar', length: 50 })
+  @Column({ type: 'text' })
   password: string;
 
   @Column({ type: 'varchar', length: 100 })
