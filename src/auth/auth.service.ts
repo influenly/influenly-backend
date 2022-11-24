@@ -1,5 +1,4 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
 import { AdvertiserService } from 'src/advertiser/advertiser.service';
 import { CreatorService } from 'src/creator/creator.service';
@@ -35,20 +34,28 @@ export class AuthService {
     }
   }
 
-  // async signUpAdvertiser(signUpAdvertiserDto: SignUpAdvertiserRequestDto) {
-  //   try {
-  //     const newAdvertsier = this.advertiserRepository.create({
-  //       ...signUpAdvertiserDto,
-  //       password: bcrypt.hashSync(signUpAdvertiserDto.password, 10)
-  //     });
-  //     await this.advertiserRepository.save(newAdvertsier);
-  //     return newAdvertsier;
-  //   } catch (error) {
-  //     throw new Error(error.message);
-  //   }
-  // }
-
   async signIn(signInRequestDto: SignInRequestDto) {
-    return 'signIn';
+    try {
+      const { email, password } = signInRequestDto;
+
+      const [creator, advertiser] = await Promise.all([
+        this.creatorService.getCreatorByEmail(email),
+        this.advertiserService.getAdvertiserByEmail(email)
+      ]);
+
+      if (!creator && !advertiser) {
+        throw new Error('Credentials are not valid (email)');
+      }
+
+      const user = creator || advertiser;
+
+      if (!bcrypt.compareSync(password, user.password)) {
+        throw new Error('Credentials are not valid (password)');
+      }
+
+      return user;
+    } catch (error) {
+      throw new Error(error.message);
+    }
   }
 }

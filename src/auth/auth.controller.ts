@@ -31,14 +31,14 @@ export class AuthController {
     }
   }
 
-  // @Post('/sign-in')
-  // @UsePipes(ValidationPipe)
-  // async signIn(@Body() signInRequestDto: SignInRequestDto) {
-  //   try {
-  //     const signInResult = await this.authService.signIn(signInRequestDto);
-  //     return signInResult;
-  //   } catch (error) {
-  //     throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
-  //   }
-  // }
+  @Post('/sign-in')
+  @UsePipes(ValidationPipe)
+  async signIn(@Body() signInRequestDto: SignInRequestDto) {
+    try {
+      const signInResult = await this.authService.signIn(signInRequestDto);
+      return signInResult;
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
+  }
 }

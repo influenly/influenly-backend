@@ -18,7 +18,7 @@ export class Advertiser extends BaseEntity {
   @Column({ unique: true, type: 'varchar', length: 100, nullable: true })
   userName: string;
 
-  @Column({ type: 'text' })
+  @Column({ type: 'text', select: false })
   password: string;
 
   @Column({ unique: true, type: 'varchar', length: 120 })

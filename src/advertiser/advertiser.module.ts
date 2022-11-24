@@ -7,6 +7,7 @@ import { AdvertiserService } from './advertiser.service';
 @Module({
   imports: [TypeOrmModule.forFeature([Advertiser])],
   controllers: [AdvertiserController],
-  providers: [AdvertiserService]
+  providers: [AdvertiserService],
+  exports: [AdvertiserService]
 })
 export class AdvertiserModule {}
