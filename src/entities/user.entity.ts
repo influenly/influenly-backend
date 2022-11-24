@@ -4,8 +4,7 @@ import {
   CreateDateColumn,
   Entity,
   PrimaryGeneratedColumn,
-  UpdateDateColumn,
-  OneToMany
+  UpdateDateColumn
 } from 'typeorm';
 
 type UserType = 'CREATOR' | 'ADVERTISER';

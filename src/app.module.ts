@@ -9,6 +9,7 @@ import { ContractModule } from './contract/contract.module';
 import { AnalyticsModule } from './analytics/analytics.module';
 import { YoutubeTokenInfoModule } from './youtube-token-info/youtube-token-info.module';
 import { AuthModule } from './auth/auth.module';
+import { UserModule } from './user/user.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -32,7 +33,8 @@ import { AuthModule } from './auth/auth.module';
     ContractModule,
     AnalyticsModule,
     YoutubeTokenInfoModule,
-    AuthModule
+    AuthModule,
+    UserModule
   ]
 })
 export class AppModule {

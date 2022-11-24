@@ -1,61 +1,44 @@
 import { Injectable } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
-import { AdvertiserService } from 'src/advertiser/advertiser.service';
-import { CreatorService } from 'src/creator/creator.service';
+import { UserService } from 'src/user/user.service';
 import { SignInRequestDto, SignUpRequestDto } from './dto';
 
 @Injectable()
 export class AuthService {
-  constructor(
-    private readonly creatorService: CreatorService,
-    private readonly advertiserService: AdvertiserService
-  ) {}
-  // async signUp(signUpRequestDto: SignUpRequestDto) {
-  //   try {
-  //     const { userType, password } = signUpRequestDto;
-  //     const hashedPassword = bcrypt.hashSync(password, 10);
-  //     //TODO: DO NOT MUTATE INPUT VARIABLE. FUNCTIONAL PROGRAMMING
-  //     signUpRequestDto = { ...signUpRequestDto, password: hashedPassword };
+  constructor(private readonly userService: UserService) {}
+  async signUp(signUpRequestDto: SignUpRequestDto) {
+    try {
+      const { userType, password } = signUpRequestDto;
+      const hashedPassword = bcrypt.hashSync(password, 10);
+      //TODO: DO NOT MUTATE INPUT VARIABLE. FUNCTIONAL PROGRAMMING
+      signUpRequestDto = { ...signUpRequestDto, password: hashedPassword };
 
-  //     if (userType === 'CREATOR') {
-  //       const newCreatorResult = await this.creatorService.createCreator(
-  //         signUpRequestDto
-  //       );
-  //       return newCreatorResult;
-  //     }
-  //     if (userType === 'ADVERTISER') {
-  //       const newAdvertiserResult =
-  //         await this.advertiserService.createAdvertiser(signUpRequestDto);
-  //       return newAdvertiserResult;
-  //     }
-  //     throw new Error(`Invalid user type (userType) with value: ${userType}`);
-  //   } catch (error) {
-  //     throw new Error(error.message);
-  //   }
-  // }
+      const newUser = await this.userService.createUser(signUpRequestDto);
+      return newUser;
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  }
 
-  // async signIn(signInRequestDto: SignInRequestDto) {
-  //   try {
-  //     const { email, password } = signInRequestDto;
+  async signIn(signInRequestDto: SignInRequestDto) {
+    try {
+      const { email, password } = signInRequestDto;
 
-  //     const [creator, advertiser] = await Promise.all([
-  //       this.creatorService.getCreatorByEmail(email),
-  //       this.advertiserService.getAdvertiserByEmail(email)
-  //     ]);
+      const user = await this.userService.getUserByEmail(email);
 
-  //     if (!creator && !advertiser) {
-  //       throw new Error('Credentials are not valid (email)');
-  //     }
+      if (!user) {
+        throw new Error('Credentials are not valid (email)');
+      }
 
-  //     const user = creator || advertiser;
+      if (!bcrypt.compareSync(password, user.password)) {
+        throw new Error('Credentials are not valid (password)');
+      }
 
-  //     if (!bcrypt.compareSync(password, user.password)) {
-  //       throw new Error('Credentials are not valid (password)');
-  //     }
-
-  //     return user;
-  //   } catch (error) {
-  //     throw new Error(error.message);
-  //   }
-  // }
+      delete user.password;
+      return user;
+      //TODO return jwt
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  }
 }
