@@ -1,15 +1,30 @@
+import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
-import { Strategy } from 'passport-jwt';
-import { Advertiser, Creator } from 'src/entities';
+import { ExtractJwt, Strategy } from 'passport-jwt';
+import { User } from 'src/entities';
+import { UserService } from 'src/user/user.service';
 import { IJwtPayload } from '../interfaces/jwt-payload.interface';
 
-// export class JwtStrategy extends PassportStrategy(Strategy) {
-//   async validate(payload: IJwtPayload): Promise<Creator | Advertiser> {
+@Injectable()
+export class JwtStrategy extends PassportStrategy(Strategy) {
+  constructor(
+    private readonly userService: UserService,
+    private readonly configService: ConfigService
+  ) {
+    super({
+      secretOrKey: configService.get('JWT_SECRET'),
+      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken()
+    });
+  }
+  async validate(payload: IJwtPayload): Promise<User> {
+    const { email, userType } = payload;
 
-//     const { email } = payload;
+    const user = await this.userService.getUserByEmail(email);
+    if (!user) throw new UnauthorizedException('Token not valid');
 
-//     c
+    console.log(userType);
 
-//     return;
-//   }
-// }
+    return user;
+  }
+}
