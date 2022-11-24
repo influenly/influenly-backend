@@ -1,42 +1,39 @@
 import {
   BaseEntity,
-  Column,
   JoinColumn,
   CreateDateColumn,
   Entity,
-  PrimaryGeneratedColumn,
   UpdateDateColumn,
-  ManyToOne
+  PrimaryColumn,
+  ManyToOne,
+  Column,
+  Index
 } from 'typeorm';
-import { Advertiser } from './advertiser.entity';
-import { Creator } from './creator.entity';
-import { Stage } from './stage.entity';
+import { Stage, User } from './index';
 
 @Entity('contract')
+@Index(['userAdvertiserId', 'userCreatorId'], { unique: true })
 export class Contract extends BaseEntity {
-  @PrimaryGeneratedColumn('increment')
-  id: number;
+  @PrimaryColumn({ type: 'int' })
+  userAdvertiserId!: number;
 
-  @Column({ type: 'int' })
-  creatorId!: number;
-
-  @Column({ type: 'int' })
-  advertiserId!: number;
+  @PrimaryColumn({ type: 'int' })
+  userCreatorId!: number;
 
   @Column({ type: 'int' })
   stageId!: number;
 
-  @ManyToOne(() => Creator, (creator) => creator.contracts)
-  @JoinColumn({ name: 'creatorId', referencedColumnName: 'id' })
-  creator!: Creator;
-
-  @ManyToOne(() => Advertiser, (advertiser) => advertiser.contracts)
-  @JoinColumn({ name: 'advertiserId', referencedColumnName: 'id' })
-  advertiser!: Advertiser;
-
   @ManyToOne(() => Stage, (stage) => stage.contracts)
   @JoinColumn({ name: 'stageId', referencedColumnName: 'id' })
   stage!: Stage;
+
+  @ManyToOne(() => User)
+  @JoinColumn({ name: 'userAdvertiserId', referencedColumnName: 'id' })
+  userAdvertiser: User;
+
+  @ManyToOne(() => User)
+  @JoinColumn({ name: 'userCreatorId', referencedColumnName: 'id' })
+  userCreator: User;
 
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;

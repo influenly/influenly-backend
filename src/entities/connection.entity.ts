@@ -1,34 +1,31 @@
 import {
   BaseEntity,
-  Column,
   JoinColumn,
   CreateDateColumn,
   Entity,
-  PrimaryGeneratedColumn,
   UpdateDateColumn,
-  ManyToOne
+  PrimaryColumn,
+  ManyToOne,
+  Index
 } from 'typeorm';
-import { Advertiser } from './advertiser.entity';
-import { Creator } from './creator.entity';
+import { User } from './user.entity';
 
 @Entity('connection')
+@Index(['userRequesterId', 'userAddressedId'], { unique: true })
 export class Connection extends BaseEntity {
-  @PrimaryGeneratedColumn('increment')
-  id: number;
+  @PrimaryColumn({ type: 'int' })
+  userRequesterId!: number;
 
-  @Column({ type: 'int' })
-  creatorId!: number;
+  @PrimaryColumn({ type: 'int' })
+  userAddressedId!: number;
 
-  @Column({ type: 'int' })
-  advertiserId!: number;
+  @ManyToOne(() => User)
+  @JoinColumn({ name: 'userRequesterId', referencedColumnName: 'id' })
+  userRequester: User;
 
-  @ManyToOne(() => Creator, (creator) => creator.connections)
-  @JoinColumn({ name: 'creatorId', referencedColumnName: 'id' })
-  creator!: Creator;
-
-  @ManyToOne(() => Advertiser, (advertiser) => advertiser.connections)
-  @JoinColumn({ name: 'advertiserId', referencedColumnName: 'id' })
-  advertiser!: Advertiser;
+  @ManyToOne(() => User)
+  @JoinColumn({ name: 'userAddressedId', referencedColumnName: 'id' })
+  userAddressed: User;
 
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;

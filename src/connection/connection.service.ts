@@ -15,20 +15,20 @@ export class ConnectionService {
     return connections;
   }
 
-  async getConnection(id: number): Promise<Connection> {
-    const connection = await this.connectionRepository.findOne({
-      where: { id }
-    });
-    return connection;
-  }
+  // async getConnection(id: number): Promise<Connection> {
+  //   const connection = await this.connectionRepository.findOne({
+  //     where: { id }
+  //   });
+  //   return connection;
+  // }
 
-  async createConnection(
-    createConnectionDto: CreateConnectionDto
-  ): Promise<Connection> {
-    const newConnection = this.connectionRepository.create(createConnectionDto);
-    await this.connectionRepository.save(newConnection);
-    return newConnection;
-  }
+  // async createConnection(
+  //   createConnectionDto: CreateConnectionDto
+  // ): Promise<Connection> {
+  //   const newConnection = this.connectionRepository.create(createConnectionDto);
+  //   await this.connectionRepository.save(newConnection);
+  //   return newConnection;
+  // }
 
   async deleteConnection(id: number): Promise<Connection> {
     const queryResult = await this.connectionRepository

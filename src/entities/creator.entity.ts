@@ -5,28 +5,22 @@ import {
   Entity,
   OneToMany,
   PrimaryGeneratedColumn,
-  UpdateDateColumn
+  UpdateDateColumn,
+  OneToOne,
+  JoinColumn
 } from 'typeorm';
-import { Analytics } from './analytics.entity';
-import { Connection } from './connection.entity';
-import { Contract } from './contract.entity';
+import { Analytics, User } from './index';
 
 @Entity('creator')
 export class Creator extends BaseEntity {
   @PrimaryGeneratedColumn('increment')
   id: number;
 
+  @Column({ type: 'int' })
+  userId: number;
+
   @Column({ unique: true, type: 'varchar', length: 100, nullable: true })
   userName: string;
-
-  @Column({ unique: true, type: 'varchar', length: 120 })
-  email: string;
-
-  @Column({ type: 'text', select: false })
-  password: string;
-
-  @Column({ type: 'varchar', length: 100 })
-  country: string;
 
   @Column({ type: 'text', nullable: true })
   profileImage: string;
@@ -40,24 +34,16 @@ export class Creator extends BaseEntity {
   @Column({ type: 'boolean', default: false })
   twitchLinked: Boolean;
 
-  @Column({ type: 'boolean', default: false })
-  emailConfirmed: Boolean;
-
-  @Column({ type: 'boolean', default: false })
-  onboardingCompleted: Boolean;
-
-  @OneToMany(() => Connection, (connection) => connection.creator)
-  connections!: Connection[];
-
-  @OneToMany(() => Contract, (contract) => contract.creator)
-  contracts!: Contract[];
-
-  @OneToMany(() => Analytics, (analytics) => analytics.creator)
-  analytics!: Analytics[];
-
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
 
   @UpdateDateColumn({ type: 'timestamp' })
   updatedAt: Date;
+
+  @OneToOne(() => User)
+  @JoinColumn({ name: 'userId', referencedColumnName: 'id' })
+  user: User;
+
+  @OneToMany(() => Analytics, (analytics) => analytics.creator)
+  analytics!: Analytics[];
 }

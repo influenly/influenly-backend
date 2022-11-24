@@ -5,27 +5,21 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
-  OneToMany
+  OneToOne,
+  JoinColumn
 } from 'typeorm';
-import { Connection } from './connection.entity';
-import { Contract } from './contract.entity';
+import { User } from './index';
 
 @Entity('advertiser')
 export class Advertiser extends BaseEntity {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('increment')
   id: number;
+
+  @Column({ type: 'int' })
+  userId: number;
 
   @Column({ unique: true, type: 'varchar', length: 100, nullable: true })
   userName: string;
-
-  @Column({ type: 'text', select: false })
-  password: string;
-
-  @Column({ unique: true, type: 'varchar', length: 120 })
-  email: string;
-
-  @Column({ type: 'varchar', length: 100 })
-  country: string;
 
   @Column({ type: 'text', nullable: true })
   profileImage: string;
@@ -51,24 +45,16 @@ export class Advertiser extends BaseEntity {
   @Column({ type: 'boolean', default: false })
   validated: Boolean;
 
-  @Column({ type: 'boolean', default: false })
-  emailConfirmed: Boolean;
-
-  @Column({ type: 'boolean', default: false })
-  onboardingCompleted: Boolean;
-
   @Column({ type: 'int', default: 10 })
   credits: number;
-
-  @OneToMany(() => Connection, (connection) => connection.advertiser)
-  connections!: Connection[];
-
-  @OneToMany(() => Contract, (contract) => contract.advertiser)
-  contracts!: Contract[];
 
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
 
   @UpdateDateColumn({ type: 'timestamp' })
   updatedAt: Date;
+
+  @OneToOne(() => User)
+  @JoinColumn({ name: 'userId', referencedColumnName: 'id' })
+  user: User;
 }

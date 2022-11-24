@@ -29,33 +29,33 @@ export class ConnectionController {
     }
   }
 
-  @Get(':id')
-  async getConnection(@Param('id', ParseIntPipe) connectionId: number) {
-    try {
-      const connection = await this.connectionService.getConnection(
-        connectionId
-      );
-      if (!connection) {
-        throw new Error(`Connection with id ${connectionId} not found`);
-      }
-      return connection;
-    } catch (error) {
-      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
-    }
-  }
+  // @Get(':id')
+  // async getConnection(@Param('id', ParseIntPipe) connectionId: number) {
+  //   try {
+  //     const connection = await this.connectionService.getConnection(
+  //       connectionId
+  //     );
+  //     if (!connection) {
+  //       throw new Error(`Connection with id ${connectionId} not found`);
+  //     }
+  //     return connection;
+  //   } catch (error) {
+  //     throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+  //   }
+  // }
 
-  @Post()
-  @UsePipes(ValidationPipe)
-  async createConnection(@Body() createConnectionDto: CreateConnectionDto) {
-    try {
-      const connection = await this.connectionService.createConnection(
-        createConnectionDto
-      );
-      return connection;
-    } catch (error) {
-      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
-    }
-  }
+  // @Post()
+  // @UsePipes(ValidationPipe)
+  // async createConnection(@Body() createConnectionDto: CreateConnectionDto) {
+  //   try {
+  //     const connection = await this.connectionService.createConnection(
+  //       createConnectionDto
+  //     );
+  //     return connection;
+  //   } catch (error) {
+  //     throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+  //   }
+  // }
 
   @Delete(':id')
   async deleteConnection(@Param('id', ParseIntPipe) connectionId: number) {

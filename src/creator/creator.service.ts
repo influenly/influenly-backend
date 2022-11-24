@@ -23,23 +23,23 @@ export class CreatorService {
     return creator;
   }
 
-  async getCreatorByEmail(email: string): Promise<Creator> {
-    const creator = await this.creatorRepository.findOne({
-      where: { email },
-      select: {
-        email: true,
-        password: true
-      }
-    });
-    return creator;
-  }
+  // async getCreatorByEmail(email: string): Promise<Creator> {
+  //   const creator = await this.creatorRepository.findOne({
+  //     where: { email },
+  //     select: {
+  //       email: true,
+  //       password: true
+  //     }
+  //   });
+  //   return creator;
+  // }
 
-  async createCreator(signUpRequestDto: SignUpRequestDto): Promise<Creator> {
-    const newCreator = this.creatorRepository.create(signUpRequestDto);
-    await this.creatorRepository.save(newCreator);
-    delete newCreator.password;
-    return newCreator;
-  }
+  // async createCreator(signUpRequestDto: SignUpRequestDto): Promise<Creator> {
+  //   const newCreator = this.creatorRepository.create(signUpRequestDto);
+  //   await this.creatorRepository.save(newCreator);
+  //   delete newCreator.password;
+  //   return newCreator;
+  // }
 
   async updateCreator(updateCreatorDto: UpdateCreatorDto): Promise<Creator> {
     const queryResult = await this.creatorRepository
