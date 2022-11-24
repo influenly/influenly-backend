@@ -10,57 +10,35 @@ import {
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
-import {
-  SignInRequestDto,
-  SignUpAdvertiserRequestDto,
-  SignUpCreatorRequestDto
-} from './dto';
+import { SignInRequestDto, SignUpRequestDto } from './dto';
 
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @Post('/sign-up/creator')
+  @Post('/sign-up')
   @UsePipes(ValidationPipe)
-  async signUpCreator(
+  async signUp(
     @Body()
-    signUpCreatorRequestDto: SignUpCreatorRequestDto
+    signUpRequestDto: SignUpRequestDto
   ) {
     try {
-      const signUpCreatorResult = await this.authService.signUpCreator(
-        signUpCreatorRequestDto
-      );
-      return signUpCreatorResult;
+      const signUpResult = await this.authService.signUp(signUpRequestDto);
+      return signUpResult;
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
   }
 
-  @Post('/sign-up/advertiser')
-  @UsePipes(ValidationPipe)
-  async signUpAdvertiser(
-    @Body()
-    signUpAdvertiserRequestDto: SignUpAdvertiserRequestDto
-  ) {
-    try {
-      const signUpAdvertiserResult = await this.authService.signUpAdvertiser(
-        signUpAdvertiserRequestDto
-      );
-      return signUpAdvertiserResult;
-    } catch (error) {
-      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
-    }
-  }
-
-  @Post('/sign-in')
-  @UsePipes(ValidationPipe)
-  async signIn(@Body() signInRequestDto: SignInRequestDto) {
-    try {
-      const signInResult = await this.authService.signIn(signInRequestDto);
-      return signInResult;
-    } catch (error) {
-      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
-    }
-  }
+  // @Post('/sign-in')
+  // @UsePipes(ValidationPipe)
+  // async signIn(@Body() signInRequestDto: SignInRequestDto) {
+  //   try {
+  //     const signInResult = await this.authService.signIn(signInRequestDto);
+  //     return signInResult;
+  //   } catch (error) {
+  //     throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+  //   }
+  // }
 }

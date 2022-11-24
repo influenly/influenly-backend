@@ -4,10 +4,13 @@ import {
   IsNotEmpty,
   MinLength,
   IsString,
-  MaxLength
+  IsIn
 } from 'class-validator';
 
-export class SignUpCreatorRequestDto {
+const userTypes = ['CREATOR', 'ADVERTISER'];
+type UserType = 'CREATOR' | 'ADVERTISER';
+
+export class SignUpRequestDto {
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
@@ -27,13 +30,6 @@ export class SignUpCreatorRequestDto {
 
   @ApiProperty()
   @IsNotEmpty()
-  @IsString()
-  @MinLength(8)
-  userName: string;
-
-  @ApiProperty()
-  @IsNotEmpty()
-  @IsString()
-  @MaxLength(500)
-  description: string;
+  @IsIn(userTypes)
+  userType: UserType;
 }

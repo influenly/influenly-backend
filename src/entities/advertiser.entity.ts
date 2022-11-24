@@ -15,7 +15,7 @@ export class Advertiser extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ unique: true, type: 'varchar', length: 100 })
+  @Column({ unique: true, type: 'varchar', length: 100, nullable: true })
   userName: string;
 
   @Column({ type: 'text' })
@@ -53,6 +53,9 @@ export class Advertiser extends BaseEntity {
 
   @Column({ type: 'boolean', default: false })
   emailConfirmed: Boolean;
+
+  @Column({ type: 'boolean', default: false })
+  onboardingCompleted: Boolean;
 
   @Column({ type: 'int', default: 10 })
   credits: number;

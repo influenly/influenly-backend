@@ -16,7 +16,7 @@ export class Creator extends BaseEntity {
   @PrimaryGeneratedColumn('increment')
   id: number;
 
-  @Column({ unique: true, type: 'varchar', length: 100 })
+  @Column({ unique: true, type: 'varchar', length: 100, nullable: true })
   userName: string;
 
   @Column({ unique: true, type: 'varchar', length: 120 })
@@ -42,6 +42,9 @@ export class Creator extends BaseEntity {
 
   @Column({ type: 'boolean', default: false })
   emailConfirmed: Boolean;
+
+  @Column({ type: 'boolean', default: false })
+  onboardingCompleted: Boolean;
 
   @OneToMany(() => Connection, (connection) => connection.creator)
   connections!: Connection[];
