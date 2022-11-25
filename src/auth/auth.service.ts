@@ -13,15 +13,17 @@ export class AuthService {
   ) {}
   async signUp(signUpRequestDto: SignUpRequestDto) {
     try {
-      const { userType, password, email } = signUpRequestDto;
+      const { userType, password } = signUpRequestDto;
       const hashedPassword = bcrypt.hashSync(password, 10);
       //TODO: DO NOT MUTATE INPUT VARIABLE. FUNCTIONAL PROGRAMMING
       signUpRequestDto = { ...signUpRequestDto, password: hashedPassword };
 
       const newUser = await this.userService.createUser(signUpRequestDto);
+      const { id } = newUser;
+      const token = this.getJwtToken({ id, userType });
       return {
         ...newUser,
-        token: this.getJwtToken({ email, userType })
+        token
       };
     } catch (error) {
       throw new Error(error.message);
@@ -42,12 +44,13 @@ export class AuthService {
         throw new Error('Credentials are not valid (password)');
       }
 
-      const { userType } = user;
+      const { type, id } = user;
+      const token = this.getJwtToken({ id, userType: type });
 
       delete user.password;
       return {
         ...user,
-        token: this.getJwtToken({ email, userType })
+        token
       };
     } catch (error) {
       throw new Error(error.message);

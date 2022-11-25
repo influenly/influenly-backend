@@ -8,6 +8,7 @@ import {
 } from 'typeorm';
 
 type UserType = 'CREATOR' | 'ADVERTISER';
+type UserRole = 'REGULAR' | 'ADMIN';
 
 @Entity('user')
 export class User extends BaseEntity {
@@ -30,7 +31,10 @@ export class User extends BaseEntity {
   onboardingCompleted: Boolean;
 
   @Column({ type: 'varchar', length: 20 })
-  userType: UserType;
+  rolee: UserRole;
+
+  @Column({ type: 'varchar', length: 20 })
+  type: UserType;
 
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;

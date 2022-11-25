@@ -1,4 +1,4 @@
 export interface IJwtPayload {
-  email: string;
+  id: number;
   userType: 'CREATOR' | 'ADVERTISER';
 }

@@ -24,11 +24,14 @@ export class UserService {
   }
 
   async getUserByEmail(email: string): Promise<User> {
+    //TODO: add argument to function to indicate which fields should be returned
     const user = await this.userRepository.findOne({
       where: { email },
       select: {
+        id: true,
         email: true,
-        password: true
+        password: true,
+        type: true
       }
     });
     return user;
