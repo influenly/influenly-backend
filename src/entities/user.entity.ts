@@ -6,9 +6,9 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn
 } from 'typeorm';
+import { UserRoles, UserTypes } from 'src/common/constants';
 
-type UserType = 'CREATOR' | 'ADVERTISER';
-type UserRole = 'REGULAR' | 'ADMIN';
+type UserType = UserTypes.ADVERTISER | UserTypes.CREATOR;
 
 @Entity('user')
 export class User extends BaseEntity {
@@ -30,8 +30,8 @@ export class User extends BaseEntity {
   @Column({ type: 'boolean', default: false })
   onboardingCompleted: Boolean;
 
-  @Column({ type: 'varchar', length: 20 })
-  rolee: UserRole;
+  @Column('text', { array: true, default: [UserRoles.REGULAR] })
+  roles: UserRoles[];
 
   @Column({ type: 'varchar', length: 20 })
   type: UserType;

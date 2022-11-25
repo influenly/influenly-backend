@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { UserService } from 'src/user/user.service';
-import { SignInRequestDto, SignUpRequestDto } from './dto';
+import { SignInRequestDto, SignUpRequestDto } from '../common/dto';
 import { IJwtPayload } from './interfaces/jwt-payload.interface';
 
 @Injectable()
@@ -13,14 +13,14 @@ export class AuthService {
   ) {}
   async signUp(signUpRequestDto: SignUpRequestDto) {
     try {
-      const { userType, password } = signUpRequestDto;
+      const { type, password } = signUpRequestDto;
       const hashedPassword = bcrypt.hashSync(password, 10);
       //TODO: DO NOT MUTATE INPUT VARIABLE. FUNCTIONAL PROGRAMMING
       signUpRequestDto = { ...signUpRequestDto, password: hashedPassword };
 
       const newUser = await this.userService.createUser(signUpRequestDto);
       const { id } = newUser;
-      const token = this.getJwtToken({ id, userType });
+      const token = this.getJwtToken({ id, userType: type });
       return {
         ...newUser,
         token

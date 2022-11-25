@@ -6,9 +6,10 @@ import {
   IsString,
   IsIn
 } from 'class-validator';
+import { UserTypes } from 'src/common/constants';
 
-const userTypes = ['CREATOR', 'ADVERTISER'];
-type UserType = 'CREATOR' | 'ADVERTISER';
+const userTypes = Object.keys(UserTypes);
+type UserType = UserTypes.ADVERTISER | UserTypes.CREATOR;
 
 export class SignUpRequestDto {
   @ApiProperty()
@@ -31,5 +32,5 @@ export class SignUpRequestDto {
   @ApiProperty()
   @IsNotEmpty()
   @IsIn(userTypes)
-  userType: UserType;
+  type: UserType;
 }

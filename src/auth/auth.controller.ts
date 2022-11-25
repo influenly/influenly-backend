@@ -5,7 +5,6 @@ import {
   HttpException,
   HttpStatus,
   Post,
-  Query,
   UseGuards,
   UsePipes,
   ValidationPipe
@@ -13,7 +12,9 @@ import {
 import { AuthGuard } from '@nestjs/passport';
 import { ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
-import { SignInRequestDto, SignUpRequestDto } from './dto';
+import { SignInRequestDto, SignUpRequestDto } from '../common/dto';
+import { Auth } from './decorators';
+import { UserRoles } from 'src/common/constants';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -45,8 +46,8 @@ export class AuthController {
     }
   }
 
-  @UseGuards(AuthGuard())
-  @Get('/private')
+  @Auth(UserRoles.ADMIN)
+  @Get('/admin')
   async private() {
     return 'private route';
   }

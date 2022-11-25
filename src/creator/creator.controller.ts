@@ -12,14 +12,19 @@ import {
   ValidationPipe
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+import { Auth } from 'src/auth/decorators';
+import { UserRoles } from 'src/common/constants';
 import { CreatorService } from './creator.service';
 import { UpdateCreatorDto } from './dto';
+
+//TODO: Auth decorator should check user type.
 
 @ApiTags('creator')
 @Controller('creator')
 export class CreatorController {
   constructor(private readonly creatorService: CreatorService) {}
 
+  @Auth(UserRoles.ADMIN)
   @Get()
   async getCreators() {
     try {
