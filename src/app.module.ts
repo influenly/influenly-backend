@@ -12,21 +12,32 @@ import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
+import { MailModule } from './lib/mail/mail.module';
+import APP_CONFIG from './config/app';
+import DATABASE_CONFIG from './config/database';
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true }),
+    ConfigModule.forRoot({
+      load: [APP_CONFIG, DATABASE_CONFIG],
+      isGlobal: true
+    }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
-      useFactory: (configService: ConfigService) => ({
-        type: 'postgres',
-        host: configService.get('DB_HOST'),
-        port: +configService.get<number>('DB_PORT'),
-        username: configService.get('DB_USERNAME'),
-        password: configService.get('DB_PASSWORD'),
-        database: configService.get('DB_NAME'),
-        entities,
-        synchronize: true
-      }),
+      useFactory: (configService: ConfigService) => {
+        const { host, port, username, password, database } =
+          configService.get('database');
+
+        return {
+          type: 'postgres',
+          host,
+          port,
+          username,
+          password,
+          database,
+          entities,
+          synchronize: true
+        };
+      },
       inject: [ConfigService]
     }),
     ThrottlerModule.forRoot({
@@ -40,7 +51,8 @@ import { APP_GUARD } from '@nestjs/core';
     AnalyticsModule,
     YoutubeTokenInfoModule,
     AuthModule,
-    UserModule
+    UserModule,
+    MailModule
   ],
   providers: [
     {
