@@ -10,6 +10,8 @@ import { AnalyticsModule } from './analytics/analytics.module';
 import { YoutubeTokenInfoModule } from './youtube-token-info/youtube-token-info.module';
 import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { APP_GUARD } from '@nestjs/core';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -27,6 +29,10 @@ import { UserModule } from './user/user.module';
       }),
       inject: [ConfigService]
     }),
+    ThrottlerModule.forRoot({
+      ttl: 60,
+      limit: 10
+    }),
     AdvertiserModule,
     CreatorModule,
     ConnectionModule,
@@ -35,11 +41,17 @@ import { UserModule } from './user/user.module';
     YoutubeTokenInfoModule,
     AuthModule,
     UserModule
+  ],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard
+    }
   ]
 })
 export class AppModule {
-  static port: number
+  static port: number;
   constructor(configService: ConfigService) {
-    AppModule.port = configService.get('API_PORT')
+    AppModule.port = configService.get('API_PORT');
   }
 }
