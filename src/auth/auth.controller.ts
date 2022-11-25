@@ -1,20 +1,16 @@
 import {
+  Logger,
   Body,
   Controller,
-  Get,
   HttpException,
   HttpStatus,
   Post,
-  UseGuards,
   UsePipes,
   ValidationPipe
 } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
 import { ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { SignInRequestDto, SignUpRequestDto } from '../common/dto';
-import { Auth } from './decorators';
-import { UserRoles } from 'src/common/constants';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -29,6 +25,9 @@ export class AuthController {
   ) {
     try {
       const signUpResult = await this.authService.signUp(signUpRequestDto);
+      Logger.log(
+        `User ${signUpResult.email} created succesfully. Type: ${signUpResult.type}`
+      );
       return signUpResult;
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
@@ -44,11 +43,5 @@ export class AuthController {
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
-  }
-
-  @Auth(UserRoles.ADMIN)
-  @Get('/admin')
-  async private() {
-    return 'private route';
   }
 }
