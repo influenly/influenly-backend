@@ -45,5 +45,5 @@ export class UpdateUserDto {
   @IsOptional()
   @IsNotEmpty()
   @IsBoolean()
-  onboardingCompleted?: Boolean;
+  isOnboardingCompletion?: Boolean;
 }

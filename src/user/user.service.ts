@@ -2,14 +2,15 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { SignUpRequestDto } from 'src/common/dto';
 import { User } from 'src/entities';
-import { Repository } from 'typeorm';
+import { Repository, DataSource } from 'typeorm';
 import { UpdateUserDto } from './dto';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User)
-    private readonly userRepository: Repository<User>
+    private readonly userRepository: Repository<User>,
+    private readonly dataSource: DataSource
   ) {}
   async getUsers(): Promise<User[]> {
     const users = await this.userRepository.find();
@@ -57,7 +58,19 @@ export class UserService {
     return queryResult.raw[0];
   }
 
-  async deleteCreator(id: number): Promise<User> {
+  async updateUserAndCreateCreator(updateUserDto: UpdateUserDto) {
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+  }
+
+  async updateUserAndCreateAdvertiser(updateUserDto: UpdateUserDto) {
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+  }
+
+  async deleteUser(id: number): Promise<User> {
     const queryResult = await this.userRepository
       .createQueryBuilder()
       .delete()
