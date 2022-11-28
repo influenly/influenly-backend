@@ -1,15 +1,19 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { SignUpRequestDto } from 'src/common/dto';
-import { User } from 'src/entities';
+import { CreatorRepository } from 'src/creator/creator.repository';
+import { Creator, User } from 'src/entities';
 import { Repository, DataSource } from 'typeorm';
 import { UpdateUserDto } from './dto';
+import { IUpdateUserInput } from './interfaces';
+import { UserRepository } from './user.repository';
 
 @Injectable()
 export class UserService {
   constructor(
-    @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
+    // @InjectRepository(User)
+    // private readonly userRepository: Repository<User>,
+    private readonly userRepository: UserRepository,
     private readonly dataSource: DataSource
   ) {}
   async getUsers(): Promise<User[]> {
@@ -59,12 +63,41 @@ export class UserService {
   }
 
   async updateUserAndCreateCreator(updateUserDto: UpdateUserDto) {
-    const queryRunner = this.dataSource.createQueryRunner();
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
+    const transactionResult = await this.dataSource.transaction(
+      async (entityManager) => {
+        try {
+          // const queryRunner = entityManager.queryRunner;
+          const userRepository = entityManager.withRepository(
+            this.userRepository
+          );
+          // const customCreatorRepository = entityManager.withRepository(
+          //   this.customCreatorRepository
+          // );
+
+          const updateUserInput: IUpdateUserInput = {
+            id: updateUserDto.id,
+            onboardingCompleted: true
+          };
+
+          const updatedUser = await userRepository.updateById(updateUserInput);
+          console.log(updatedUser);
+
+          // await this.userRepository.createAndSave({
+          //   userId: updatedUser.id,
+          //   description: 'asdsadsadasdsaas',
+          //   youtubeLinked: true,
+          //   userName: 'asdasd'
+          // });
+          console.log(2);
+        } catch (error) {
+          console.log(error);
+        }
+      }
+    );
+    console.log(transactionResult);
   }
 
-  async updateUserAndCreateAdvertiser(updateUserDto: UpdateUserDto) {
+  async updateUserAndCreater(updateUserDto: UpdateUserDto) {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();

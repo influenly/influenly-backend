@@ -42,20 +42,20 @@ export class UserController {
   @UsePipes(ValidationPipe)
   async updateUser(@Req() req, @Body() updateUserDto: UpdateUserDto) {
     try {
-      const {
-        user: { type: userType }
-      } = req;
+      //   const {
+      //     user: { type: userType }
+      //   } = req;
 
-      const isCreator = userType === UserTypes.CREATOR;
+      //   const isCreator = userType === UserTypes.CREATOR;
 
       const { isOnboardingCompletion } = updateUserDto;
 
       let updatedUserResult;
 
       if (isOnboardingCompletion) {
-        updatedUserResult = isCreator
-          ? await this.userService.updateUserAndCreateCreator(updateUserDto)
-          : this.userService.updateUserAndCreateAdvertiser(updateUserDto);
+        updatedUserResult = await this.userService.updateUserAndCreateCreator(
+          updateUserDto
+        );
       } else {
         updatedUserResult = await this.userService.updateUser(updateUserDto);
       }

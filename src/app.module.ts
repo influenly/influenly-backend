@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { DataSource } from 'typeorm';
 import entities from './entities';
 import { AdvertiserModule } from './advertiser/advertiser.module';
 import { CreatorModule } from './creator/creator.module';
@@ -16,6 +17,7 @@ import { MailModule } from './lib/mail/mail.module';
 import { IntegrationModule } from './integration/integration.module';
 import APP_CONFIG from './config/app';
 import DATABASE_CONFIG from './config/database';
+import { join } from 'path';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -35,7 +37,7 @@ import DATABASE_CONFIG from './config/database';
           username,
           password,
           database,
-          entities,
+          entities: [join(__dirname, 'entities/*.entity.{ts,js}')],
           synchronize: true
         };
       },
