@@ -1,19 +1,21 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 import { SignUpRequestDto } from 'src/common/dto';
 import { CreatorRepository } from 'src/creator/creator.repository';
-import { Creator, User } from 'src/entities';
-import { Repository, DataSource } from 'typeorm';
+import { User } from 'src/entities';
+import { DataSource } from 'typeorm';
 import { UpdateUserDto } from './dto';
 import { IUpdateUserInput } from './interfaces';
 import { UserRepository } from './user.repository';
+import { ICreateAdvertiserInput } from 'src/common/interfaces/advertiser';
+import { ICreateCreatorInput } from 'src/common/interfaces/creator';
+import { AdvertiserRepository } from 'src/advertiser/advertiser.repository';
 
 @Injectable()
 export class UserService {
   constructor(
-    // @InjectRepository(User)
-    // private readonly userRepository: Repository<User>,
     private readonly userRepository: UserRepository,
+    private readonly creatorRepository: CreatorRepository,
+    private readonly advertiserRepository: AdvertiserRepository,
     private readonly dataSource: DataSource
   ) {}
   async getUsers(): Promise<User[]> {
@@ -63,45 +65,76 @@ export class UserService {
   }
 
   async updateUserAndCreateCreator(updateUserDto: UpdateUserDto) {
-    const transactionResult = await this.dataSource.transaction(
-      async (entityManager) => {
-        try {
-          // const queryRunner = entityManager.queryRunner;
-          const userRepository = entityManager.withRepository(
-            this.userRepository
-          );
-          // const customCreatorRepository = entityManager.withRepository(
-          //   this.customCreatorRepository
-          // );
-
-          const updateUserInput: IUpdateUserInput = {
-            id: updateUserDto.id,
-            onboardingCompleted: true
-          };
-
-          const updatedUser = await userRepository.updateById(updateUserInput);
-          console.log(updatedUser);
-
-          // await this.userRepository.createAndSave({
-          //   userId: updatedUser.id,
-          //   description: 'asdsadsadasdsaas',
-          //   youtubeLinked: true,
-          //   userName: 'asdasd'
-          // });
-          console.log(2);
-        } catch (error) {
-          console.log(error);
-        }
-      }
-    );
-    console.log(transactionResult);
-  }
-
-  async updateUserAndCreater(updateUserDto: UpdateUserDto) {
     const queryRunner = this.dataSource.createQueryRunner();
+
     await queryRunner.connect();
     await queryRunner.startTransaction();
+
+    try {
+      const { id, description } = updateUserDto;
+      const updateUserInput: IUpdateUserInput = {
+        id,
+        onboardingCompleted: true
+      };
+      const updatedUser = await this.userRepository.updateById(updateUserInput);
+
+      const createCreatorInput: ICreateCreatorInput = {
+        userId: updatedUser.id,
+        description,
+        youtubeLinked: true
+      };
+      const createdCreator = await this.creatorRepository.createAndSave(
+        createCreatorInput
+      );
+
+      await queryRunner.commitTransaction();
+      return createdCreator;
+    } catch (err) {
+      console.log('ROLLLLLBACK', err);
+      await queryRunner.rollbackTransaction();
+    } finally {
+      await queryRunner.release();
+    }
   }
+
+  async updateUserAndCreateAdvertiser(updateUserDto: UpdateUserDto) {
+    const queryRunner = this.dataSource.createQueryRunner();
+
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      const { id, description, userName } = updateUserDto;
+      const updateUserInput: IUpdateUserInput = {
+        id,
+        onboardingCompleted: true
+      };
+      const updatedUser = await this.userRepository.updateById(updateUserInput);
+
+      const createAdvertiserInput: ICreateAdvertiserInput = {
+        userId: updatedUser.id,
+        description,
+        userName
+      };
+      const createdAdvertiser = await this.advertiserRepository.createAndSave(
+        createAdvertiserInput
+      );
+
+      await queryRunner.commitTransaction();
+      return createdAdvertiser;
+    } catch (err) {
+      console.log('ROLLLLLBACK', err);
+      await queryRunner.rollbackTransaction();
+    } finally {
+      await queryRunner.release();
+    }
+  }
+
+  // async updateUserAndCreater(updateUserDto: UpdateUserDto) {
+  //   const queryRunner = this.dataSource.createQueryRunner();
+  //   await queryRunner.connect();
+  //   await queryRunner.startTransaction();
+  // }
 
   async deleteUser(id: number): Promise<User> {
     const queryResult = await this.userRepository

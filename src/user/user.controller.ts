@@ -25,7 +25,7 @@ import { UserTypes } from 'src/common/constants';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Get()
+  @Get(':id')
   async getUser(@Param('id', ParseIntPipe) userId: number) {
     try {
       const user = await this.userService.getUser(userId);
