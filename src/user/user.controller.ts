@@ -15,8 +15,8 @@ import {
 import { ApiTags } from '@nestjs/swagger';
 import { UserService } from './user.service';
 import { UpdateUserDto } from './dto';
-import { Auth } from 'src/auth/decorators';
-import { UserTypes } from 'src/common/constants';
+import { Auth, GetUser } from 'src/auth/decorators';
+import { User } from 'src/entities';
 
 //TODO: Auth decorator should check user type.
 @Auth()
@@ -40,30 +40,15 @@ export class UserController {
 
   @Patch()
   @UsePipes(ValidationPipe)
-  async updateUser(@Req() req, @Body() updateUserDto: UpdateUserDto) {
+  async updateUser(
+    @GetUser() user: User,
+    @Body() updateUserDto: UpdateUserDto
+  ) {
     try {
-      //   const {
-      //     user: { type: userType }
-      //   } = req;
-
-      //   const isCreator = userType === UserTypes.CREATOR;
-
-      const { isOnboardingCompletion } = updateUserDto;
-
-      let updatedUserResult;
-
-      if (isOnboardingCompletion) {
-        updatedUserResult = await this.userService.updateUserAndCreateCreator(
-          updateUserDto
-        );
-      } else {
-        updatedUserResult = await this.userService.updateUser(updateUserDto);
-      }
-
-      if (!updatedUserResult) {
-        throw new Error('Problem at updating');
-      }
-
+      const updatedUserResult = await this.userService.updateById(
+        user.id,
+        updateUserDto
+      );
       return updatedUserResult;
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);

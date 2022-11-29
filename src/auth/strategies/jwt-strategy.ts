@@ -10,7 +10,7 @@ import { IJwtPayload } from '../interfaces/jwt-payload.interface';
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
     private readonly userService: UserService,
-    private readonly configService: ConfigService
+    readonly configService: ConfigService
   ) {
     super({
       secretOrKey: configService.get('JWT_SECRET'),

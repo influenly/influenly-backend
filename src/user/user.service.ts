@@ -3,7 +3,11 @@ import { SignUpRequestDto } from 'src/common/dto';
 import { CreatorRepository } from 'src/creator/creator.repository';
 import { User } from 'src/entities';
 import { DataSource } from 'typeorm';
-import { UpdateUserDto } from './dto';
+import {
+  UpdateUserDto,
+  UpdateUserAndCreateCreator,
+  UpdateUserAndCreateAdvertiser
+} from './dto';
 import { IUpdateUserInput } from './interfaces';
 import { UserRepository } from './user.repository';
 import { ICreateAdvertiserInput } from 'src/common/interfaces/advertiser';
@@ -51,36 +55,37 @@ export class UserService {
     return newUser;
   }
 
-  async updateUser(updateUserDto: UpdateUserDto): Promise<User> {
-    const queryResult = await this.userRepository
-      .createQueryBuilder()
-      .update(updateUserDto)
-      .where({
-        id: updateUserDto.id
-      })
-      .returning('*')
-      .execute();
-
-    return queryResult.raw[0];
+  async updateById(id: number, updateUserDto: UpdateUserDto): Promise<User> {
+    const updateUserInput: IUpdateUserInput = {
+      id,
+      ...updateUserDto
+    };
+    const updatedUser = await this.userRepository.updateById(updateUserInput);
+    return updatedUser;
   }
 
-  async updateUserAndCreateCreator(updateUserDto: UpdateUserDto) {
+  async updateUserAndCreateCreator(
+    updateUserAndCreateCreator: UpdateUserAndCreateCreator
+  ) {
     const queryRunner = this.dataSource.createQueryRunner();
 
     await queryRunner.connect();
     await queryRunner.startTransaction();
 
     try {
-      const { id, description } = updateUserDto;
-      const updateUserInput: IUpdateUserInput = {
+      const { id, description, birthDate, userName } =
+        updateUserAndCreateCreator;
+
+      const updatedUser = await this.userRepository.updateById({
         id,
+        birthDate,
         onboardingCompleted: true
-      };
-      const updatedUser = await this.userRepository.updateById(updateUserInput);
+      });
 
       const createCreatorInput: ICreateCreatorInput = {
         userId: updatedUser.id,
         description,
+        userName,
         youtubeLinked: true
       };
       const createdCreator = await this.creatorRepository.createAndSave(
@@ -97,19 +102,19 @@ export class UserService {
     }
   }
 
-  async updateUserAndCreateAdvertiser(updateUserDto: UpdateUserDto) {
+  async updateUserAndCreateAdvertiser(
+    updateUserAndCreateAdvertiser: UpdateUserAndCreateAdvertiser
+  ) {
     const queryRunner = this.dataSource.createQueryRunner();
 
     await queryRunner.connect();
     await queryRunner.startTransaction();
 
     try {
-      const { id, description, userName } = updateUserDto;
-      const updateUserInput: IUpdateUserInput = {
-        id,
-        onboardingCompleted: true
-      };
-      const updatedUser = await this.userRepository.updateById(updateUserInput);
+      const { id, description, userName } = updateUserAndCreateAdvertiser;
+      const updatedUser = await this.userRepository.updateById({
+        id
+      });
 
       const createAdvertiserInput: ICreateAdvertiserInput = {
         userId: updatedUser.id,

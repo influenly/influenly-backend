@@ -22,6 +22,9 @@ export class Creator extends BaseEntity {
   @Column({ unique: true, type: 'varchar', length: 100, nullable: true })
   userName: string;
 
+  @Column({ type: 'date' })
+  birthDate: Date;
+
   @Column({ type: 'text', nullable: true })
   profileImage: string;
 

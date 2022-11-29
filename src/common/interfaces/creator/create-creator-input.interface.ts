@@ -1,6 +1,6 @@
 export interface ICreateCreatorInput {
   userId: number;
-  userName?: string;
+  userName: string;
   description: string;
   youtubeLinked: boolean;
 }

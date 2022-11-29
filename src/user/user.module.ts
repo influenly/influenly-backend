@@ -4,6 +4,7 @@ import { AdvertiserModule } from 'src/advertiser/advertiser.module';
 import { AuthModule } from 'src/auth/auth.module';
 import { CreatorModule } from 'src/creator/creator.module';
 import { User } from 'src/entities';
+import { OnboardingController } from './onboarding/onboarding.controller';
 import { UserController } from './user.controller';
 import { UserRepository } from './user.repository';
 import { UserService } from './user.service';
@@ -15,7 +16,7 @@ import { UserService } from './user.service';
     forwardRef(() => CreatorModule),
     AdvertiserModule
   ],
-  controllers: [UserController],
+  controllers: [UserController, OnboardingController],
   providers: [UserService, UserRepository],
   exports: [UserService]
 })

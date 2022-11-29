@@ -6,15 +6,11 @@ import {
   IsString,
   IsNumber,
   IsOptional,
-  IsBoolean
+  IsBoolean,
+  IsDate
 } from 'class-validator';
 
 export class UpdateUserDto {
-  @ApiProperty()
-  @IsNotEmpty()
-  @IsNumber()
-  id: number;
-
   @ApiPropertyOptional()
   @IsOptional()
   @IsNotEmpty()
@@ -51,11 +47,11 @@ export class UpdateUserDto {
   @IsOptional()
   @IsNotEmpty()
   @IsBoolean()
-  emailConfirmed?: Boolean;
+  emailConfirmed?: boolean;
 
   @ApiPropertyOptional()
   @IsOptional()
   @IsNotEmpty()
   @IsBoolean()
-  isOnboardingCompletion?: Boolean;
+  onboardingCompleted?: boolean;
 }
