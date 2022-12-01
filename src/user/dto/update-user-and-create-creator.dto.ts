@@ -3,26 +3,28 @@ import {
   IsString,
   IsNumber,
   IsOptional,
-  IsDate
+  IsDate,
+  IsArray
 } from 'class-validator';
 
-export class UpdateUserAndCreateCreator {
+export class UpdateUserAndCreateCreatorDto {
   @IsNotEmpty()
   @IsNumber()
   id: number;
 
-  @IsOptional()
   @IsNotEmpty()
   @IsString()
   description: string;
 
-  @IsOptional()
+  @IsNotEmpty()
+  @IsArray()
+  contentType: string[];
+
   @IsNotEmpty()
   @IsString()
   userName: string;
 
-  @IsOptional()
   @IsNotEmpty()
   @IsDate()
-  birthDate: Date;
+  birthDate: string;
 }

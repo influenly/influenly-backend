@@ -37,6 +37,9 @@ export class Creator extends BaseEntity {
   @Column({ type: 'boolean', default: false })
   twitchLinked: Boolean;
 
+  @Column('text', { array: true })
+  contentType: string[];
+
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
 

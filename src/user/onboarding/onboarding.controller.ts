@@ -36,7 +36,8 @@ export class OnboardingController {
       const { id, type } = user;
       const isCreator = type === UserTypes.CREATOR;
 
-      const { description, userName, birthDate } = completeOnboardingDto;
+      const { description, userName, birthDate, contentType } =
+        completeOnboardingDto;
 
       if (isCreator) {
         if (!birthDate)
@@ -46,6 +47,7 @@ export class OnboardingController {
             id,
             description,
             userName,
+            contentType,
             birthDate
           });
         return updateUserAndCreateCreatorResult;
@@ -54,6 +56,7 @@ export class OnboardingController {
         await this.userService.updateUserAndCreateAdvertiser({
           id,
           description,
+          contentType,
           userName
         });
       return updateUserAndCreateAdvertiserResult;

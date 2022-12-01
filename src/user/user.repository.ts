@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { User } from 'src/entities';
-import { Repository, DataSource } from 'typeorm';
+import { Repository, DataSource, QueryRunner } from 'typeorm';
 import { IUpdateUserInput } from './interfaces';
 
 @Injectable()
@@ -9,8 +9,11 @@ export class UserRepository extends Repository<User> {
     super(User, dataSource.createEntityManager());
   }
 
-  async updateById(updateUserInput: IUpdateUserInput) {
-    const queryResult = await this.createQueryBuilder()
+  async updateById(
+    updateUserInput: IUpdateUserInput,
+    queryRunner?: QueryRunner
+  ) {
+    const queryResult = await this.createQueryBuilder('updateById', queryRunner)
       .update(updateUserInput)
       .where({
         id: updateUserInput.id

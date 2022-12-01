@@ -3,7 +3,6 @@ export interface IUpdateUserInput {
   password?: string;
   email?: string;
   country?: string;
-  birthDate?: Date;
   emailConfirmed?: boolean;
   onboardingCompleted?: boolean;
 }

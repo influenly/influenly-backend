@@ -1,16 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { SignUpRequestDto } from 'src/common/dto';
 import { Creator } from 'src/entities';
-import { Repository } from 'typeorm';
+import { CreatorRepository } from './creator.repository';
 import { UpdateCreatorDto } from './dto';
 
 @Injectable()
 export class CreatorService {
-  constructor(
-    @InjectRepository(Creator)
-    private readonly creatorRepository: Repository<Creator>
-  ) {}
+  constructor(private readonly creatorRepository: CreatorRepository) {}
   async getCreators(): Promise<Creator[]> {
     const creators = await this.creatorRepository.find();
     return creators;

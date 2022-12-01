@@ -1,4 +1,4 @@
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, Repository, QueryRunner } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { Advertiser } from 'src/entities';
 import { ICreateAdvertiserInput } from 'src/common/interfaces/advertiser';
@@ -9,10 +9,20 @@ export class AdvertiserRepository extends Repository<Advertiser> {
     super(Advertiser, dataSource.createEntityManager());
   }
   async createAndSave(
-    createAdvertiserInput: ICreateAdvertiserInput
+    createAdvertiserInput: ICreateAdvertiserInput,
+    queryRunner?: QueryRunner
   ): Promise<Advertiser> {
     const newAdvertiser = this.create(createAdvertiserInput);
-    await this.save(newAdvertiser);
-    return newAdvertiser;
+
+    const queryResult = await this.createQueryBuilder(
+      'createAndSave',
+      queryRunner
+    )
+      .insert()
+      .values(newAdvertiser)
+      .returning('*')
+      .execute();
+    console.log(queryResult);
+    return queryResult.raw[0];
   }
 }

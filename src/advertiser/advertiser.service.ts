@@ -1,15 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { SignUpRequestDto } from 'src/common/dto';
 import { Advertiser } from 'src/entities';
-import { Repository } from 'typeorm';
+import { AdvertiserRepository } from './advertiser.repository';
 import { UpdateAdvertiserDto } from './dto';
 @Injectable()
 export class AdvertiserService {
-  constructor(
-    @InjectRepository(Advertiser)
-    private readonly advertiserRepository: Repository<Advertiser>
-  ) {}
+  constructor(private readonly advertiserRepository: AdvertiserRepository) {}
   async getAdvertisers(): Promise<Advertiser[]> {
     const advertisers = await this.advertiserRepository.find();
     return advertisers;
@@ -31,15 +26,6 @@ export class AdvertiserService {
   //     }
   //   });
   //   return advertiser;
-  // }
-
-  // async createAdvertiser(
-  //   signUpRequestDto: SignUpRequestDto
-  // ): Promise<Advertiser> {
-  //   const newAdvertiser = this.advertiserRepository.create(signUpRequestDto);
-  //   await this.advertiserRepository.save(newAdvertiser);
-  //   delete newAdvertiser.password;
-  //   return newAdvertiser;
   // }
 
   async updateAdvertiser(

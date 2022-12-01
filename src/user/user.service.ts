@@ -1,12 +1,12 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { SignUpRequestDto } from 'src/common/dto';
 import { CreatorRepository } from 'src/creator/creator.repository';
 import { User } from 'src/entities';
 import { DataSource } from 'typeorm';
 import {
   UpdateUserDto,
-  UpdateUserAndCreateCreator,
-  UpdateUserAndCreateAdvertiser
+  UpdateUserAndCreateCreatorDto,
+  UpdateUserAndCreateAdvertiserDto
 } from './dto';
 import { IUpdateUserInput } from './interfaces';
 import { UserRepository } from './user.repository';
@@ -65,7 +65,7 @@ export class UserService {
   }
 
   async updateUserAndCreateCreator(
-    updateUserAndCreateCreator: UpdateUserAndCreateCreator
+    updateUserAndCreateCreator: UpdateUserAndCreateCreatorDto
   ) {
     const queryRunner = this.dataSource.createQueryRunner();
 
@@ -73,37 +73,47 @@ export class UserService {
     await queryRunner.startTransaction();
 
     try {
-      const { id, description, birthDate, userName } =
+      const { id, description, birthDate, userName, contentType } =
         updateUserAndCreateCreator;
 
-      const updatedUser = await this.userRepository.updateById({
-        id,
-        birthDate,
-        onboardingCompleted: true
-      });
+      const updatedUser = await this.userRepository.updateById(
+        {
+          id,
+          onboardingCompleted: true
+        },
+        queryRunner
+      );
+
+      Logger.log(
+        `User ${updatedUser?.id} updated onboaring completed succesfully.`
+      );
 
       const createCreatorInput: ICreateCreatorInput = {
         userId: updatedUser.id,
         description,
         userName,
+        contentType,
+        birthDate,
         youtubeLinked: true
       };
       const createdCreator = await this.creatorRepository.createAndSave(
-        createCreatorInput
+        createCreatorInput,
+        queryRunner
       );
 
       await queryRunner.commitTransaction();
       return createdCreator;
     } catch (err) {
-      console.log('ROLLLLLBACK', err);
+      Logger.error(`Onboarding completion transaction has failed.`);
       await queryRunner.rollbackTransaction();
+      throw new Error(err.message);
     } finally {
       await queryRunner.release();
     }
   }
 
   async updateUserAndCreateAdvertiser(
-    updateUserAndCreateAdvertiser: UpdateUserAndCreateAdvertiser
+    updateUserAndCreateAdvertiser: UpdateUserAndCreateAdvertiserDto
   ) {
     const queryRunner = this.dataSource.createQueryRunner();
 
@@ -111,35 +121,39 @@ export class UserService {
     await queryRunner.startTransaction();
 
     try {
-      const { id, description, userName } = updateUserAndCreateAdvertiser;
-      const updatedUser = await this.userRepository.updateById({
-        id
-      });
+      const { id, description, userName, contentType } =
+        updateUserAndCreateAdvertiser;
+      const updatedUser = await this.userRepository.updateById(
+        {
+          id
+        },
+        queryRunner
+      );
+
+      Logger.log(
+        `User ${updatedUser?.id} updated onboaring completed succesfully.`
+      );
 
       const createAdvertiserInput: ICreateAdvertiserInput = {
         userId: updatedUser.id,
         description,
-        userName
+        userName,
+        contentType
       };
       const createdAdvertiser = await this.advertiserRepository.createAndSave(
-        createAdvertiserInput
+        createAdvertiserInput,
+        queryRunner
       );
 
       await queryRunner.commitTransaction();
       return createdAdvertiser;
     } catch (err) {
-      console.log('ROLLLLLBACK', err);
+      Logger.error(`Onboarding completion transaction has failed.`);
       await queryRunner.rollbackTransaction();
     } finally {
       await queryRunner.release();
     }
   }
-
-  // async updateUserAndCreater(updateUserDto: UpdateUserDto) {
-  //   const queryRunner = this.dataSource.createQueryRunner();
-  //   await queryRunner.connect();
-  //   await queryRunner.startTransaction();
-  // }
 
   async deleteUser(id: number): Promise<User> {
     const queryResult = await this.userRepository

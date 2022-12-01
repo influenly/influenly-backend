@@ -3,4 +3,6 @@ export interface ICreateCreatorInput {
   userName: string;
   description: string;
   youtubeLinked: boolean;
+  contentType: string[];
+  birthDate: string;
 }

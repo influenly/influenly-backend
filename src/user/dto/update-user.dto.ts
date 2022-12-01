@@ -48,10 +48,4 @@ export class UpdateUserDto {
   @IsNotEmpty()
   @IsBoolean()
   emailConfirmed?: boolean;
-
-  @ApiPropertyOptional()
-  @IsOptional()
-  @IsNotEmpty()
-  @IsBoolean()
-  onboardingCompleted?: boolean;
 }

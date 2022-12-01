@@ -1,4 +1,4 @@
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, Repository, QueryRunner } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { Creator } from 'src/entities';
 import { ICreateCreatorInput } from '../common/interfaces/creator';
@@ -9,10 +9,18 @@ export class CreatorRepository extends Repository<Creator> {
     super(Creator, dataSource.createEntityManager());
   }
   async createAndSave(
-    createCreatorInput: ICreateCreatorInput
+    createCreatorInput: ICreateCreatorInput,
+    queryRunner?: QueryRunner
   ): Promise<Creator> {
     const newCreator = this.create(createCreatorInput);
-    await this.save(newCreator);
-    return newCreator;
+    const queryResult = await this.createQueryBuilder(
+      'createAndSave',
+      queryRunner
+    )
+      .insert()
+      .values(newCreator)
+      .returning('*')
+      .execute();
+    return queryResult.raw[0];
   }
 }

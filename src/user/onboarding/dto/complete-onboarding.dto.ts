@@ -1,13 +1,12 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
-  IsEmail,
   IsNotEmpty,
-  MinLength,
   IsString,
-  IsNumber,
   IsOptional,
-  IsBoolean,
-  IsDate
+  IsArray,
+  IsDateString,
+  IsISO8601,
+  Length
 } from 'class-validator';
 
 export class CompleteOnboardingDto {
@@ -20,12 +19,19 @@ export class CompleteOnboardingDto {
   @ApiPropertyOptional()
   @IsOptional()
   @IsNotEmpty()
-  @IsDate()
-  birthDate?: Date;
+  @IsDateString()
+  @IsISO8601({ strict: true })
+  @Length(10, 10)
+  birthDate?: string;
 
   @ApiProperty()
   @IsOptional()
   @IsNotEmpty()
   @IsString()
   userName: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsArray()
+  contentType: string[];
 }

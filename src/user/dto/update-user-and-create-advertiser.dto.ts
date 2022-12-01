@@ -1,16 +1,18 @@
-import { IsNotEmpty, IsString, IsNumber, IsOptional } from 'class-validator';
+import { IsNotEmpty, IsString, IsNumber, IsArray } from 'class-validator';
 
-export class UpdateUserAndCreateAdvertiser {
+export class UpdateUserAndCreateAdvertiserDto {
   @IsNotEmpty()
   @IsNumber()
   id: number;
 
-  @IsOptional()
   @IsNotEmpty()
   @IsString()
   description: string;
 
-  @IsOptional()
+  @IsNotEmpty()
+  @IsArray()
+  contentType: string[];
+
   @IsNotEmpty()
   @IsString()
   userName: string;
