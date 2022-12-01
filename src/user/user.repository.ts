@@ -12,7 +12,7 @@ export class UserRepository extends Repository<User> {
   async updateById(
     updateUserInput: IUpdateUserInput,
     queryRunner?: QueryRunner
-  ) {
+  ): Promise<User> {
     const queryResult = await this.createQueryBuilder('updateById', queryRunner)
       .update(updateUserInput)
       .where({

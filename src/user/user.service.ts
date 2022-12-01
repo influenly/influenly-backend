@@ -3,16 +3,14 @@ import { SignUpRequestDto } from 'src/common/dto';
 import { CreatorRepository } from 'src/creator/creator.repository';
 import { User } from 'src/entities';
 import { DataSource } from 'typeorm';
-import {
-  UpdateUserDto,
-  UpdateUserAndCreateCreatorDto,
-  UpdateUserAndCreateAdvertiserDto
-} from './dto';
+import { UpdateUserDto } from './dto';
 import { IUpdateUserInput } from './interfaces';
 import { UserRepository } from './user.repository';
 import { ICreateAdvertiserInput } from 'src/common/interfaces/advertiser';
 import { ICreateCreatorInput } from 'src/common/interfaces/creator';
 import { AdvertiserRepository } from 'src/advertiser/advertiser.repository';
+import { UserTypes } from 'src/common/constants';
+import { CompleteOnboardingDto } from './onboarding/dto';
 
 @Injectable()
 export class UserService {
@@ -64,8 +62,9 @@ export class UserService {
     return updatedUser;
   }
 
-  async updateUserAndCreateCreator(
-    updateUserAndCreateCreator: UpdateUserAndCreateCreatorDto
+  async completeOnboarding(
+    id: number,
+    completeOnboardingDto: CompleteOnboardingDto
   ) {
     const queryRunner = this.dataSource.createQueryRunner();
 
@@ -73,8 +72,8 @@ export class UserService {
     await queryRunner.startTransaction();
 
     try {
-      const { id, description, birthDate, userName, contentType } =
-        updateUserAndCreateCreator;
+      const { description, birthDate, userName, contentType } =
+        completeOnboardingDto;
 
       const updatedUser = await this.userRepository.updateById(
         {
@@ -84,72 +83,53 @@ export class UserService {
         queryRunner
       );
 
+      const isCreator = updatedUser.type === UserTypes.CREATOR;
+
       Logger.log(
         `User ${updatedUser?.id} updated onboaring completed succesfully.`
       );
 
-      const createCreatorInput: ICreateCreatorInput = {
-        userId: updatedUser.id,
-        description,
-        userName,
-        contentType,
-        birthDate,
-        youtubeLinked: true
-      };
-      const createdCreator = await this.creatorRepository.createAndSave(
-        createCreatorInput,
-        queryRunner
-      );
+      let newId: number;
+
+      if (isCreator) {
+        if (!birthDate)
+          throw new Error('birthDate is required to create a new creator');
+        const createCreatorInput: ICreateCreatorInput = {
+          userId: updatedUser.id,
+          description,
+          userName,
+          contentType,
+          birthDate,
+          youtubeLinked: true
+        };
+        const creatorCreated = await this.creatorRepository.createAndSave(
+          createCreatorInput,
+          queryRunner
+        );
+        newId = creatorCreated.id;
+      } else {
+        const createAdvertiserInput: ICreateAdvertiserInput = {
+          userId: updatedUser.id,
+          description,
+          userName,
+          contentType
+        };
+        const advertiserCreated = await this.advertiserRepository.createAndSave(
+          createAdvertiserInput,
+          queryRunner
+        );
+        newId = advertiserCreated.id;
+      }
 
       await queryRunner.commitTransaction();
-      return createdCreator;
+      return {
+        ...updatedUser,
+        [isCreator ? 'creatorId' : 'advertiserId']: newId
+      };
     } catch (err) {
       Logger.error(`Onboarding completion transaction has failed.`);
       await queryRunner.rollbackTransaction();
       throw new Error(err.message);
-    } finally {
-      await queryRunner.release();
-    }
-  }
-
-  async updateUserAndCreateAdvertiser(
-    updateUserAndCreateAdvertiser: UpdateUserAndCreateAdvertiserDto
-  ) {
-    const queryRunner = this.dataSource.createQueryRunner();
-
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
-
-    try {
-      const { id, description, userName, contentType } =
-        updateUserAndCreateAdvertiser;
-      const updatedUser = await this.userRepository.updateById(
-        {
-          id
-        },
-        queryRunner
-      );
-
-      Logger.log(
-        `User ${updatedUser?.id} updated onboaring completed succesfully.`
-      );
-
-      const createAdvertiserInput: ICreateAdvertiserInput = {
-        userId: updatedUser.id,
-        description,
-        userName,
-        contentType
-      };
-      const createdAdvertiser = await this.advertiserRepository.createAndSave(
-        createAdvertiserInput,
-        queryRunner
-      );
-
-      await queryRunner.commitTransaction();
-      return createdAdvertiser;
-    } catch (err) {
-      Logger.error(`Onboarding completion transaction has failed.`);
-      await queryRunner.rollbackTransaction();
     } finally {
       await queryRunner.release();
     }

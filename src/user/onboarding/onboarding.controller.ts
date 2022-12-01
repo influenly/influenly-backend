@@ -1,14 +1,9 @@
 import {
   Body,
   Controller,
-  Get,
   HttpException,
   HttpStatus,
-  Param,
-  ParseIntPipe,
-  Patch,
   Post,
-  Req,
   UsePipes,
   ValidationPipe
 } from '@nestjs/common';
@@ -16,8 +11,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { UserService } from '../user.service';
 import { CompleteOnboardingDto } from './dto';
 import { Auth, GetUser } from 'src/auth/decorators';
-import { Advertiser, Creator, User } from 'src/entities';
-import { UserTypes } from 'src/common/constants';
+import { User } from 'src/entities';
 
 //TODO: Auth decorator should check user type.
 @Auth()
@@ -33,33 +27,12 @@ export class OnboardingController {
     @Body() completeOnboardingDto: CompleteOnboardingDto
   ) {
     try {
-      const { id, type } = user;
-      const isCreator = type === UserTypes.CREATOR;
+      const { id } = user;
 
-      const { description, userName, birthDate, contentType } =
-        completeOnboardingDto;
+      const completeOnboardingResult =
+        await this.userService.completeOnboarding(id, completeOnboardingDto);
 
-      if (isCreator) {
-        if (!birthDate)
-          throw new Error('birthDate is required to create a new creator');
-        const updateUserAndCreateCreatorResult =
-          await this.userService.updateUserAndCreateCreator({
-            id,
-            description,
-            userName,
-            contentType,
-            birthDate
-          });
-        return updateUserAndCreateCreatorResult;
-      }
-      const updateUserAndCreateAdvertiserResult =
-        await this.userService.updateUserAndCreateAdvertiser({
-          id,
-          description,
-          contentType,
-          userName
-        });
-      return updateUserAndCreateAdvertiserResult;
+      return completeOnboardingResult;
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }

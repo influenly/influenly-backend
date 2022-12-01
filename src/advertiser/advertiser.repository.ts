@@ -22,7 +22,6 @@ export class AdvertiserRepository extends Repository<Advertiser> {
       .values(newAdvertiser)
       .returning('*')
       .execute();
-    console.log(queryResult);
     return queryResult.raw[0];
   }
 }
