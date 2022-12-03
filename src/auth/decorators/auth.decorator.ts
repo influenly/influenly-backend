@@ -6,7 +6,7 @@ import { AuthDecoratorInput } from '../interfaces/auth-decorator-input.interface
 import { RoleProtected } from './role-protected.decorator';
 import { TypeProtected } from './type-protected.decorator';
 
-export function Auth(input: AuthDecoratorInput) {
+export function Auth(input?: AuthDecoratorInput) {
   return applyDecorators(
     RoleProtected(...(input?.roles || [])),
     TypeProtected(input?.type),

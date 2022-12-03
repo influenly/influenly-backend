@@ -12,9 +12,9 @@ import { UserService } from '../user.service';
 import { CompleteOnboardingDto } from './dto';
 import { Auth, GetUser } from 'src/auth/decorators';
 import { User } from 'src/entities';
-import { UserRoles, UserTypes } from 'src/common/constants';
+import { UserRoles } from 'src/common/constants';
 
-@Auth({ roles: [UserRoles.REGULAR] })
+@Auth()
 @ApiTags('user/onboarding')
 @Controller('user/onboarding')
 export class OnboardingController {
