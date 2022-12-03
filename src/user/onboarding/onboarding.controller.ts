@@ -1,7 +1,6 @@
 import {
   Body,
   Controller,
-  Get,
   HttpException,
   HttpStatus,
   Post,
@@ -15,7 +14,6 @@ import { Auth, GetUser } from 'src/auth/decorators';
 import { User } from 'src/entities';
 import { UserRoles, UserTypes } from 'src/common/constants';
 
-//TODO: Auth decorator should check user type.
 @Auth({ roles: [UserRoles.REGULAR] })
 @ApiTags('user/onboarding')
 @Controller('user/onboarding')
@@ -35,16 +33,6 @@ export class OnboardingController {
         await this.userService.completeOnboarding(id, completeOnboardingDto);
 
       return completeOnboardingResult;
-    } catch (error) {
-      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
-    }
-  }
-
-  @Auth({ type: UserTypes.ADVERTISER })
-  @Get('/a')
-  async asd() {
-    try {
-      return 1;
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
