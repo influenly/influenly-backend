@@ -9,6 +9,7 @@ import {
 import { Observable } from 'rxjs';
 import { METADATA_REQUEST_ROLES } from '../constants/metadata-request';
 import { User } from 'src/entities';
+import { UserRoles } from 'src/common/constants';
 
 @Injectable()
 export class UserRoleGuard implements CanActivate {
@@ -17,10 +18,17 @@ export class UserRoleGuard implements CanActivate {
   canActivate(
     context: ExecutionContext
   ): boolean | Promise<boolean> | Observable<boolean> {
-    const validRoles: string[] = this.reflector.get(
+    const handlerValidRoles: UserRoles[] = this.reflector.get(
       METADATA_REQUEST_ROLES,
       context.getHandler()
     );
+
+    const classValidRoles: UserRoles[] = this.reflector.get(
+      METADATA_REQUEST_ROLES,
+      context.getClass()
+    );
+
+    const validRoles = this.getValidRoles(handlerValidRoles, classValidRoles);
 
     if (!validRoles || validRoles.length === 0) return true;
 
@@ -39,4 +47,7 @@ export class UserRoleGuard implements CanActivate {
       `User with email ${user.email} need a valid role: [${validRoles}]`
     );
   }
+
+  getValidRoles = (handlerRoles: UserRoles[], classRoles: UserRoles[]) =>
+    [].concat(handlerRoles || []).concat(classRoles || []);
 }

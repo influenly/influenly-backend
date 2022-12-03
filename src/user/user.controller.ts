@@ -17,26 +17,27 @@ import { UserService } from './user.service';
 import { UpdateUserDto } from './dto';
 import { Auth, GetUser } from 'src/auth/decorators';
 import { User } from 'src/entities';
+import { UserTypes } from 'src/common/constants';
 
 //TODO: Auth decorator should check user type.
-@Auth()
+// @Auth()
 @ApiTags('user')
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Get(':id')
-  async getUser(@Param('id', ParseIntPipe) userId: number) {
-    try {
-      const user = await this.userService.getUser(userId);
-      if (!user) {
-        throw new Error(`User with id ${userId} not found`);
-      }
-      return user;
-    } catch (error) {
-      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
-    }
-  }
+//   @Get(':id')
+//   async getUser(@Param('id', ParseIntPipe) userId: number) {
+//     try {
+//       const user = await this.userService.getUser(userId);
+//       if (!user) {
+//         throw new Error(`User with id ${userId} not found`);
+//       }
+//       return user;
+//     } catch (error) {
+//       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+//     }
+//   }
 
   @Patch()
   @UsePipes(ValidationPipe)

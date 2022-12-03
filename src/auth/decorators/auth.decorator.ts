@@ -1,12 +1,15 @@
 import { applyDecorators, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { UserRoles } from 'src/common/constants/enums/user-roles.enum';
 import { UserRoleGuard } from '../guards/user-role.guard';
+import { UserTypeGuard } from '../guards/user-type.guard';
+import { AuthDecoratorInput } from '../interfaces/auth-decorator-input.interface';
 import { RoleProtected } from './role-protected.decorator';
+import { TypeProtected } from './type-protected.decorator';
 
-export function Auth(...roles: UserRoles[]) {
+export function Auth(input: AuthDecoratorInput) {
   return applyDecorators(
-    RoleProtected(...roles),
-    UseGuards(AuthGuard(), UserRoleGuard)
+    RoleProtected(...(input?.roles || [])),
+    TypeProtected(input?.type),
+    UseGuards(AuthGuard(), UserRoleGuard, UserTypeGuard)
   );
 }
