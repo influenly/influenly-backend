@@ -1,4 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
 import {
   IsNotEmpty,
   IsString,
@@ -6,9 +7,13 @@ import {
   IsArray,
   IsDateString,
   IsISO8601,
-  Length
+  Length,
+  IsObject,
+  ValidateNested
 } from 'class-validator';
+import { ISocialNetworks } from 'src/common/interfaces/advertiser/social-networks.interface';
 
+class SocialNetworks implements ISocialNetworks {}
 export class CompleteOnboardingDto {
   @ApiProperty()
   @IsOptional()
@@ -23,6 +28,14 @@ export class CompleteOnboardingDto {
   @IsISO8601({ strict: true })
   @Length(10, 10)
   birthDate?: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsNotEmpty()
+  @IsObject()
+  @ValidateNested()
+  @Type(() => SocialNetworks)
+  socialNetworks?: ISocialNetworks;
 
   @ApiProperty()
   @IsOptional()

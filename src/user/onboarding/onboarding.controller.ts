@@ -12,7 +12,6 @@ import { UserService } from '../user.service';
 import { CompleteOnboardingDto } from './dto';
 import { Auth, GetUser } from 'src/auth/decorators';
 import { User } from 'src/entities';
-import { UserRoles } from 'src/common/constants';
 
 @Auth()
 @ApiTags('user/onboarding')

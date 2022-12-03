@@ -9,6 +9,14 @@ export class UserRepository extends Repository<User> {
     super(User, dataSource.createEntityManager());
   }
 
+  async findById(id: number, queryRunner?: QueryRunner): Promise<User> {
+    const queryResult = await this.createQueryBuilder('findById', queryRunner)
+      .where({ id })
+      .getOne();
+
+    return queryResult;
+  }
+
   async updateById(
     updateUserInput: IUpdateUserInput,
     queryRunner?: QueryRunner

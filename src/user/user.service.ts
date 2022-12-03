@@ -20,15 +20,13 @@ export class UserService {
     private readonly advertiserRepository: AdvertiserRepository,
     private readonly dataSource: DataSource
   ) {}
-  async getUsers(): Promise<User[]> {
-    const users = await this.userRepository.find();
-    return users;
-  }
+  // async getUsers(): Promise<User[]> {
+  //   const users = await this.userRepository.find();
+  //   return users;
+  // }
 
-  async getUser(id: number): Promise<User> {
-    const user = await this.userRepository.findOne({
-      where: { id }
-    });
+  async getUserById(id: number): Promise<User> {
+    const user = await this.userRepository.findById(id);
     return user;
   }
 
@@ -66,13 +64,16 @@ export class UserService {
     id: number,
     completeOnboardingDto: CompleteOnboardingDto
   ) {
+    const user = await this.userRepository.findById(id);
+    if (user.onboardingCompleted)
+      throw new Error('User has already completed the onboarding');
     const queryRunner = this.dataSource.createQueryRunner();
 
     await queryRunner.connect();
     await queryRunner.startTransaction();
 
     try {
-      const { description, birthDate, userName, contentType } =
+      const { description, birthDate, userName, contentType, socialNetworks } =
         completeOnboardingDto;
 
       const updatedUser = await this.userRepository.updateById(
@@ -108,12 +109,20 @@ export class UserService {
         );
         newId = creatorCreated.id;
       } else {
+        if (!socialNetworks)
+          throw new Error(
+            'socialNetworks is required to create a new advertiser'
+          );
+
         const createAdvertiserInput: ICreateAdvertiserInput = {
           userId: updatedUser.id,
           description,
           userName,
-          contentType
+          contentType,
+          ...socialNetworks
         };
+
+        console.log(createAdvertiserInput);
         const advertiserCreated = await this.advertiserRepository.createAndSave(
           createAdvertiserInput,
           queryRunner
