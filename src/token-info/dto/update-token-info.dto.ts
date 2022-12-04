@@ -4,12 +4,10 @@ import {
   IsNotEmpty,
   MinLength,
   IsString,
-  IsNumber,
-  IsOptional,
-  IsBoolean
+  IsNumber
 } from 'class-validator';
 
-export class UpdateYoutubeTokenInfoDto {
+export class UpdateTokenInfoDto {
   @ApiProperty()
   @IsNotEmpty()
   @IsNumber()

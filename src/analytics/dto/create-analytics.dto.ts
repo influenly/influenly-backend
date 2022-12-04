@@ -15,5 +15,5 @@ export class CreateAnalyticsDto {
   @ApiProperty()
   @IsNotEmpty()
   @IsNumber()
-  youtubeTokenInfoId: number;
+  tokenInfoId: number;
 }

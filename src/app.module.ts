@@ -7,13 +7,12 @@ import { CreatorModule } from './creator/creator.module';
 import { ConnectionModule } from './connection/connection.module';
 import { ContractModule } from './contract/contract.module';
 import { AnalyticsModule } from './analytics/analytics.module';
-import { YoutubeTokenInfoModule } from './youtube-token-info/youtube-token-info.module';
+import { TokenInfoModule } from './token-info/token-info.module';
 import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 import { MailModule } from './lib/mail/mail.module';
-import { IntegrationModule } from './integration/integration.module';
 import APP_CONFIG from './config/app';
 import DATABASE_CONFIG from './config/database';
 @Module({
@@ -50,11 +49,10 @@ import DATABASE_CONFIG from './config/database';
     ConnectionModule,
     ContractModule,
     AnalyticsModule,
-    YoutubeTokenInfoModule,
+    TokenInfoModule,
     AuthModule,
     UserModule,
-    MailModule,
-    IntegrationModule
+    MailModule
   ],
   providers: [
     {

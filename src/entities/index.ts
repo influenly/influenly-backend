@@ -5,7 +5,7 @@ import { Contract } from './contract.entity';
 import { Stage } from './stage.entity';
 import { Analytics } from './analytics.entity';
 import { AnalyticsYoutube } from './analytics-youtube.entity';
-import { YoutubeTokenInfo } from './youtube-token-info.entity';
+import { TokenInfo } from './token-info.entity';
 import { User } from './user.entity';
 
 const entities = [
@@ -16,7 +16,7 @@ const entities = [
   Stage,
   Analytics,
   AnalyticsYoutube,
-  YoutubeTokenInfo,
+  TokenInfo,
   User
 ];
 
@@ -28,7 +28,7 @@ export {
   Stage,
   Analytics,
   AnalyticsYoutube,
-  YoutubeTokenInfo,
+  TokenInfo,
   User
 };
 export default entities;
