@@ -6,9 +6,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn
 } from 'typeorm';
-import { UserRoles, UserTypes } from 'src/common/constants';
-
-type UserType = UserTypes.ADVERTISER | UserTypes.CREATOR;
+import { UserRoles, UserType } from 'src/common/constants';
 
 @Entity('user')
 export class User extends BaseEntity {
