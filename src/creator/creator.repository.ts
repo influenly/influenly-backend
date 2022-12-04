@@ -23,4 +23,12 @@ export class CreatorRepository extends Repository<Creator> {
       .execute();
     return queryResult.raw[0];
   }
+
+  async findById(id: number, queryRunner?: QueryRunner): Promise<Creator> {
+    const queryResult = await this.createQueryBuilder('findById', queryRunner)
+      .where({ id })
+      .getOne();
+
+    return queryResult;
+  }
 }

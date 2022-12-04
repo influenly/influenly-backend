@@ -12,9 +12,7 @@ export class CreatorService {
   }
 
   async getCreator(id: number): Promise<Creator> {
-    const creator = await this.creatorRepository.findOne({
-      where: { id }
-    });
+    const creator = await this.creatorRepository.findById(id);
     return creator;
   }
 

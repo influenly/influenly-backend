@@ -13,12 +13,10 @@ import {
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { Auth } from 'src/auth/decorators';
-import { UserRoles, UserTypes } from 'src/common/constants';
 import { CreatorService } from './creator.service';
 import { UpdateCreatorDto } from './dto';
 
-//TODO: Auth decorator should check user type.
-
+@Auth()
 @ApiTags('creator')
 @Controller('creator')
 export class CreatorController {
