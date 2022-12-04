@@ -9,7 +9,6 @@ import {
   ManyToOne,
   OneToOne
 } from 'typeorm';
-import { AnalyticsTwitch } from './analytics-twitch.entity';
 import { AnalyticsYoutube } from './analytics-youtube.entity';
 import { Creator } from './creator.entity';
 import { YoutubeTokenInfo } from './youtube-token-info.entity';
@@ -26,9 +25,6 @@ export class Analytics extends BaseEntity {
   analyticsYoutubeId!: number;
 
   @Column({ type: 'int', nullable: true, default: null })
-  analyticsTwitchId!: number;
-
-  @Column({ type: 'int', nullable: true, default: null })
   youtubeTokenInfoId!: number;
 
   @ManyToOne(() => Creator, (creator) => creator.analytics)
@@ -38,10 +34,6 @@ export class Analytics extends BaseEntity {
   @OneToOne(() => AnalyticsYoutube)
   @JoinColumn({ name: 'analyticsYoutubeId', referencedColumnName: 'id' })
   analyticsYoutube!: AnalyticsYoutube;
-
-  @OneToOne(() => AnalyticsTwitch)
-  @JoinColumn({ name: 'analyticsTwitchId', referencedColumnName: 'id' })
-  analyticsTwitch!: AnalyticsTwitch;
 
   @OneToOne(() => YoutubeTokenInfo)
   @JoinColumn({ name: 'youtubeTokenInfoId', referencedColumnName: 'id' })
