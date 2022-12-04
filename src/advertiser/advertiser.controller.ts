@@ -12,9 +12,11 @@ import {
   ValidationPipe
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+import { Auth } from 'src/auth/decorators';
 import { AdvertiserService } from './advertiser.service';
 import { UpdateAdvertiserDto } from './dto';
 
+@Auth()
 @ApiTags('advertiser')
 @Controller('advertiser')
 export class AdvertiserController {

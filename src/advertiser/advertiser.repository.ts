@@ -24,4 +24,12 @@ export class AdvertiserRepository extends Repository<Advertiser> {
       .execute();
     return queryResult.raw[0];
   }
+
+  async findById(id: number, queryRunner?: QueryRunner): Promise<Advertiser> {
+    const queryResult = await this.createQueryBuilder('findById', queryRunner)
+      .where({ id })
+      .getOne();
+
+    return queryResult;
+  }
 }

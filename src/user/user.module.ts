@@ -14,7 +14,7 @@ import { UserService } from './user.service';
     TypeOrmModule.forFeature([User]),
     forwardRef(() => AuthModule),
     forwardRef(() => CreatorModule),
-    AdvertiserModule
+    forwardRef(() => AdvertiserModule)
   ],
   controllers: [UserController, OnboardingController],
   providers: [UserService, UserRepository],

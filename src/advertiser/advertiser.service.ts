@@ -11,9 +11,7 @@ export class AdvertiserService {
   }
 
   async getAdvertiser(id: number): Promise<Advertiser> {
-    const advertiser = await this.advertiserRepository.findOne({
-      where: { id }
-    });
+    const advertiser = await this.advertiserRepository.findById(id);
     return advertiser;
   }
 

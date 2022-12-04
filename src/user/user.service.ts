@@ -75,7 +75,6 @@ export class UserService {
     try {
       const { description, birthDate, userName, contentType, socialNetworks } =
         completeOnboardingDto;
-      console.log(socialNetworks);
       const updatedUser = await this.userRepository.updateById(
         {
           id,
