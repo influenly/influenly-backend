@@ -9,11 +9,12 @@ import {
   IsISO8601,
   Length,
   IsObject,
+  IsUrl,
   ValidateNested
 } from 'class-validator';
 import { ISocialNetworks } from 'src/common/interfaces/advertiser/social-networks.interface';
+import { SocialNetworksDto } from './social-networks.dto';
 
-class SocialNetworks implements ISocialNetworks {}
 export class CompleteOnboardingDto {
   @ApiProperty()
   @IsOptional()
@@ -34,7 +35,7 @@ export class CompleteOnboardingDto {
   @IsNotEmpty()
   @IsObject()
   @ValidateNested()
-  @Type(() => SocialNetworks)
+  @Type(() => SocialNetworksDto)
   socialNetworks?: ISocialNetworks;
 
   @ApiProperty()

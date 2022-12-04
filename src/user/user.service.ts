@@ -64,9 +64,9 @@ export class UserService {
     id: number,
     completeOnboardingDto: CompleteOnboardingDto
   ) {
-    const user = await this.userRepository.findById(id);
-    if (user.onboardingCompleted)
-      throw new Error('User has already completed the onboarding');
+    // const user = await this.userRepository.findById(id);
+    // if (user.onboardingCompleted)
+    //   throw new Error('User has already completed the onboarding');
     const queryRunner = this.dataSource.createQueryRunner();
 
     await queryRunner.connect();
@@ -75,7 +75,7 @@ export class UserService {
     try {
       const { description, birthDate, userName, contentType, socialNetworks } =
         completeOnboardingDto;
-
+      console.log(socialNetworks);
       const updatedUser = await this.userRepository.updateById(
         {
           id,
@@ -122,7 +122,6 @@ export class UserService {
           ...socialNetworks
         };
 
-        console.log(createAdvertiserInput);
         const advertiserCreated = await this.advertiserRepository.createAndSave(
           createAdvertiserInput,
           queryRunner

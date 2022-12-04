@@ -42,6 +42,9 @@ export class Advertiser extends BaseEntity {
   @Column({ type: 'varchar', length: 300, nullable: true })
   twitterUrl: string;
 
+  @Column({ type: 'varchar', length: 300, nullable: true })
+  tiktokUrl: string;
+
   @Column('text', { array: true })
   contentType: string[];
 
