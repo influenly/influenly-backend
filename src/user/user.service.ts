@@ -31,7 +31,6 @@ export class UserService {
   }
 
   async getUserByEmail(email: string): Promise<User> {
-    //TODO: add argument to function to indicate which fields should be returned
     const user = await this.userRepository.findOne({
       where: { email },
       select: {
@@ -127,6 +126,8 @@ export class UserService {
         );
         newId = advertiserCreated.id;
       }
+
+      //NEXT HERE: CREATE YOUTUBE TOKEN INFO ID WITH INFO PROVIDED ON INTEGRATION 
 
       await queryRunner.commitTransaction();
       return {
