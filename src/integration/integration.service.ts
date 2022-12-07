@@ -1,19 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Integration } from 'src/entities';
+import { GoogleOAuth2Service } from 'src/libs/google/oauth2';
 import { Repository } from 'typeorm';
-import { CreateIntegrationDto, UpdateIntegrationDto } from './dto';
+import { CreateIntegrationDto } from './dto';
 
 @Injectable()
 export class IntegrationService {
   constructor(
     @InjectRepository(Integration)
-    private readonly integrationRepository: Repository<Integration>
+    private readonly integrationRepository: Repository<Integration>,
+    private readonly googleOAuth2Service: GoogleOAuth2Service
   ) {}
-  async getAllIntegration(): Promise<Integration[]> {
-    const integration = await this.integrationRepository.find();
-    return integration;
-  }
 
   async getIntegration(id: number): Promise<Integration> {
     const integration = await this.integrationRepository.findOne({
@@ -23,39 +21,25 @@ export class IntegrationService {
   }
 
   async createIntegration(
+    userId: number,
     createTokenInfoDto: CreateIntegrationDto
-  ): Promise<Integration> {
-    const newIntegration =
-      this.integrationRepository.create(createTokenInfoDto);
-    await this.integrationRepository.save(newIntegration);
-    return newIntegration;
-  }
+  ) {
+    console.log(this.googleOAuth2Service.getToken);
+    //get token from google lib
+    // const token = this.googleOAuth2Service.getToken(
+    //   createTokenInfoDto.authorizationCode
+    // );
+    //analyze token response and build input
+    //const integrationInput = {
+    //...token
+    // };
+    //create analytics ( empty )
+    //create integration
+    // const newIntegration =
+    //   this.integrationRepository.create(createTokenInfoDto);
+    // await this.integrationRepository.save(newIntegration);
+    // return newIntegration;
 
-  async updateIntegration(
-    updateTokenInfoDto: UpdateIntegrationDto
-  ): Promise<Integration> {
-    const queryResult = await this.integrationRepository
-      .createQueryBuilder()
-      .update(updateTokenInfoDto)
-      .where({
-        id: updateTokenInfoDto.id
-      })
-      .returning('*')
-      .execute();
-
-    return queryResult.raw[0];
-  }
-
-  async deleteIntegration(id: number): Promise<Integration> {
-    const queryResult = await this.integrationRepository
-      .createQueryBuilder()
-      .delete()
-      .where({
-        id
-      })
-      .returning('*')
-      .execute();
-
-    return queryResult.raw[0];
+    return 1;
   }
 }
