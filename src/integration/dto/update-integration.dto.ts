@@ -7,7 +7,7 @@ import {
   IsNumber
 } from 'class-validator';
 
-export class UpdateTokenInfoDto {
+export class UpdateIntegrationDto {
   @ApiProperty()
   @IsNotEmpty()
   @IsNumber()

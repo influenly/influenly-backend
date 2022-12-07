@@ -7,7 +7,7 @@ import { CreatorModule } from './creator/creator.module';
 import { ConnectionModule } from './connection/connection.module';
 import { ContractModule } from './contract/contract.module';
 import { AnalyticsModule } from './analytics/analytics.module';
-import { TokenInfoModule } from './token-info/token-info.module';
+import { IntegrationModule } from './integration/integration.module';
 import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
@@ -49,7 +49,7 @@ import DATABASE_CONFIG from './config/database';
     ConnectionModule,
     ContractModule,
     AnalyticsModule,
-    TokenInfoModule,
+    IntegrationModule,
     AuthModule,
     UserModule,
     MailModule

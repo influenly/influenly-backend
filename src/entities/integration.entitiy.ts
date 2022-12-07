@@ -8,8 +8,8 @@ import {
   UpdateDateColumn
 } from 'typeorm';
 
-@Entity('tokenInfo')
-export class TokenInfo extends BaseEntity {
+@Entity('integration')
+export class Integration extends BaseEntity {
   @PrimaryGeneratedColumn('increment')
   id: number;
 
@@ -20,7 +20,7 @@ export class TokenInfo extends BaseEntity {
   accessToken!: string;
 
   @Column({ type: 'int' })
-  expiresIn?: number;
+  tokenExpiresIn?: number;
 
   @Column({ type: 'varchar' })
   refreshToken?: string;
