@@ -9,11 +9,12 @@ import {
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { Auth, GetUser } from 'src/auth/decorators';
+import { UserTypes } from 'src/common/constants';
 import { User } from 'src/entities';
 import { CreateIntegrationDto } from './dto';
 import { IntegrationService } from './integration.service';
 
-@Auth()
+@Auth({ type: UserTypes.CREATOR })
 @ApiTags('integration')
 @Controller('integration')
 export class IntegrationController {

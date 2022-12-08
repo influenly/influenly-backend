@@ -1,4 +1,3 @@
-import { Platform } from 'src/common/constants/types/platform';
 import {
   BaseEntity,
   Column,
@@ -12,9 +11,6 @@ import {
 export class Integration extends BaseEntity {
   @PrimaryGeneratedColumn('increment')
   id: number;
-
-  @Column({ type: 'text' })
-  plaftorm: Platform;
 
   @Column({ type: 'varchar' })
   accessToken!: string;

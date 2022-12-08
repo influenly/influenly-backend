@@ -9,6 +9,7 @@ import {
   ManyToOne,
   OneToOne
 } from 'typeorm';
+import { Platform } from 'src/common/constants/types/platform';
 import { AnalyticsYoutube } from './analytics-youtube.entity';
 import { Creator } from './creator.entity';
 import { Integration } from './integration.entitiy';
@@ -23,6 +24,9 @@ export class Analytics extends BaseEntity {
 
   @Column({ type: 'int', nullable: true, default: null })
   integrationId!: number;
+//TODO: NEW TABLE PLATFORM AND RELATION BETWEEN PLATFORMID
+  @Column({ type: 'text' })
+  plaftorm: Platform;
 
   @Column({ type: 'int', nullable: true, default: null })
   analyticsYoutubeId!: number;
