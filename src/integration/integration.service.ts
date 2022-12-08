@@ -6,7 +6,7 @@ import { GoogleService } from 'src/libs/google/google.service';
 import { CreateIntegrationDto } from './dto';
 import { IntegrationRepository } from './integration.repository';
 import { Platforms } from 'src/common/constants/enums';
-import { platform } from 'os';
+import { AnalyticsRepository } from 'src/analytics/analytics.repository';
 
 @Injectable()
 export class IntegrationService {
@@ -14,6 +14,7 @@ export class IntegrationService {
     private readonly integrationRepository: IntegrationRepository,
     private readonly googleOAuth2Service: GoogleService,
     private readonly creatorRepository: CreatorRepository,
+    private readonly analyticsRepository: AnalyticsRepository,
     private readonly dataSource: DataSource
   ) {}
 
@@ -42,24 +43,42 @@ export class IntegrationService {
       if (!creator)
         throw new Error(`Creator not found with given user id ${userId}`);
 
+      //TODO: token getting
+
       // const token = this.googleOAuth2Service.getToken(
       //   createIntegrationDto.authorizationCode
       // );
+
+      const platform =
+        Platforms[createIntegrationDto.platform as keyof typeof Platforms];
 
       const newIntegration = await this.integrationRepository.createAndSave(
         {
           accessToken: 'example',
           tokenExpiresIn: 123123123,
           refreshToken: 'examplee',
-          platform:
-            Platforms[createIntegrationDto.platform as keyof typeof Platforms]
+          platform
         },
         queryRunner
       );
 
-      // const
+      const newAnalytics = await this.analyticsRepository.createAndSave(
+        {
+          creatorId: creator.id,
+          integrationId: newIntegration.id,
+          platform
+        },
+        queryRunner
+      );
 
       await queryRunner.commitTransaction();
+
+      return {
+        userId,
+        creatorId: creator.id,
+        integrationId: newIntegration.id,
+        analyticsId: newAnalytics.id
+      };
     } catch (err) {
       Logger.error(`Integration creation transaction has failed.`);
       await queryRunner.rollbackTransaction();
