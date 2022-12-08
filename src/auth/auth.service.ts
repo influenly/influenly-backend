@@ -1,6 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
+import { DataSource } from 'typeorm';
 import { UserRepository } from 'src/user/user.repository';
 import { SignInRequestDto, SignUpRequestDto } from '../common/dto';
 import { IJwtPayload } from './interfaces/jwt-payload.interface';
@@ -9,24 +10,37 @@ import { IJwtPayload } from './interfaces/jwt-payload.interface';
 export class AuthService {
   constructor(
     private readonly userRepository: UserRepository,
-    private readonly jwService: JwtService
+    private readonly jwService: JwtService,
+    private readonly dataSource: DataSource
   ) {}
   async signUp(signUpRequestDto: SignUpRequestDto) {
+    const queryRunner = this.dataSource.createQueryRunner();
+
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
     try {
       const { type, password } = signUpRequestDto;
       const hashedPassword = bcrypt.hashSync(password, 10);
       //TODO: DO NOT MUTATE INPUT VARIABLE. FUNCTIONAL PROGRAMMING
       signUpRequestDto = { ...signUpRequestDto, password: hashedPassword };
 
-      const newUser = await this.userRepository.createAndSave(signUpRequestDto);
-      const { id } = newUser;
-      const token = this.getJwtToken({ id, userType: type });
+      const newUser = await this.userRepository.createAndSave(
+        signUpRequestDto,
+        queryRunner
+      );
+      const { id: newUserId } = newUser;
+
+      const token = this.getJwtToken({ id: newUserId, userType: type });
       return {
         ...newUser,
         token
       };
     } catch (error) {
+      Logger.error(`User signup transaction has failed.`);
+      await queryRunner.rollbackTransaction();
       throw new Error(error.message);
+    } finally {
+      await queryRunner.release();
     }
   }
 
