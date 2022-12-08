@@ -1,4 +1,3 @@
-export const enum Platforms {
-  YOUTUBE = 'YOUTUBE',
-  INSTAGRAM = 'INSTAGRAM'
+export enum Platforms {
+  YOUTUBE = 'YOUTUBE'
 }

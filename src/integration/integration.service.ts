@@ -1,18 +1,20 @@
-import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { Injectable, Logger } from '@nestjs/common';
+import { DataSource } from 'typeorm';
 import { CreatorRepository } from 'src/creator/creator.repository';
 import { Integration } from 'src/entities';
 import { GoogleService } from 'src/libs/google/google.service';
-import { Repository } from 'typeorm';
 import { CreateIntegrationDto } from './dto';
+import { IntegrationRepository } from './integration.repository';
+import { Platforms } from 'src/common/constants/enums';
+import { platform } from 'os';
 
 @Injectable()
 export class IntegrationService {
   constructor(
-    @InjectRepository(Integration)
-    private readonly integrationRepository: Repository<Integration>,
+    private readonly integrationRepository: IntegrationRepository,
     private readonly googleOAuth2Service: GoogleService,
-    private readonly creatorRepository: CreatorRepository
+    private readonly creatorRepository: CreatorRepository,
+    private readonly dataSource: DataSource
   ) {}
 
   async getIntegration(id: number): Promise<Integration> {
@@ -24,12 +26,47 @@ export class IntegrationService {
 
   async createIntegration(
     userId: number,
-    createTokenInfoDto: CreateIntegrationDto
+    createIntegrationDto: CreateIntegrationDto
   ) {
-    // const creator = await this.creatorRepository.findByUserId(userId);
-    const token = this.googleOAuth2Service.getToken(
-      createTokenInfoDto.authorizationCode
-    );
+    const queryRunner = this.dataSource.createQueryRunner();
+
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      const creator = await this.creatorRepository.findByUserId(
+        userId,
+        queryRunner
+      );
+
+      if (!creator)
+        throw new Error(`Creator not found with given user id ${userId}`);
+
+      // const token = this.googleOAuth2Service.getToken(
+      //   createIntegrationDto.authorizationCode
+      // );
+
+      const newIntegration = await this.integrationRepository.createAndSave(
+        {
+          accessToken: 'example',
+          tokenExpiresIn: 123123123,
+          refreshToken: 'examplee',
+          platform:
+            Platforms[createIntegrationDto.platform as keyof typeof Platforms]
+        },
+        queryRunner
+      );
+
+      // const
+
+      await queryRunner.commitTransaction();
+    } catch (err) {
+      Logger.error(`Integration creation transaction has failed.`);
+      await queryRunner.rollbackTransaction();
+      throw new Error(err.message);
+    } finally {
+      await queryRunner.release();
+    }
     //analyze token response and build input
     //const integrationInput = {
     //...token

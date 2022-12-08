@@ -6,10 +6,9 @@ import {
   IsString,
   IsIn
 } from 'class-validator';
-import { UserTypes } from 'src/common/constants';
+import { UserType, UserTypes } from 'src/common/constants';
 
 const userTypes = Object.keys(UserTypes);
-type UserType = UserTypes.ADVERTISER | UserTypes.CREATOR;
 
 export class SignUpRequestDto {
   @ApiProperty()

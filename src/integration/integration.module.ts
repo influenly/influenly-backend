@@ -6,11 +6,17 @@ import { CreatorRepository } from 'src/creator/creator.repository';
 import { Integration } from 'src/entities';
 import { GoogleService } from 'src/libs/google/google.service';
 import { IntegrationController } from './integration.controller';
+import { IntegrationRepository } from './integration.repository';
 import { IntegrationService } from './integration.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Integration]), AuthModule, CreatorModule],
   controllers: [IntegrationController],
-  providers: [IntegrationService, GoogleService, CreatorRepository]
+  providers: [
+    IntegrationService,
+    IntegrationRepository,
+    GoogleService,
+    CreatorRepository
+  ]
 })
 export class IntegrationModule {}

@@ -20,16 +20,16 @@ export class Analytics extends BaseEntity {
   id: number;
 
   @Column({ type: 'int' })
-  creatorId!: number;
+  creatorId: number;
 
   @Column({ type: 'int', nullable: true, default: null })
-  integrationId!: number;
-//TODO: NEW TABLE PLATFORM AND RELATION BETWEEN PLATFORMID
+  integrationId: number;
+  //TODO: NEW TABLE PLATFORM AND RELATION BETWEEN PLATFORMID
   @Column({ type: 'text' })
   plaftorm: Platform;
 
   @Column({ type: 'int', nullable: true, default: null })
-  analyticsYoutubeId!: number;
+  analyticsYoutubeId: number;
 
   @ManyToOne(() => Creator, (creator) => creator.analytics)
   @JoinColumn({ name: 'creatorId', referencedColumnName: 'id' })
@@ -41,7 +41,7 @@ export class Analytics extends BaseEntity {
 
   @OneToOne(() => AnalyticsYoutube)
   @JoinColumn({ name: 'analyticsYoutubeId', referencedColumnName: 'id' })
-  analyticsYoutube!: AnalyticsYoutube;
+  analyticsYoutube: AnalyticsYoutube;
 
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
