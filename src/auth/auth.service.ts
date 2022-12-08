@@ -69,6 +69,7 @@ export class AuthService {
       return {
         ...newUser,
         creatorId: newCreatorId,
+        advertiserId: newAdvertiserId,
         token
       };
     } catch (error) {

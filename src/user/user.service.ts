@@ -7,10 +7,10 @@ import { UpdateUserDto } from './dto';
 import { IUpdateUserInput } from './interfaces';
 import { UserRepository } from './user.repository';
 import { ICreateAdvertiserInput } from 'src/common/interfaces/advertiser';
-import { ICreateCreatorInput } from 'src/common/interfaces/creator';
 import { AdvertiserRepository } from 'src/advertiser/advertiser.repository';
 import { UserTypes } from 'src/common/constants';
 import { CompleteOnboardingDto } from './onboarding/dto';
+import { IUpdateCreatorInput } from 'src/common/interfaces/creator';
 
 @Injectable()
 export class UserService {
@@ -44,11 +44,7 @@ export class UserService {
   }
 
   async updateById(id: number, updateUserDto: UpdateUserDto): Promise<User> {
-    const updateUserInput: IUpdateUserInput = {
-      id,
-      ...updateUserDto
-    };
-    const updatedUser = await this.userRepository.updateById(updateUserInput);
+    const updatedUser = await this.userRepository.updateById(id, updateUserDto);
     return updatedUser;
   }
 
@@ -68,8 +64,8 @@ export class UserService {
       const { description, birthDate, userName, contentType, socialNetworks } =
         completeOnboardingDto;
       const updatedUser = await this.userRepository.updateById(
+        id,
         {
-          id,
           onboardingCompleted: true
         },
         queryRunner
@@ -81,25 +77,29 @@ export class UserService {
         `User ${updatedUser?.id} updated onboaring completed succesfully.`
       );
 
-      let newCreatorId: number;
+      let creatorId: number;
       let newAdvertiserId: number;
 
       if (isCreator) {
+        const creator = await this.creatorRepository.findById(id);
+        if (!creator)
+          throw new Error(`Creator not found with given user id ${id}`);
+
         if (!birthDate)
           throw new Error('birthDate is required to create a new creator');
-        const createCreatorInput: ICreateCreatorInput = {
-          userId: updatedUser.id,
+        const updateCreatorInput: IUpdateCreatorInput = {
           description,
           userName,
           contentType,
           birthDate,
           youtubeLinked: true
         };
-        const creatorCreated = await this.creatorRepository.createAndSave(
-          createCreatorInput,
+        const updatedCreator = await this.creatorRepository.updateById(
+          creator.id,
+          updateCreatorInput,
           queryRunner
         );
-        newCreatorId = creatorCreated.id;
+        creatorId = updatedCreator.id;
       } else {
         if (!socialNetworks)
           throw new Error(
@@ -124,8 +124,7 @@ export class UserService {
       await queryRunner.commitTransaction();
       return {
         ...updatedUser,
-        [isCreator ? 'creatorId' : 'advertiserId']:
-          newCreatorId || newAdvertiserId
+        [isCreator ? 'creatorId' : 'advertiserId']: creatorId || newAdvertiserId
       };
     } catch (err) {
       Logger.error(`Onboarding completion transaction has failed.`);

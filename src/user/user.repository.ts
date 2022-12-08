@@ -45,13 +45,14 @@ export class UserRepository extends Repository<User> {
   }
 
   async updateById(
+    id: number,
     updateUserInput: IUpdateUserInput,
     queryRunner?: QueryRunner
   ): Promise<User> {
     const queryResult = await this.createQueryBuilder('updateById', queryRunner)
       .update(updateUserInput)
       .where({
-        id: updateUserInput.id
+        id
       })
       .returning('*')
       .execute();

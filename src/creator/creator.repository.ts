@@ -1,7 +1,10 @@
 import { DataSource, Repository, QueryRunner } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { Creator } from 'src/entities';
-import { ICreateCreatorInput } from '../common/interfaces/creator';
+import {
+  ICreateCreatorInput,
+  IUpdateCreatorInput
+} from '../common/interfaces/creator';
 
 @Injectable()
 export class CreatorRepository extends Repository<Creator> {
@@ -44,5 +47,21 @@ export class CreatorRepository extends Repository<Creator> {
       .getOne();
 
     return queryResult;
+  }
+
+  async updateById(
+    id: number,
+    updateCreatorInput: IUpdateCreatorInput,
+    queryRunner?: QueryRunner
+  ): Promise<Creator> {
+    const queryResult = await this.createQueryBuilder('updateById', queryRunner)
+      .update(updateCreatorInput)
+      .where({
+        id
+      })
+      .returning('*')
+      .execute();
+
+    return queryResult.raw[0];
   }
 }

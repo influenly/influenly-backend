@@ -20,20 +20,6 @@ export class UpdateCreatorDto {
   @IsNotEmpty()
   @IsString()
   @MinLength(3)
-  firstName?: string;
-
-  @ApiPropertyOptional()
-  @IsOptional()
-  @IsNotEmpty()
-  @IsString()
-  @MinLength(3)
-  lastName?: string;
-
-  @ApiPropertyOptional()
-  @IsOptional()
-  @IsNotEmpty()
-  @IsString()
-  @MinLength(3)
   userName?: string;
 
   @ApiPropertyOptional()
