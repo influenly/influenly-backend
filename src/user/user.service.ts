@@ -81,7 +81,8 @@ export class UserService {
         `User ${updatedUser?.id} updated onboaring completed succesfully.`
       );
 
-      let newId: number;
+      let newCreatorId: number;
+      let newAdvertiserId: number;
 
       if (isCreator) {
         if (!birthDate)
@@ -98,7 +99,7 @@ export class UserService {
           createCreatorInput,
           queryRunner
         );
-        newId = creatorCreated.id;
+        newCreatorId = creatorCreated.id;
       } else {
         if (!socialNetworks)
           throw new Error(
@@ -117,15 +118,14 @@ export class UserService {
           createAdvertiserInput,
           queryRunner
         );
-        newId = advertiserCreated.id;
+        newAdvertiserId = advertiserCreated.id;
       }
-
-      //NEXT HERE: CREATE YOUTUBE TOKEN INFO ID WITH INFO PROVIDED ON INTEGRATION
 
       await queryRunner.commitTransaction();
       return {
         ...updatedUser,
-        [isCreator ? 'creatorId' : 'advertiserId']: newId
+        [isCreator ? 'creatorId' : 'advertiserId']:
+          newCreatorId || newAdvertiserId
       };
     } catch (err) {
       Logger.error(`Onboarding completion transaction has failed.`);

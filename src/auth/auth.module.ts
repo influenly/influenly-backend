@@ -3,12 +3,13 @@ import { ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { AdvertiserModule } from 'src/advertiser/advertiser.module';
+import { AdvertiserRepository } from 'src/advertiser/advertiser.repository';
 import { CreatorModule } from 'src/creator/creator.module';
 import { CreatorRepository } from 'src/creator/creator.repository';
 import { Advertiser, Creator } from 'src/entities';
 import { UserModule } from 'src/user/user.module';
 import { UserRepository } from 'src/user/user.repository';
-import { UserService } from 'src/user/user.service';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { JwtStrategy } from './strategies/jwt-strategy';
@@ -17,6 +18,7 @@ import { JwtStrategy } from './strategies/jwt-strategy';
   imports: [
     TypeOrmModule.forFeature([Advertiser, Creator]),
     UserModule,
+    forwardRef(() => AdvertiserModule),
     CreatorModule,
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.registerAsync({
@@ -33,7 +35,13 @@ import { JwtStrategy } from './strategies/jwt-strategy';
     })
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy, UserRepository, CreatorRepository],
+  providers: [
+    AuthService,
+    JwtStrategy,
+    UserRepository,
+    CreatorRepository,
+    AdvertiserRepository
+  ],
   exports: [PassportModule, JwtStrategy]
 })
 export class AuthModule {}

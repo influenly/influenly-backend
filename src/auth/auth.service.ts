@@ -5,11 +5,18 @@ import { DataSource } from 'typeorm';
 import { UserRepository } from 'src/user/user.repository';
 import { SignInRequestDto, SignUpRequestDto } from '../common/dto';
 import { IJwtPayload } from './interfaces/jwt-payload.interface';
+import { UserTypes } from 'src/common/constants';
+import { CreatorRepository } from 'src/creator/creator.repository';
+import { AdvertiserRepository } from 'src/advertiser/advertiser.repository';
+import { ICreateCreatorInput } from 'src/common/interfaces/creator';
+import { ICreateAdvertiserInput } from 'src/common/interfaces/advertiser';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly userRepository: UserRepository,
+    private readonly creatorRepository: CreatorRepository,
+    private readonly advertiserRepository: AdvertiserRepository,
     private readonly jwService: JwtService,
     private readonly dataSource: DataSource
   ) {}
@@ -29,6 +36,32 @@ export class AuthService {
         queryRunner
       );
       const { id: newUserId } = newUser;
+
+      const isCreator = type === UserTypes.CREATOR;
+
+      let newCreatorId: number;
+      let newAdvertiserId: number;
+
+      if (isCreator) {
+        const createCreatorInput: ICreateCreatorInput = {
+          userId: newUserId
+        };
+        const creatorCreated = await this.creatorRepository.createAndSave(
+          createCreatorInput,
+          queryRunner
+        );
+        newCreatorId = creatorCreated.id;
+      } else {
+        const createAdvertiserInput: ICreateAdvertiserInput = {
+          userId: newUserId
+        };
+
+        const advertiserCreated = await this.advertiserRepository.createAndSave(
+          createAdvertiserInput,
+          queryRunner
+        );
+        newAdvertiserId = advertiserCreated.id;
+      }
 
       const token = this.getJwtToken({ id: newUserId, userType: type });
       return {
