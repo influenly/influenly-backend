@@ -64,8 +64,11 @@ export class AuthService {
       }
 
       const token = this.getJwtToken({ id: newUserId, userType: type });
+
+      await queryRunner.commitTransaction();
       return {
         ...newUser,
+        creatorId: newCreatorId,
         token
       };
     } catch (error) {
