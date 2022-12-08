@@ -6,7 +6,10 @@ import { DataSource } from 'typeorm';
 import { UpdateUserDto } from './dto';
 import { IUpdateUserInput } from './interfaces';
 import { UserRepository } from './user.repository';
-import { ICreateAdvertiserInput } from 'src/common/interfaces/advertiser';
+import {
+  ICreateAdvertiserInput,
+  IUpdateAdvertiserInput
+} from 'src/common/interfaces/advertiser';
 import { AdvertiserRepository } from 'src/advertiser/advertiser.repository';
 import { UserTypes } from 'src/common/constants';
 import { CompleteOnboardingDto } from './onboarding/dto';
@@ -73,15 +76,14 @@ export class UserService {
 
       const isCreator = updatedUser.type === UserTypes.CREATOR;
 
-      Logger.log(
-        `User ${updatedUser?.id} updated onboaring completed succesfully.`
-      );
-
       let creatorId: number;
       let advertiserId: number;
 
       if (isCreator) {
-        const creator = await this.creatorRepository.findById(id);
+        const creator = await this.creatorRepository.findByUserId(
+          id,
+          queryRunner
+        );
         if (!creator)
           throw new Error(`Creator not found with given user id ${id}`);
 
@@ -103,21 +105,25 @@ export class UserService {
         );
         creatorId = updatedCreator.id;
       } else {
+        const advertiser = await this.advertiserRepository.findByUserId(
+          id,
+          queryRunner
+        );
+        if (!advertiser)
+          throw new Error(`Advertiser not found with given user id ${id}`);
         if (!socialNetworks)
           throw new Error(
             'socialNetworks is required to complete the onboarding of an advertiser'
           );
 
-        const updateAdvertiserInput: ICreateAdvertiserInput = {
-          userId: updatedUser.id,
+        const updateAdvertiserInput: IUpdateAdvertiserInput = {
           description,
           userName,
           contentType,
           ...socialNetworks
         };
-
         const advertiserCreated = await this.advertiserRepository.updateById(
-          id,
+          advertiser.id,
           updateAdvertiserInput,
           queryRunner
         );
@@ -125,6 +131,9 @@ export class UserService {
       }
 
       await queryRunner.commitTransaction();
+      Logger.log(
+        `User ${updatedUser?.id} updated onboaring completed succesfully.`
+      );
       return {
         ...updatedUser,
         creatorId,

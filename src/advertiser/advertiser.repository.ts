@@ -36,6 +36,20 @@ export class AdvertiserRepository extends Repository<Advertiser> {
     return queryResult;
   }
 
+  async findByUserId(
+    userId: number,
+    queryRunner?: QueryRunner
+  ): Promise<Advertiser> {
+    const queryResult = await this.createQueryBuilder(
+      'findByUserId',
+      queryRunner
+    )
+      .where({ userId })
+      .getOne();
+
+    return queryResult;
+  }
+
   async updateById(
     id: number,
     updateAdvertiserInput: IUpdateAdvertiserInput,

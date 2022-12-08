@@ -23,26 +23,4 @@ export class IntegrationRepository extends Repository<Integration> {
       .execute();
     return queryResult.raw[0];
   }
-
-  //   async findById(id: number, queryRunner?: QueryRunner): Promise<Creator> {
-  //     const queryResult = await this.createQueryBuilder('findById', queryRunner)
-  //       .where({ id })
-  //       .getOne();
-
-  //     return queryResult;
-  //   }
-
-  //   async findByUserId(
-  //     userId: number,
-  //     queryRunner?: QueryRunner
-  //   ): Promise<Integration> {
-  //     const queryResult = await this.createQueryBuilder(
-  //       'findByUserId',
-  //       queryRunner
-  //     )
-  //       .where({ userId })
-  //       .getOne();
-
-  //     return queryResult;
-  //   }
 }
