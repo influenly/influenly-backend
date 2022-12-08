@@ -87,6 +87,9 @@ export class UserService {
         if (!creator)
           throw new Error(`Creator not found with given user id ${id}`);
 
+        if (!creator.youtubeLinked)
+          throw new Error(`Creator has not youtube linked`);
+
         if (!birthDate)
           throw new Error(
             'birthDate is required to complete the onboarding of a creator'
@@ -95,8 +98,7 @@ export class UserService {
           description,
           userName,
           contentType,
-          birthDate,
-          youtubeLinked: true
+          birthDate
         };
         const updatedCreator = await this.creatorRepository.updateById(
           creator.id,

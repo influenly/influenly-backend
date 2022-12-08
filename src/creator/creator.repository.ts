@@ -64,4 +64,23 @@ export class CreatorRepository extends Repository<Creator> {
 
     return queryResult.raw[0];
   }
+
+  async updateByUserId(
+    userId: number,
+    updateCreatorInput: IUpdateCreatorInput,
+    queryRunner?: QueryRunner
+  ): Promise<Creator> {
+    const queryResult = await this.createQueryBuilder(
+      'updateByUserId',
+      queryRunner
+    )
+      .update(updateCreatorInput)
+      .where({
+        userId
+      })
+      .returning('*')
+      .execute();
+
+    return queryResult.raw[0];
+  }
 }

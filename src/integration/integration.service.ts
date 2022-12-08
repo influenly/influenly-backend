@@ -7,6 +7,7 @@ import { CreateIntegrationDto } from './dto';
 import { IntegrationRepository } from './integration.repository';
 import { Platforms } from 'src/common/constants/enums';
 import { AnalyticsRepository } from 'src/analytics/analytics.repository';
+import { IUpdateCreatorInput } from 'src/common/interfaces/creator';
 
 @Injectable()
 export class IntegrationService {
@@ -35,13 +36,11 @@ export class IntegrationService {
     await queryRunner.startTransaction();
 
     try {
-      const creator = await this.creatorRepository.findByUserId(
+      const updatedCreator = await this.creatorRepository.updateByUserId(
         userId,
+        { youtubeLinked: true } as IUpdateCreatorInput,
         queryRunner
       );
-
-      if (!creator)
-        throw new Error(`Creator not found with given user id ${userId}`);
 
       //TODO: token getting
 
@@ -64,7 +63,7 @@ export class IntegrationService {
 
       const newAnalytics = await this.analyticsRepository.createAndSave(
         {
-          creatorId: creator.id,
+          creatorId: updatedCreator.id,
           integrationId: newIntegration.id,
           platform
         },
@@ -75,7 +74,7 @@ export class IntegrationService {
 
       return {
         userId,
-        creatorId: creator.id,
+        creatorId: updatedCreator.id,
         integrationId: newIntegration.id,
         analyticsId: newAnalytics.id
       };
