@@ -5,7 +5,7 @@ import { google } from 'googleapis';
 const CLIENT_ID = 'TODO';
 const CLIENT_SECRET = 'TODO';
 const REDIRECT_URL = 'TODO'; //??
-export class GoogleOAuth2Service {
+export class GoogleService {
   private oAuth2Client: OAuth2Client;
   constructor() {
     this.oAuth2Client = new google.auth.OAuth2(

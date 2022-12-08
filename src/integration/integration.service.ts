@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Integration } from 'src/entities';
-import { GoogleOAuth2Service } from 'src/libs/google/oauth2';
+import { GoogleService } from 'src/libs/google/google.service';
 import { Repository } from 'typeorm';
 import { CreateIntegrationDto } from './dto';
 
@@ -10,7 +10,7 @@ export class IntegrationService {
   constructor(
     @InjectRepository(Integration)
     private readonly integrationRepository: Repository<Integration>,
-    private readonly googleOAuth2Service: GoogleOAuth2Service
+    private readonly googleOAuth2Service: GoogleService
   ) {}
 
   async getIntegration(id: number): Promise<Integration> {
