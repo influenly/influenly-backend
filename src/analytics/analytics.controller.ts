@@ -1,19 +1,14 @@
 import {
-  Body,
   Controller,
   Delete,
   Get,
   HttpException,
   HttpStatus,
   Param,
-  ParseIntPipe,
-  Post,
-  UsePipes,
-  ValidationPipe
+  ParseIntPipe
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { AnalyticsService } from './analytics.service';
-import { CreateAnalyticsDto } from './dto';
 
 @ApiTags('analytics')
 @Controller('analytics')
@@ -37,19 +32,6 @@ export class AnalyticsController {
       if (!analytics) {
         throw new Error(`Analytics with id ${analyticsId} not found`);
       }
-      return analytics;
-    } catch (error) {
-      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
-    }
-  }
-
-  @Post()
-  @UsePipes(ValidationPipe)
-  async createAnalytics(@Body() createAnalyticsDto: CreateAnalyticsDto) {
-    try {
-      const analytics = await this.analyticsService.createAnalytics(
-        createAnalyticsDto
-      );
       return analytics;
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
