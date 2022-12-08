@@ -16,10 +16,11 @@ import { MailModule } from './libs/mail/mail.module';
 import { GoogleModule } from './libs/google/google.module';
 import APP_CONFIG from './config/app';
 import DATABASE_CONFIG from './config/database';
+import GOOGLE_CONFIG from './config/google';
 @Module({
   imports: [
     ConfigModule.forRoot({
-      load: [APP_CONFIG, DATABASE_CONFIG],
+      load: [APP_CONFIG, DATABASE_CONFIG, GOOGLE_CONFIG],
       isGlobal: true
     }),
     TypeOrmModule.forRootAsync({
@@ -66,6 +67,9 @@ import DATABASE_CONFIG from './config/database';
 export class AppModule {
   static port: number;
   constructor(configService: ConfigService) {
-    AppModule.port = configService.get('API_PORT');
+    const {
+      api: { port: apiPort }
+    } = configService.get('app');
+    AppModule.port = apiPort;
   }
 }

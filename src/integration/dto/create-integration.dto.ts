@@ -14,6 +14,7 @@ export class CreateIntegrationDto {
 
   @ApiProperty()
   @IsNotEmpty()
+  @IsString()
   @IsIn(platforms)
   platform: Platform;
 }

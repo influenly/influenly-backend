@@ -1,20 +1,15 @@
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { Credentials, OAuth2Client } from 'google-auth-library';
 import { google } from 'googleapis';
-
-const CLIENT_ID = 'TODO';
-const CLIENT_SECRET = 'TODO';
-const REDIRECT_URL = 'TODO'; //??
 
 @Injectable()
 export class GoogleService {
   private oAuth2Client: OAuth2Client;
-  constructor() {
-    this.oAuth2Client = new google.auth.OAuth2(
-      CLIENT_ID,
-      CLIENT_SECRET,
-      REDIRECT_URL //??
-    );
+  constructor(private readonly configService: ConfigService) {
+    const { clientId, clientSecret } = configService.get('google');
+    console.log(clientId);
+    this.oAuth2Client = new google.auth.OAuth2(clientId, clientSecret);
   }
 
   async getToken(authorizationCode: string): Promise<Credentials> {
@@ -22,8 +17,8 @@ export class GoogleService {
     return tokens;
   }
 
-  private async setCredentials(authorizationCode: string) {
-    const tokens = await this.getToken(authorizationCode);
-    this.oAuth2Client.setCredentials(tokens);
-  }
+  // private async setCredentials(authorizationCode: string) {
+  //   const tokens = await this.getToken(authorizationCode);
+  //   this.oAuth2Client.setCredentials(tokens);
+  // }
 }
