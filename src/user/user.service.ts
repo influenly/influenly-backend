@@ -78,7 +78,7 @@ export class UserService {
       );
 
       let creatorId: number;
-      let newAdvertiserId: number;
+      let advertiserId: number;
 
       if (isCreator) {
         const creator = await this.creatorRepository.findById(id);
@@ -86,7 +86,9 @@ export class UserService {
           throw new Error(`Creator not found with given user id ${id}`);
 
         if (!birthDate)
-          throw new Error('birthDate is required to create a new creator');
+          throw new Error(
+            'birthDate is required to complete the onboarding of a creator'
+          );
         const updateCreatorInput: IUpdateCreatorInput = {
           description,
           userName,
@@ -103,10 +105,10 @@ export class UserService {
       } else {
         if (!socialNetworks)
           throw new Error(
-            'socialNetworks is required to create a new advertiser'
+            'socialNetworks is required to complete the onboarding of an advertiser'
           );
 
-        const createAdvertiserInput: ICreateAdvertiserInput = {
+        const updateAdvertiserInput: ICreateAdvertiserInput = {
           userId: updatedUser.id,
           description,
           userName,
@@ -114,17 +116,19 @@ export class UserService {
           ...socialNetworks
         };
 
-        const advertiserCreated = await this.advertiserRepository.createAndSave(
-          createAdvertiserInput,
+        const advertiserCreated = await this.advertiserRepository.updateById(
+          id,
+          updateAdvertiserInput,
           queryRunner
         );
-        newAdvertiserId = advertiserCreated.id;
+        advertiserId = advertiserCreated.id;
       }
 
       await queryRunner.commitTransaction();
       return {
         ...updatedUser,
-        [isCreator ? 'creatorId' : 'advertiserId']: creatorId || newAdvertiserId
+        creatorId,
+        advertiserId
       };
     } catch (err) {
       Logger.error(`Onboarding completion transaction has failed.`);

@@ -9,7 +9,6 @@ import {
   IsISO8601,
   Length,
   IsObject,
-  IsUrl,
   ValidateNested
 } from 'class-validator';
 import { ISocialNetworks } from 'src/common/interfaces/advertiser/social-networks.interface';

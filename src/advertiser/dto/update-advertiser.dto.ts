@@ -26,26 +26,6 @@ export class UpdateAdvertiserDto {
   @IsOptional()
   @IsNotEmpty()
   @IsString()
-  @MinLength(8)
-  password?: string;
-
-  @ApiPropertyOptional()
-  @IsOptional()
-  @IsNotEmpty()
-  @IsString()
-  @IsEmail()
-  email?: string;
-
-  @ApiPropertyOptional()
-  @IsOptional()
-  @IsNotEmpty()
-  @IsString()
-  country?: string;
-
-  @ApiPropertyOptional()
-  @IsOptional()
-  @IsNotEmpty()
-  @IsString()
   profileImage?: string;
 
   @ApiPropertyOptional()
