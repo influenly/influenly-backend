@@ -31,15 +31,8 @@ export class UserService {
   }
 
   async getUserByEmail(email: string): Promise<User> {
-    const user = await this.userRepository.findOne({
-      where: { email },
-      select: {
-        id: true,
-        email: true,
-        password: true,
-        type: true
-      }
-    });
+    //here is an example of whay error handle should be in service layer
+    const user = await this.userRepository.findByEmail(email);
     return user;
   }
 
@@ -127,7 +120,7 @@ export class UserService {
         newId = advertiserCreated.id;
       }
 
-      //NEXT HERE: CREATE YOUTUBE TOKEN INFO ID WITH INFO PROVIDED ON INTEGRATION 
+      //NEXT HERE: CREATE YOUTUBE TOKEN INFO ID WITH INFO PROVIDED ON INTEGRATION
 
       await queryRunner.commitTransaction();
       return {

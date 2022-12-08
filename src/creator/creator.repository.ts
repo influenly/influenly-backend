@@ -31,4 +31,18 @@ export class CreatorRepository extends Repository<Creator> {
 
     return queryResult;
   }
+
+  async findByUserId(
+    userId: number,
+    queryRunner?: QueryRunner
+  ): Promise<Creator> {
+    const queryResult = await this.createQueryBuilder(
+      'findByUserId',
+      queryRunner
+    )
+      .where({ userId })
+      .getOne();
+
+    return queryResult;
+  }
 }

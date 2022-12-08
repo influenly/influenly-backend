@@ -22,7 +22,7 @@ export class Creator extends BaseEntity {
   @Column({ unique: true, type: 'varchar', length: 100, nullable: true })
   userName: string;
 
-  @Column({ type: 'date' })
+  @Column({ type: 'date', nullable: true })
   birthDate: Date;
 
   @Column({ type: 'text', nullable: true })
@@ -37,7 +37,7 @@ export class Creator extends BaseEntity {
   @Column({ type: 'boolean', default: false })
   twitchLinked: Boolean;
 
-  @Column('text', { array: true })
+  @Column({ type: 'text', array: true, nullable: true })
   contentType: string[];
 
   @CreateDateColumn({ type: 'timestamp' })

@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { CreatorRepository } from 'src/creator/creator.repository';
 import { Integration } from 'src/entities';
 import { GoogleService } from 'src/libs/google/google.service';
 import { Repository } from 'typeorm';
@@ -10,7 +11,8 @@ export class IntegrationService {
   constructor(
     @InjectRepository(Integration)
     private readonly integrationRepository: Repository<Integration>,
-    private readonly googleOAuth2Service: GoogleService
+    private readonly googleOAuth2Service: GoogleService,
+    private readonly creatorRepository: CreatorRepository
   ) {}
 
   async getIntegration(id: number): Promise<Integration> {
@@ -24,11 +26,10 @@ export class IntegrationService {
     userId: number,
     createTokenInfoDto: CreateIntegrationDto
   ) {
-    console.log(this.googleOAuth2Service.getToken);
-    //get token from google lib
-    // const token = this.googleOAuth2Service.getToken(
-    //   createTokenInfoDto.authorizationCode
-    // );
+    // const creator = await this.creatorRepository.findByUserId(userId);
+    const token = this.googleOAuth2Service.getToken(
+      createTokenInfoDto.authorizationCode
+    );
     //analyze token response and build input
     //const integrationInput = {
     //...token

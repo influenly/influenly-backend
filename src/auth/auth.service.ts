@@ -1,14 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
-import { UserService } from 'src/user/user.service';
+import { UserRepository } from 'src/user/user.repository';
 import { SignInRequestDto, SignUpRequestDto } from '../common/dto';
 import { IJwtPayload } from './interfaces/jwt-payload.interface';
 
 @Injectable()
 export class AuthService {
   constructor(
-    private readonly userService: UserService,
+    private readonly userRepository: UserRepository,
     private readonly jwService: JwtService
   ) {}
   async signUp(signUpRequestDto: SignUpRequestDto) {
@@ -18,7 +18,7 @@ export class AuthService {
       //TODO: DO NOT MUTATE INPUT VARIABLE. FUNCTIONAL PROGRAMMING
       signUpRequestDto = { ...signUpRequestDto, password: hashedPassword };
 
-      const newUser = await this.userService.createUser(signUpRequestDto);
+      const newUser = await this.userRepository.createAndSave(signUpRequestDto);
       const { id } = newUser;
       const token = this.getJwtToken({ id, userType: type });
       return {
@@ -34,7 +34,7 @@ export class AuthService {
     try {
       const { email, password } = signInRequestDto;
 
-      const user = await this.userService.getUserByEmail(email);
+      const user = await this.userRepository.findByEmail(email);
 
       if (!user) {
         throw new Error('Credentials are not valid (email)');
