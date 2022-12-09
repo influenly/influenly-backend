@@ -9,10 +9,10 @@ export class AnalyticsRepository extends Repository<Analytics> {
     super(Analytics, dataSource.createEntityManager());
   }
   async createAndSave(
-    createAnalyticsDto: ICreateAnalyticsInput,
+    createAnalyticsInput: ICreateAnalyticsInput,
     queryRunner?: QueryRunner
   ): Promise<Analytics> {
-    const newAnalytics = this.create(createAnalyticsDto);
+    const newAnalytics = this.create(createAnalyticsInput);
     const queryResult = await this.createQueryBuilder(
       'createAndSave',
       queryRunner

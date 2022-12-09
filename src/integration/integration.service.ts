@@ -42,21 +42,26 @@ export class IntegrationService {
         queryRunner
       );
 
-      //TODO: token getting
-
-      // const token = this.googleOAuth2Service.getToken(
-      //   createIntegrationDto.authorizationCode
-      // );
+      const {
+        access_token: accessToken,
+        expiry_date: expiryDate,
+        id_token: idToken,
+        refresh_token: refreshToken
+        // scope,
+        // token_type: tokenType
+      } = await this.googleOAuth2Service.getToken(
+        createIntegrationDto.authorizationCode
+      );
 
       const platform =
         Platforms[createIntegrationDto.platform as keyof typeof Platforms];
 
       const newIntegration = await this.integrationRepository.createAndSave(
         {
-          accessToken: 'example',
-          tokenExpiresIn: 123123123,
-          refreshToken: 'examplee',
-          platform
+          accessToken,
+          expiryDate,
+          idToken,
+          refreshToken
         },
         queryRunner
       );
@@ -79,6 +84,7 @@ export class IntegrationService {
         analyticsId: newAnalytics.id
       };
     } catch (err) {
+      console.log(err);
       Logger.error(`Integration creation transaction has failed.`);
       await queryRunner.rollbackTransaction();
       throw new Error(err.message);

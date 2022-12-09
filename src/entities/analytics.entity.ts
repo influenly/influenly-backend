@@ -7,7 +7,8 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
   ManyToOne,
-  OneToOne
+  OneToOne,
+  Index
 } from 'typeorm';
 import { Platform } from 'src/common/constants/types/platform';
 import { AnalyticsYoutube } from './analytics-youtube.entity';
@@ -15,6 +16,7 @@ import { Creator } from './creator.entity';
 import { Integration } from './integration.entitiy';
 
 @Entity('analytics')
+@Index(['creatorId', 'platform'], { unique: true })
 export class Analytics extends BaseEntity {
   @PrimaryGeneratedColumn('increment')
   id: number;
@@ -26,7 +28,7 @@ export class Analytics extends BaseEntity {
   integrationId: number;
   //TODO: NEW TABLE PLATFORM AND RELATION BETWEEN PLATFORMID
   @Column({ type: 'text' })
-  plaftorm: Platform;
+  platform: Platform;
 
   @Column({ type: 'int', nullable: true, default: null })
   analyticsYoutubeId: number;

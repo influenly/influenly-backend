@@ -1,8 +1,6 @@
-import { Platform } from 'src/common/constants/types/platform';
-
 export interface ICreateIntegrationInput {
   accessToken: string;
-  tokenExpiresIn: number;
+  expiryDate: number;
+  idToken: string;
   refreshToken: string;
-  platform: Platform;
 }
