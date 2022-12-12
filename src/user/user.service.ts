@@ -4,12 +4,8 @@ import { CreatorRepository } from 'src/creator/creator.repository';
 import { User } from 'src/entities';
 import { DataSource } from 'typeorm';
 import { UpdateUserDto } from './dto';
-import { IUpdateUserInput } from './interfaces';
 import { UserRepository } from './user.repository';
-import {
-  ICreateAdvertiserInput,
-  IUpdateAdvertiserInput
-} from 'src/common/interfaces/advertiser';
+import { IUpdateAdvertiserInput } from 'src/common/interfaces/advertiser';
 import { AdvertiserRepository } from 'src/advertiser/advertiser.repository';
 import { UserTypes } from 'src/common/constants';
 import { CompleteOnboardingDto } from './onboarding/dto';
