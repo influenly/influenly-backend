@@ -4,8 +4,6 @@ import {
   Get,
   HttpException,
   HttpStatus,
-  Param,
-  ParseIntPipe,
   Patch,
   Post,
   UsePipes,
@@ -28,19 +26,6 @@ export class ContractController {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
   }
-
-  // @Get(':id')
-  // async getContract(@Param('id', ParseIntPipe) contractId: number) {
-  //   try {
-  //     const contract = await this.contractService.getContract(contractId);
-  //     if (!contract) {
-  //       throw new Error(`Contract with id ${contractId} not found`);
-  //     }
-  //     return contract;
-  //   } catch (error) {
-  //     throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
-  //   }
-  // }
 
   @Post()
   @UsePipes(ValidationPipe)

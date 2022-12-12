@@ -16,17 +16,6 @@ export class CreatorService {
     return creator;
   }
 
-  // async getCreatorByEmail(email: string): Promise<Creator> {
-  //   const creator = await this.creatorRepository.findOne({
-  //     where: { email },
-  //     select: {
-  //       email: true,
-  //       password: true
-  //     }
-  //   });
-  //   return creator;
-  // }
-
   async updateCreator(updateCreatorDto: UpdateCreatorDto): Promise<Creator> {
     const queryResult = await this.creatorRepository
       .createQueryBuilder()

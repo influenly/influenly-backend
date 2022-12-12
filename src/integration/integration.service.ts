@@ -84,24 +84,11 @@ export class IntegrationService {
         analyticsId: newAnalytics.id
       };
     } catch (err) {
-      console.log(err);
       Logger.error(`Integration creation transaction has failed.`);
       await queryRunner.rollbackTransaction();
       throw new Error(err.message);
     } finally {
       await queryRunner.release();
     }
-    //analyze token response and build input
-    //const integrationInput = {
-    //...token
-    // };
-    //create analytics ( empty )
-    //create integration
-    // const newIntegration =
-    //   this.integrationRepository.create(createTokenInfoDto);
-    // await this.integrationRepository.save(newIntegration);
-    // return newIntegration;
-
-    return 1;
   }
 }

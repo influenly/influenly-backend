@@ -15,13 +15,6 @@ export class ContractService {
     return contracts;
   }
 
-  // async getContract(id: number): Promise<Contract> {
-  //   const contract = await this.contractRepositoriy.findOne({
-  //     where: { id }
-  //   });
-  //   return contract;
-  // }
-
   async createContract(
     createContractDto: CreateContractDto
   ): Promise<Contract> {

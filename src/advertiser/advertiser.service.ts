@@ -15,17 +15,6 @@ export class AdvertiserService {
     return advertiser;
   }
 
-  // async getAdvertiserByEmail(email: string): Promise<Advertiser> {
-  //   const advertiser = await this.advertiserRepository.findOne({
-  //     where: { email },
-  //     select: {
-  //       email: true,
-  //       password: true
-  //     }
-  //   });
-  //   return advertiser;
-  // }
-
   async updateAdvertiser(
     updateAdvertiserDto: UpdateAdvertiserDto
   ): Promise<Advertiser> {

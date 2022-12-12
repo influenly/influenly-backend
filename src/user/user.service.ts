@@ -23,10 +23,6 @@ export class UserService {
     private readonly advertiserRepository: AdvertiserRepository,
     private readonly dataSource: DataSource
   ) {}
-  // async getUsers(): Promise<User[]> {
-  //   const users = await this.userRepository.find();
-  //   return users;
-  // }
 
   async getUserById(id: number): Promise<User> {
     const user = await this.userRepository.findById(id);
