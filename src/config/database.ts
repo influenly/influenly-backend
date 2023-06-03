@@ -36,6 +36,7 @@ if (config.error) {
 
 export default () => ({
   database: {
+    type: 'postgres',
     host: config.value.DATABASE_HOST,
     port: config.value.DATABASE_PORT,
     username: config.value.DATABASE_USERNAME,

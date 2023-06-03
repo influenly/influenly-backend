@@ -37,7 +37,17 @@ import GOOGLE_CONFIG from './config/google';
           password,
           database,
           entities: entities,
-          synchronize: true
+          migrationsRun: false,
+          logging: true,
+          migrationsTableName: 'migration',
+          migrations: [
+            __dirname + '/migration/**/*.ts',
+            __dirname + '/migration/**/*.js'
+          ],
+          synchronize: true,
+          cli: {
+            migrationsDir: 'src/migration'
+          }
         };
       },
       inject: [ConfigService]
