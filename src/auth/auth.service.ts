@@ -10,6 +10,7 @@ import { CreatorRepository } from 'src/creator/creator.repository';
 import { AdvertiserRepository } from 'src/advertiser/advertiser.repository';
 import { ICreateCreatorInput } from 'src/common/interfaces/creator';
 import { ICreateAdvertiserInput } from 'src/common/interfaces/advertiser';
+import { Errors } from 'src/common/constants/enums';
 
 @Injectable()
 export class AuthService {
@@ -25,8 +26,8 @@ export class AuthService {
 
     await queryRunner.connect();
     await queryRunner.startTransaction();
+    const { type, password, email } = signUpRequestDto;
     try {
-      const { type, password } = signUpRequestDto;
       const hashedPassword = bcrypt.hashSync(password, 10);
       //TODO: DO NOT MUTATE INPUT VARIABLE. FUNCTIONAL PROGRAMMING
       signUpRequestDto = { ...signUpRequestDto, password: hashedPassword };
@@ -35,6 +36,7 @@ export class AuthService {
         signUpRequestDto,
         queryRunner
       );
+
       const { id: newUserId } = newUser;
 
       const isCreator = type === UserTypes.CREATOR;
@@ -73,9 +75,13 @@ export class AuthService {
         token
       };
     } catch (error) {
-      Logger.error(`User signup transaction has failed.`);
+      Logger.error(`User signup transaction has failed. ${error.detail}`);
       await queryRunner.rollbackTransaction();
-      throw new Error(error.message);
+      const errorMessage =
+        error.detail === `Key (email)=(${email}) already exists.`
+          ? Errors.EMAIL_ALREADY_EXISTS
+          : error.message;
+      throw new Error(errorMessage);
     } finally {
       await queryRunner.release();
     }
