@@ -94,11 +94,11 @@ export class AuthService {
       const user = await this.userRepository.findByEmail(email);
 
       if (!user) {
-        throw new Error('Credentials are not valid (email)');
+        throw new Error(Errors.INVALID_EMAIL);
       }
 
       if (!bcrypt.compareSync(password, user.password)) {
-        throw new Error('Credentials are not valid (password)');
+        throw new Error(Errors.INVALID_PASSWORD);
       }
 
       const { type, id } = user;
