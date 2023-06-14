@@ -13,7 +13,7 @@ export class User extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: 'text', select: false })
+  @Column({ type: 'text' })
   password: string;
 
   @Column({ unique: true, type: 'varchar', length: 120 })
