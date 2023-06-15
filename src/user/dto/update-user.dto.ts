@@ -42,10 +42,4 @@ export class UpdateUserDto {
   @IsNotEmpty()
   @IsString()
   country?: string;
-
-  @ApiPropertyOptional()
-  @IsOptional()
-  @IsNotEmpty()
-  @IsBoolean()
-  emailConfirmed?: boolean;
 }

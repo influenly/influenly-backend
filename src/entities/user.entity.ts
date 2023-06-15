@@ -23,9 +23,6 @@ export class User extends BaseEntity {
   country: string;
 
   @Column({ type: 'boolean', default: false })
-  emailConfirmed: Boolean;
-
-  @Column({ type: 'boolean', default: false })
   onboardingCompleted: Boolean;
 
   @Column('text', { array: true, default: [UserRoles.REGULAR] })
