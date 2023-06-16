@@ -29,7 +29,7 @@ export class AuthService {
     const { type, password, email } = signUpRequestDto;
     try {
       const hashedPassword = bcrypt.hashSync(password, 10);
-      //TODO: DO NOT MUTATE INPUT VARIABLE. FUNCTIONAL PROGRAMMING
+      //TODO: DO NOT MUTATE INPUT VARIABLE
       signUpRequestDto = { ...signUpRequestDto, password: hashedPassword };
 
       const newUser = await this.userRepository.createAndSave(
