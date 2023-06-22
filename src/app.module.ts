@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import entities from './entities';
@@ -17,6 +17,7 @@ import { GoogleModule } from './libs/google/google.module';
 import APP_CONFIG from './config/app';
 import DATABASE_CONFIG from './config/database';
 import GOOGLE_CONFIG from './config/google';
+import { LoggerMiddleware } from './middlewares/logger.middleware';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -74,12 +75,16 @@ import GOOGLE_CONFIG from './config/google';
     }
   ]
 })
-export class AppModule {
+export class AppModule implements NestModule {
   static port: number;
   constructor(configService: ConfigService) {
     const {
       api: { port: apiPort }
     } = configService.get('app');
     AppModule.port = apiPort;
+  }
+
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(LoggerMiddleware).forRoutes('*');
   }
 }
