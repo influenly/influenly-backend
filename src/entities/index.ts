@@ -1,34 +1,31 @@
-import { Creator } from './creator.entity';
-import { Advertiser } from './advertiser.entity';
+import { User } from './user.entity';
+import { Message } from './message.entity';
+import { Conversation } from './conversation-entity';
+import { CreatorInfo } from './creator-info.entity';
+import { AdvertiserInfo } from './advertiser-info.entity';
 import { Connection } from './connection.entity';
-import { Contract } from './contract.entity';
-import { Stage } from './stage.entity';
-import { Analytics } from './analytics.entity';
 import { AnalyticsYoutube } from './analytics-youtube.entity';
 import { Integration } from './integration.entitiy';
-import { User } from './user.entity';
 
 const entities = [
-  Creator,
-  Advertiser,
+  CreatorInfo,
+  AdvertiserInfo,
   Connection,
-  Contract,
-  Stage,
-  Analytics,
   AnalyticsYoutube,
   Integration,
-  User
+  User,
+  Message,
+  Conversation
 ];
 
 export {
-  Creator,
-  Advertiser,
+  CreatorInfo,
+  AdvertiserInfo,
   Connection,
-  Contract,
-  Stage,
-  Analytics,
   AnalyticsYoutube,
   Integration,
-  User
+  User,
+  Message,
+  Conversation
 };
 export default entities;

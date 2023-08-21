@@ -13,7 +13,7 @@ export class Integration extends BaseEntity {
   id: number;
 
   @Column({ type: 'varchar' })
-  accessToken!: string;
+  accessToken: string;
 
   @Column({ type: 'int' })
   expiryDate: number;

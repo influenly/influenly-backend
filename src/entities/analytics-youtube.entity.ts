@@ -4,32 +4,36 @@ import {
   CreateDateColumn,
   Entity,
   PrimaryGeneratedColumn,
-  UpdateDateColumn
+  UpdateDateColumn,
+  OneToOne,
+  JoinColumn
 } from 'typeorm';
+import { Integration } from './integration.entitiy';
 
-@Entity('analyticsYoutube')
+@Entity('analytics_youtube')
 export class AnalyticsYoutube extends BaseEntity {
   @PrimaryGeneratedColumn('increment')
   id: number;
 
-  @Column({ type: 'int' })
-  totalSubscribers!: number;
+  @Column('int', { unique: true })
+  integrationId: number;
 
-  @Column({ type: 'int' })
-  totalVideos!: number;
+  @Column({ type: 'int', nullable: true })
+  totalSubs: number;
 
-  @Column({ type: 'int' })
-  lastThreeMonthsLikes!: number;
+  @Column({ type: 'int', nullable: true })
+  totalVideos: number;
 
-  @Column({ type: 'int' })
-  lastTwoMonthVideos!: number;
-
-  @Column({ type: 'int' })
-  totalAverageViewDuration!: number;
+  @Column({ type: 'int', nullable: true })
+  totalLikes: number;
 
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
 
   @UpdateDateColumn({ type: 'timestamp' })
   updatedAt: Date;
+
+  @OneToOne(() => Integration)
+  @JoinColumn({ name: 'integrationId' })
+  integration: Integration;
 }

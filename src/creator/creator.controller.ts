@@ -6,6 +6,7 @@ import {
   HttpException,
   HttpStatus,
   Param,
+  Query,
   ParseIntPipe,
   Patch,
   UsePipes,
@@ -34,6 +35,19 @@ export class CreatorController {
 
   @Get(':id')
   async getCreator(@Param('id', ParseIntPipe) creatorId: number) {
+    try {
+      const creator = await this.creatorService.getCreator(creatorId);
+      if (!creator) {
+        throw new Error(`Creator with id ${creatorId} not found`);
+      }
+      return creator;
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  @Get('profile')
+  async getCreatorProfile(@Query('id', ParseIntPipe) creatorId: number) {
     try {
       const creator = await this.creatorService.getCreator(creatorId);
       if (!creator) {
