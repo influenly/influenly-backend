@@ -7,8 +7,8 @@ import {
   UpdateDateColumn
 } from 'typeorm';
 
-@Entity('profile_info')
-export class ProfileInfo extends BaseEntity {
+@Entity('profile')
+export class Profile extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 

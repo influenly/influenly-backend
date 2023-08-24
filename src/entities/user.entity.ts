@@ -8,7 +8,7 @@ import {
   OneToOne,
   JoinColumn
 } from 'typeorm';
-import { Analytics, ProfileInfo } from 'src/entities';
+import { Analytics, Profile } from 'src/entities';
 import { UserRoles, UserType } from 'src/common/constants';
 
 @Entity('user')
@@ -17,7 +17,7 @@ export class User extends BaseEntity {
   id: number;
 
   @Column({ type: 'int', nullable: true, unique: true })
-  profileInfoId: number;
+  profileId: number;
 
   @Column({ type: 'int', nullable: true, unique: true })
   analyticsId: number;
@@ -50,7 +50,7 @@ export class User extends BaseEntity {
   @JoinColumn({ name: 'analyticsId' })
   analytics: Analytics;
 
-  @OneToOne(() => ProfileInfo)
-  @JoinColumn({ name: 'profileInfoId' })
-  profileInfo: ProfileInfo;
+  @OneToOne(() => Profile)
+  @JoinColumn({ name: 'profileId' })
+  profile: Profile;
 }

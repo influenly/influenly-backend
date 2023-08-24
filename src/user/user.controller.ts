@@ -8,12 +8,13 @@ import {
   Param,
   ParseIntPipe,
   Patch,
+  Post,
   UsePipes,
   ValidationPipe
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { UserService } from './user.service';
-import { UpdateUserDto } from './dto';
+import { CompleteOnboardingDto, UpdateUserDto } from './dto';
 import { Auth, GetUser } from 'src/auth/decorators';
 import { User } from 'src/entities';
 
@@ -22,6 +23,24 @@ import { User } from 'src/entities';
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
+
+  @Post()
+  @UsePipes(ValidationPipe)
+  async completeOnboarding(
+    @GetUser() user: User,
+    @Body() completeOnboardingDto: CompleteOnboardingDto
+  ) {
+    try {
+      const { id } = user;
+
+      const completeOnboardingResult =
+        await this.userService.completeOnboarding(id, completeOnboardingDto);
+
+      return completeOnboardingResult;
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
+  }
 
   @Get(':id')
   async getUser(@Param('id', ParseIntPipe) userId: number) {
