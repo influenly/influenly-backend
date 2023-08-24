@@ -4,10 +4,7 @@ import {
   IsNotEmpty,
   MinLength,
   IsString,
-  IsNumber,
-  IsOptional,
-  IsBoolean,
-  IsDate
+  IsOptional
 } from 'class-validator';
 
 export class UpdateUserDto {

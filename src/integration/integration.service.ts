@@ -1,6 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { DataSource } from 'typeorm';
-import { CreatorRepository } from 'src/creator/creator.repository';
 import { Integration } from 'src/entities';
 import { GoogleService } from 'src/libs/google/google.service';
 import { CreateIntegrationDto } from './dto';

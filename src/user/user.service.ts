@@ -5,10 +5,8 @@ import { User } from 'src/entities';
 import { DataSource } from 'typeorm';
 import { UpdateUserDto } from './dto';
 import { UserRepository } from './user.repository';
-// import {  } from 'src/common/interfaces/profile';
 import { UserTypes } from 'src/common/constants';
 import { CompleteOnboardingDto } from './dto';
-import { IUpdateCreatorInput } from 'src/common/interfaces/creator';
 import { ICreateProfileInput } from './profile/interfaces/create-profile-input.interface';
 
 @Injectable()
@@ -59,6 +57,25 @@ export class UserService {
     try {
       const { description, birthDate, username, contentTags, socialNetworks } =
         completeOnboardingDto;
+
+      if (!birthDate)
+        throw new Error(
+          'birthDate is required to complete the onboarding of a creator'
+        );
+
+      const createProfileInput: ICreateProfileInput = {
+        description,
+        socialNetworks,
+        username,
+        contentTags,
+        birthDate
+      };
+
+      const createdProfile = await this.profileRepository.createAndSave(
+        createProfileInput,
+        queryRunner
+      );
+
       const updatedUser = await this.userRepository.updateById(
         id,
         {
@@ -69,27 +86,8 @@ export class UserService {
 
       const isCreator = updatedUser.type === UserTypes.CREATOR;
 
-      const creator = await this.profileRepository.createAndSave(
-        id,
-        queryRunner
-      );
-      if (!creator)
-        throw new Error(`Creator not found with given user id ${id}`);
-
       // if (!creator.youtubeLinked)
       //   throw new Error(`Creator has not youtube linked`);
-
-      if (!birthDate)
-        throw new Error(
-          'birthDate is required to complete the onboarding of a creator'
-        );
-      const createProfileInput: ICreateProfileInput = {
-        description,
-        socialNetworks,
-        username,
-        contentTags,
-        birthDate
-      };
 
       await queryRunner.commitTransaction();
       Logger.log(

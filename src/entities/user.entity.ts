@@ -28,6 +28,9 @@ export class User extends BaseEntity {
   @Column({ type: 'text' })
   password: string;
 
+  @Column({ type: 'text', length: 100 })
+  country: string;
+
   @Column({ type: 'boolean', default: false })
   onboardingCompleted: boolean;
 
