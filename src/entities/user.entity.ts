@@ -8,7 +8,7 @@ import {
   OneToOne,
   JoinColumn
 } from 'typeorm';
-import { CreatorInfo, AdvertiserInfo } from 'src/entities';
+import { Analytics, ProfileInfo } from 'src/entities';
 import { UserRoles, UserType } from 'src/common/constants';
 
 @Entity('user')
@@ -17,10 +17,10 @@ export class User extends BaseEntity {
   id: number;
 
   @Column({ type: 'int', nullable: true, unique: true })
-  advertiserInfoId: number;
+  profileInfoId: number;
 
   @Column({ type: 'int', nullable: true, unique: true })
-  creatorInfoId: number;
+  analyticsId: number;
 
   @Column({ unique: true, type: 'varchar', length: 120 })
   email: string;
@@ -46,11 +46,11 @@ export class User extends BaseEntity {
   @UpdateDateColumn({ type: 'timestamp' })
   updatedAt: Date;
 
-  @OneToOne(() => CreatorInfo)
-  @JoinColumn({ name: 'creatorInfoId' })
-  creatorInfo: CreatorInfo;
+  @OneToOne(() => Analytics)
+  @JoinColumn({ name: 'analyticsId' })
+  analytics: Analytics;
 
-  @OneToOne(() => AdvertiserInfo)
-  @JoinColumn({ name: 'advertiserInfoId' })
-  advertiserInfo: AdvertiserInfo;
+  @OneToOne(() => ProfileInfo)
+  @JoinColumn({ name: 'profileInfoId' })
+  profileInfo: ProfileInfo;
 }

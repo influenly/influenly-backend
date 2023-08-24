@@ -10,7 +10,7 @@ import {
   ManyToOne
 } from 'typeorm';
 import { Conversation } from './conversation-entity';
-import { User } from './user.entity';
+import { UserType } from 'src/common/constants';
 
 @Entity('message')
 export class Message extends BaseEntity {
@@ -20,26 +20,18 @@ export class Message extends BaseEntity {
   @Column({ type: 'int' })
   conversationId: number;
 
-  @Column({ type: 'int' })
-  senderUserId: number;
-
-  @Column({ type: 'int' })
-  receiverUserId: number;
+  @Column({ type: 'varchar' })
+  senderUserType: UserType;
 
   @Column({ type: 'varchar' })
   content: string;
 
+  @Column({ type: 'boolean' })
+  initial_message: boolean;
+
   @OneToOne(() => Conversation)
   @JoinColumn({ name: 'conversationId', referencedColumnName: 'id' })
-  connection: Conversation;
-
-  @ManyToOne(() => User)
-  @JoinColumn({ name: 'senderUserId', referencedColumnName: 'id' })
-  senderUser: User;
-
-  @ManyToOne(() => User)
-  @JoinColumn({ name: 'receiverUserId', referencedColumnName: 'id' })
-  receiverUser: User;
+  conversation: Conversation;
 
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;

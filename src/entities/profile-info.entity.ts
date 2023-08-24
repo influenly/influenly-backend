@@ -7,8 +7,8 @@ import {
   UpdateDateColumn
 } from 'typeorm';
 
-@Entity('advertiser_info')
-export class AdvertiserInfo extends BaseEntity {
+@Entity('profile_info')
+export class ProfileInfo extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -27,8 +27,8 @@ export class AdvertiserInfo extends BaseEntity {
   @Column('varchar', { length: 60, array: true })
   contentTags: string[];
 
-  @Column('int', { default: 0 })
-  credits: number;
+  @Column('date', { nullable: true })
+  birthDate: Date;
 
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;

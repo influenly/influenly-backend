@@ -8,7 +8,6 @@ import {
   PrimaryGeneratedColumn,
   OneToOne
 } from 'typeorm';
-import { Connection } from './connection.entity';
 
 @Entity('conversation')
 export class Conversation extends BaseEntity {
@@ -16,11 +15,13 @@ export class Conversation extends BaseEntity {
   id: number;
 
   @Column({ type: 'int' })
-  connectionId: number;
+  advertiserUserId: number;
 
-  @OneToOne(() => Connection)
-  @JoinColumn({ name: 'connectionId', referencedColumnName: 'id' })
-  connection: Connection;
+  @Column({ type: 'int' })
+  creatorUserId: number;
+
+  @Column({ type: 'varchar' })
+  status: number;
 
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
