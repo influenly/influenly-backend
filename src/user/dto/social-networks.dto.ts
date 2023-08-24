@@ -1,5 +1,5 @@
 import { IsNotEmpty, IsOptional, IsString, IsUrl } from 'class-validator';
-import { ISocialNetworks } from 'src/common/interfaces/advertiser';
+import { ISocialNetworks } from 'src/common/interfaces/profile';
 
 export class SocialNetworksDto implements ISocialNetworks {
   @IsOptional()

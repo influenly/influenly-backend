@@ -7,12 +7,8 @@ import {
   IsArray,
   IsDateString,
   IsISO8601,
-  Length,
-  IsObject,
-  ValidateNested
+  Length
 } from 'class-validator';
-import { ISocialNetworks } from 'src/common/interfaces/advertiser/social-networks.interface';
-import { SocialNetworksDto } from './social-networks.dto';
 
 export class CompleteOnboardingDto {
   @ApiProperty()
@@ -29,22 +25,19 @@ export class CompleteOnboardingDto {
   @Length(10, 10)
   birthDate?: string;
 
-  @ApiPropertyOptional()
-  @IsOptional()
+  @ApiProperty()
   @IsNotEmpty()
-  @IsObject()
-  @ValidateNested()
-  @Type(() => SocialNetworksDto)
-  socialNetworks?: ISocialNetworks;
+  @IsArray()
+  socialNetworks: string[];
 
   @ApiProperty()
   @IsOptional()
   @IsNotEmpty()
   @IsString()
-  userName: string;
+  username: string;
 
   @ApiProperty()
   @IsNotEmpty()
   @IsArray()
-  contentType: string[];
+  contentTags: string[];
 }

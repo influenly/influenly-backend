@@ -24,7 +24,7 @@ import { User } from 'src/entities';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Post()
+  @Post('/onboarding')
   @UsePipes(ValidationPipe)
   async completeOnboarding(
     @GetUser() user: User,

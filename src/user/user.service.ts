@@ -1,22 +1,21 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { SignUpRequestDto } from 'src/common/dto';
-import { CreatorRepository } from 'src/creator/creator.repository';
+import { ProfileRepository } from './profile/profile.repository';
 import { User } from 'src/entities';
 import { DataSource } from 'typeorm';
 import { UpdateUserDto } from './dto';
 import { UserRepository } from './user.repository';
-import { IUpdateAdvertiserInput } from 'src/common/interfaces/advertiser';
-import { AdvertiserRepository } from 'src/advertiser/advertiser.repository';
+// import {  } from 'src/common/interfaces/profile';
 import { UserTypes } from 'src/common/constants';
-import { CompleteOnboardingDto } from './onboarding/dto';
+import { CompleteOnboardingDto } from './dto';
 import { IUpdateCreatorInput } from 'src/common/interfaces/creator';
+import { ICreateProfileInput } from './profile/interfaces/create-profile-input.interface';
 
 @Injectable()
 export class UserService {
   constructor(
     private readonly userRepository: UserRepository,
-    private readonly creatorRepository: CreatorRepository,
-    private readonly advertiserRepository: AdvertiserRepository,
+    private readonly profileRepository: ProfileRepository,
     private readonly dataSource: DataSource
   ) {}
 
@@ -48,15 +47,17 @@ export class UserService {
     completeOnboardingDto: CompleteOnboardingDto
   ) {
     const user = await this.userRepository.findById(id);
+
     if (user.onboardingCompleted)
       throw new Error('User has already completed the onboarding');
+
     const queryRunner = this.dataSource.createQueryRunner();
 
     await queryRunner.connect();
     await queryRunner.startTransaction();
 
     try {
-      const { description, birthDate, userName, contentType, socialNetworks } =
+      const { description, birthDate, username, contentTags, socialNetworks } =
         completeOnboardingDto;
       const updatedUser = await this.userRepository.updateById(
         id,
@@ -68,70 +69,34 @@ export class UserService {
 
       const isCreator = updatedUser.type === UserTypes.CREATOR;
 
-      let creatorId: number;
-      let advertiserId: number;
+      const creator = await this.profileRepository.createAndSave(
+        id,
+        queryRunner
+      );
+      if (!creator)
+        throw new Error(`Creator not found with given user id ${id}`);
 
-      if (isCreator) {
-        const creator = await this.creatorRepository.findByUserId(
-          id,
-          queryRunner
-        );
-        if (!creator)
-          throw new Error(`Creator not found with given user id ${id}`);
+      // if (!creator.youtubeLinked)
+      //   throw new Error(`Creator has not youtube linked`);
 
-        if (!creator.youtubeLinked)
-          throw new Error(`Creator has not youtube linked`);
-
-        if (!birthDate)
-          throw new Error(
-            'birthDate is required to complete the onboarding of a creator'
-          );
-        const updateCreatorInput: IUpdateCreatorInput = {
-          description,
-          userName,
-          contentType,
-          birthDate
-        };
-        const updatedCreator = await this.creatorRepository.updateById(
-          creator.id,
-          updateCreatorInput,
-          queryRunner
+      if (!birthDate)
+        throw new Error(
+          'birthDate is required to complete the onboarding of a creator'
         );
-        creatorId = updatedCreator.id;
-      } else {
-        const advertiser = await this.advertiserRepository.findByUserId(
-          id,
-          queryRunner
-        );
-        if (!advertiser)
-          throw new Error(`Advertiser not found with given user id ${id}`);
-        if (!socialNetworks)
-          throw new Error(
-            'socialNetworks is required to complete the onboarding of an advertiser'
-          );
-
-        const updateAdvertiserInput: IUpdateAdvertiserInput = {
-          description,
-          userName,
-          contentType,
-          ...socialNetworks
-        };
-        const advertiserCreated = await this.advertiserRepository.updateById(
-          advertiser.id,
-          updateAdvertiserInput,
-          queryRunner
-        );
-        advertiserId = advertiserCreated.id;
-      }
+      const createProfileInput: ICreateProfileInput = {
+        description,
+        socialNetworks,
+        username,
+        contentTags,
+        birthDate
+      };
 
       await queryRunner.commitTransaction();
       Logger.log(
         `User ${updatedUser?.id} updated onboaring completed succesfully.`
       );
       return {
-        ...updatedUser,
-        creatorId,
-        advertiserId
+        ...updatedUser
       };
     } catch (err) {
       Logger.error(`Onboarding completion transaction has failed.`);

@@ -9,7 +9,7 @@ import { UserTypes } from 'src/common/constants';
 import { CreatorRepository } from 'src/creator/creator.repository';
 import { AdvertiserRepository } from 'src/advertiser/advertiser.repository';
 import { ICreateCreatorInput } from 'src/common/interfaces/creator';
-import { ICreateAdvertiserInput } from 'src/common/interfaces/advertiser';
+import { ICreateAdvertiserInput } from 'src/common/interfaces/profile';
 import { Errors } from 'src/common/constants/enums';
 
 @Injectable()
