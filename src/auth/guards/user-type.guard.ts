@@ -41,10 +41,11 @@ export class UserTypeGuard implements CanActivate {
 
     if (isValidType.length === 1) return true;
 
+    console.log(validTypes);
     throw new ForbiddenException(
       `User with type ${user.type} cannot acces to a route protected to ${
         validTypes[0] || validTypes[1]
-      }S`
+      }`
     );
   }
 }

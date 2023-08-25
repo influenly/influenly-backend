@@ -9,7 +9,7 @@ import {
 import { Observable } from 'rxjs';
 import { METADATA_REQUEST_ROLES } from '../constants/metadata-request';
 import { User } from 'src/entities';
-import { UserRoles } from 'src/common/constants';
+import { UserRole } from 'src/common/constants/types';
 
 @Injectable()
 export class UserRoleGuard implements CanActivate {
@@ -18,17 +18,21 @@ export class UserRoleGuard implements CanActivate {
   canActivate(
     context: ExecutionContext
   ): boolean | Promise<boolean> | Observable<boolean> {
-    const handlerValidRole: UserRoles = this.reflector.get(
+    const handlerValidRole: UserRole = this.reflector.get(
       METADATA_REQUEST_ROLES,
       context.getHandler()
     );
 
-    const classValidRole: UserRoles = this.reflector.get(
+    console.log(context.getHandler());
+
+    const classValidRole: UserRole = this.reflector.get(
       METADATA_REQUEST_ROLES,
       context.getClass()
     );
+    console.log(context.getClass());
 
     const validRoles = [handlerValidRole, classValidRole];
+    console.log(validRoles);
     if (validRoles.every((role) => !role)) return true;
 
     const req = context.switchToHttp().getRequest();
@@ -43,9 +47,9 @@ export class UserRoleGuard implements CanActivate {
     if (isValidRole.length === 1) return true;
 
     throw new ForbiddenException(
-      `User with type ${user.type} cannot acces to a route protected to ${
+      `User with role ${user.role} cannot access to a route protected to ${
         validRoles[0] || validRoles[1]
-      }S`
+      }`
     );
   }
 }
