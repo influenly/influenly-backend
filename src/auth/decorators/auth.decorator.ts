@@ -8,7 +8,7 @@ import { TypeProtected } from './type-protected.decorator';
 
 export function Auth(input?: AuthDecoratorInput) {
   return applyDecorators(
-    RoleProtected(...(input?.roles || [])),
+    RoleProtected(input?.role),
     TypeProtected(input?.type),
     UseGuards(AuthGuard(), UserRoleGuard, UserTypeGuard)
   );

@@ -37,19 +37,4 @@ export class AnalyticsController {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
   }
-
-  @Delete(':id')
-  async deleteAnalytics(@Param('id', ParseIntPipe) analyticsId: number) {
-    try {
-      const deletedAnalytics = await this.analyticsService.deleteAnalytics(
-        analyticsId
-      );
-      if (!deletedAnalytics) {
-        throw new Error('Problem at deleting');
-      }
-      return deletedAnalytics;
-    } catch (error) {
-      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
-    }
-  }
 }

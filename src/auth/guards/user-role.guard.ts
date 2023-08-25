@@ -18,36 +18,34 @@ export class UserRoleGuard implements CanActivate {
   canActivate(
     context: ExecutionContext
   ): boolean | Promise<boolean> | Observable<boolean> {
-    const handlerValidRoles: UserRoles[] = this.reflector.get(
+    const handlerValidRole: UserRoles = this.reflector.get(
       METADATA_REQUEST_ROLES,
       context.getHandler()
     );
 
-    const classValidRoles: UserRoles[] = this.reflector.get(
+    const classValidRole: UserRoles = this.reflector.get(
       METADATA_REQUEST_ROLES,
       context.getClass()
     );
 
-    const validRoles = this.getValidRoles(handlerValidRoles, classValidRoles);
-
-    if (!validRoles || validRoles.length === 0) return true;
+    const validRoles = [handlerValidRole, classValidRole];
+    if (validRoles.every((role) => !role)) return true;
 
     const req = context.switchToHttp().getRequest();
     const user = req.user as User;
 
     if (!user) throw new BadRequestException('User not found');
 
-    for (const role of user.roles) {
-      if (validRoles.includes(role)) {
-        return true;
-      }
-    }
+    const isValidRole = validRoles.filter(
+      (validRole) => validRole === user.role
+    );
+
+    if (isValidRole.length === 1) return true;
 
     throw new ForbiddenException(
-      `User with email ${user.email} need a valid role: [${validRoles}]`
+      `User with type ${user.type} cannot acces to a route protected to ${
+        validRoles[0] || validRoles[1]
+      }S`
     );
   }
-
-  getValidRoles = (handlerRoles: UserRoles[], classRoles: UserRoles[]) =>
-    [].concat(handlerRoles || []).concat(classRoles || []);
 }

@@ -17,17 +17,17 @@ export class UserTypeGuard implements CanActivate {
   canActivate(
     context: ExecutionContext
   ): boolean | Promise<boolean> | Observable<boolean> {
-    const validTypeHandler: string = this.reflector.get(
+    const handlerValidType: string = this.reflector.get(
       METADATA_REQUEST_TYPES,
       context.getHandler()
     );
 
-    const validTypeClass: string = this.reflector.get(
+    const classValidType: string = this.reflector.get(
       METADATA_REQUEST_TYPES,
       context.getClass()
     );
 
-    const validTypes = [validTypeHandler, validTypeClass];
+    const validTypes = [handlerValidType, classValidType];
     if (validTypes.every((type) => !type)) return true;
 
     const req = context.switchToHttp().getRequest();
