@@ -14,7 +14,7 @@ export class ProfileRepository extends Repository<Profile> {
   ): Promise<Profile> {
     const newProfile = this.create(createProfileInput);
     const queryResult = await this.createQueryBuilder(
-      'profile-creation',
+      'profile-createAndSave',
       queryRunner
     )
       .insert()

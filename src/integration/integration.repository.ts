@@ -14,7 +14,7 @@ export class IntegrationRepository extends Repository<Integration> {
   ): Promise<Integration> {
     const newIntegration = this.create(createIntegrationInput);
     const queryResult = await this.createQueryBuilder(
-      'createAndSave',
+      'integration-createAndSave',
       queryRunner
     )
       .insert()

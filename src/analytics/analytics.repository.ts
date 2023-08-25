@@ -14,7 +14,7 @@ export class AnalyticsRepository extends Repository<Analytics> {
   ): Promise<Analytics> {
     const newAnalytics = this.create(createAnalyticsInput);
     const queryResult = await this.createQueryBuilder(
-      'createAndSave',
+      'analytics-createAndSave',
       queryRunner
     )
       .insert()

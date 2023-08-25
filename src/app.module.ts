@@ -2,10 +2,6 @@ import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import entities from './entities';
-import { AdvertiserModule } from './advertiser/advertiser.module';
-import { CreatorModule } from './creator/creator.module';
-import { ConnectionModule } from './connection/connection.module';
-import { ContractModule } from './contract/contract.module';
 import { AnalyticsModule } from './analytics/analytics.module';
 import { IntegrationModule } from './integration/integration.module';
 import { AuthModule } from './auth/auth.module';
@@ -57,10 +53,6 @@ import { LoggerMiddleware } from './middlewares/logger.middleware';
       ttl: 60,
       limit: 10
     }),
-    AdvertiserModule,
-    CreatorModule,
-    ConnectionModule,
-    ContractModule,
     AnalyticsModule,
     IntegrationModule,
     AuthModule,

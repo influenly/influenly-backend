@@ -4,17 +4,18 @@ import { Integration } from 'src/entities';
 import { GoogleService } from 'src/libs/google/google.service';
 import { CreateIntegrationDto } from './dto';
 import { IntegrationRepository } from './integration.repository';
-import { Platforms } from 'src/common/constants/enums';
 import { AnalyticsRepository } from 'src/analytics/analytics.repository';
-import { IUpdateCreatorInput } from 'src/common/interfaces/creator';
+import { AnalyticsYoutubeRepository } from 'src/analytics/analytics-youtube/analytics-youtube.repository';
+import { UserRepository } from '../user/user.repository';
 
 @Injectable()
 export class IntegrationService {
   constructor(
     private readonly integrationRepository: IntegrationRepository,
     private readonly googleOAuth2Service: GoogleService,
-    private readonly creatorRepository: CreatorRepository,
     private readonly analyticsRepository: AnalyticsRepository,
+    private readonly analyticsYoutubeRepository: AnalyticsYoutubeRepository,
+    private readonly userRepository: UserRepository,
     private readonly dataSource: DataSource
   ) {}
 
@@ -35,25 +36,14 @@ export class IntegrationService {
     await queryRunner.startTransaction();
 
     try {
-      const updatedCreator = await this.creatorRepository.updateByUserId(
-        userId,
-        { youtubeLinked: true } as IUpdateCreatorInput,
-        queryRunner
-      );
+      const authorizationCode = createIntegrationDto.authorizationCode;
 
       const {
         access_token: accessToken,
         expiry_date: expiryDate,
         id_token: idToken,
         refresh_token: refreshToken
-        // scope,
-        // token_type: tokenType
-      } = await this.googleOAuth2Service.getToken(
-        createIntegrationDto.authorizationCode
-      );
-
-      const platform =
-        Platforms[createIntegrationDto.platform as keyof typeof Platforms];
+      } = await this.googleOAuth2Service.getToken(authorizationCode);
 
       const newIntegration = await this.integrationRepository.createAndSave(
         {
@@ -65,22 +55,38 @@ export class IntegrationService {
         queryRunner
       );
 
+      const integrationId = newIntegration.id;
+
+      const newAnalyticsYoutube =
+        await this.analyticsYoutubeRepository.createAndSave(
+          {
+            integrationId
+          },
+          queryRunner
+        );
+
+      const analyticsYoutubeId = newAnalyticsYoutube.id;
+
       const newAnalytics = await this.analyticsRepository.createAndSave(
         {
-          creatorId: updatedCreator.id,
-          integrationId: newIntegration.id,
-          platform
+          analyticsYoutubeId
         },
         queryRunner
       );
+
+      const analyticsId = newAnalytics.id;
+
+      await this.userRepository.updateById(userId, {
+        analyticsId
+      });
 
       await queryRunner.commitTransaction();
 
       return {
         userId,
-        creatorId: updatedCreator.id,
-        integrationId: newIntegration.id,
-        analyticsId: newAnalytics.id
+        analyticsId,
+        analyticsYoutubeId,
+        integrationId
       };
     } catch (err) {
       Logger.error(`Integration creation transaction has failed.`);
