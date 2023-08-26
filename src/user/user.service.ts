@@ -9,6 +9,7 @@ import { CompleteOnboardingDto } from './dto';
 import { ICreateProfileInput } from './profile/interfaces/create-profile-input.interface';
 import { AnalyticsRepository } from 'src/analytics/analytics.repository';
 import { ICreateUserInput } from './interfaces';
+import { UserTypes } from 'src/common/constants';
 
 @Injectable()
 export class UserService {
@@ -71,12 +72,11 @@ export class UserService {
   }
 
   async completeOnboarding(
-    id: number,
+    { id, onboardingCompleted, type }: Partial<User>,
     completeOnboardingDto: CompleteOnboardingDto
   ) {
-    const user = await this.userRepository.findById(id);
-
-    if (user.onboardingCompleted)
+    console.log(onboardingCompleted);
+    if (onboardingCompleted)
       throw new Error('User has already completed the onboarding');
 
     const queryRunner = this.dataSource.createQueryRunner();
@@ -88,12 +88,13 @@ export class UserService {
       const { description, birthDate, username, contentTags, socialNetworks } =
         completeOnboardingDto;
 
-      if (!birthDate)
+      if (!birthDate && type === UserTypes.CREATOR)
         throw new Error(
           'birthDate is required to complete the onboarding of a creator'
         );
 
       const createProfileInput: ICreateProfileInput = {
+        userId: id,
         description,
         socialNetworks,
         username,
@@ -106,7 +107,7 @@ export class UserService {
         queryRunner
       );
 
-      const updatedUser = await this.userRepository.updateById(
+      await this.userRepository.updateById(
         id,
         {
           onboardingCompleted: true
@@ -115,12 +116,11 @@ export class UserService {
       );
 
       await queryRunner.commitTransaction();
-      Logger.log(
-        `User ${updatedUser?.id} updated onboaring completed succesfully.`
-      );
+      Logger.log(`User ${id} onboaring completed succesfully.`);
 
       return {
-        ...updatedUser
+        ...createdProfile,
+        type
       };
     } catch (err) {
       Logger.error(`Onboarding completion transaction has failed.`);

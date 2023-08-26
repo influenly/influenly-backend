@@ -35,14 +35,20 @@ export class UserController {
     @Body() completeOnboardingDto: CompleteOnboardingDto
   ) {
     try {
-      const { id } = user;
+      const { id, onboardingCompleted, type } = user;
 
       const completeOnboardingResult =
-        await this.userService.completeOnboarding(id, completeOnboardingDto);
+        await this.userService.completeOnboarding(
+          { id, onboardingCompleted, type },
+          completeOnboardingDto
+        );
 
       return completeOnboardingResult;
     } catch (error) {
-      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+      throw new HttpException(
+        { error: true, message: error.message },
+        HttpStatus.BAD_REQUEST
+      );
     }
   }
 

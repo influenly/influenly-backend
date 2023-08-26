@@ -21,7 +21,7 @@ export class Profile extends BaseEntity {
   @Column('varchar', { unique: true, length: 50 })
   username: string;
 
-  @Column('varchar', { length: 50 })
+  @Column('varchar', { length: 50, nullable: true })
   profileImg: string;
 
   @Column('varchar', { array: true })

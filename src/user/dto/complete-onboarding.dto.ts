@@ -12,7 +12,6 @@ import {
 
 export class CompleteOnboardingDto {
   @ApiProperty()
-  @IsOptional()
   @IsNotEmpty()
   @IsString()
   description: string;
@@ -31,7 +30,6 @@ export class CompleteOnboardingDto {
   socialNetworks: string[];
 
   @ApiProperty()
-  @IsOptional()
   @IsNotEmpty()
   @IsString()
   username: string;
