@@ -18,10 +18,10 @@ export class Analytics extends BaseEntity {
   @Column({ type: 'int' })
   userId: number;
 
-  @Column({ type: 'boolean' })
+  @Column({ type: 'boolean', default: false })
   youtubeLinked: boolean;
 
-  @Column({ type: 'boolean' })
+  @Column({ type: 'boolean', default: false })
   tiktokLinked: boolean;
 
   @CreateDateColumn({ type: 'timestamp' })

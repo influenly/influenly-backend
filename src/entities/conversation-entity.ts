@@ -31,10 +31,10 @@ export class Conversation extends BaseEntity {
   updatedAt: Date;
 
   @OneToOne(() => User)
-  @JoinColumn({ name: 'userId' })
+  @JoinColumn({ name: 'advertiserUserId' })
   advertiserUser: User;
 
   @OneToOne(() => User)
-  @JoinColumn({ name: 'userId' })
+  @JoinColumn({ name: 'creatorUserId' })
   creatorUser: User;
 }

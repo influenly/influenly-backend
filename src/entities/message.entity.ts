@@ -30,7 +30,7 @@ export class Message extends BaseEntity {
   initial_message: boolean;
 
   @OneToOne(() => Conversation)
-  @JoinColumn({ name: 'conversationId', referencedColumnName: 'id' })
+  @JoinColumn({ name: 'conversationId' })
   conversation: Conversation;
 
   @CreateDateColumn({ type: 'timestamp' })

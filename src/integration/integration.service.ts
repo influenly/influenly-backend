@@ -31,7 +31,7 @@ export class IntegrationService {
   ) {
     const { authorizationCode, platform } = createIntegrationDto;
 
-    const analyticsPlatformMap = new Map();
+    const analyticsPlatformMap = new Map<Platforms, string>();
     analyticsPlatformMap.set(Platforms.YOUTUBE, 'youtubeLinked');
     analyticsPlatformMap.set(Platforms.TIKTOK, 'tiktokLinked');
 
@@ -98,7 +98,12 @@ export class IntegrationService {
 
       await queryRunner.commitTransaction();
 
-      return {};
+      Logger.error(`Integration id: ${newIntegration.id} created successfully`);
+
+      return {
+        error: false,
+        message: 'Integration created successfully'
+      };
     } catch (err) {
       Logger.error(`Integration creation transaction has failed.`);
       await queryRunner.rollbackTransaction();
