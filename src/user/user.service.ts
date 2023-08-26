@@ -36,20 +36,17 @@ export class UserService {
     await queryRunner.connect();
     await queryRunner.startTransaction();
     try {
-      const newAnalytics = await this.analyticsRepository.createAndSave(
-        {},
-        queryRunner
-      );
-
-      const analyticsId = newAnalytics.id;
-
       const createUserInput: ICreateUserInput = {
-        ...signUpRequestDto,
-        analyticsId
+        ...signUpRequestDto
       };
 
       const newUser = await this.userRepository.createAndSave(
         createUserInput,
+        queryRunner
+      );
+
+      await this.analyticsRepository.createAndSave(
+        { userId: newUser.id },
         queryRunner
       );
 

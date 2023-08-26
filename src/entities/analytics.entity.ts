@@ -8,18 +8,21 @@ import {
   OneToOne,
   JoinColumn
 } from 'typeorm';
-import { AnalyticsYoutube } from './analytics-youtube.entity';
+import { User } from './user.entity';
 
 @Entity('analytics')
 export class Analytics extends BaseEntity {
   @PrimaryGeneratedColumn('increment')
   id: number;
 
-  @Column('int', { nullable: true })
-  analyticsYoutubeId: number;
+  @Column({ type: 'int' })
+  userId: number;
 
-  @Column('int', { nullable: true })
-  analyticsTiktokId: number;
+  @Column({ type: 'boolean' })
+  youtubeLinked: boolean;
+
+  @Column({ type: 'boolean' })
+  tiktokLinked: boolean;
 
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
@@ -27,7 +30,7 @@ export class Analytics extends BaseEntity {
   @UpdateDateColumn({ type: 'timestamp' })
   updatedAt: Date;
 
-  @OneToOne(() => AnalyticsYoutube)
-  @JoinColumn({ name: 'analyticsYoutubeId' })
-  analyticsYoutube: AnalyticsYoutube;
+  @OneToOne(() => User)
+  @JoinColumn({ name: 'userId' })
+  user: User;
 }

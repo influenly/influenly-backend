@@ -6,7 +6,6 @@ import { CreateIntegrationDto } from './dto';
 import { IntegrationRepository } from './integration.repository';
 import { AnalyticsRepository } from 'src/analytics/analytics.repository';
 import { AnalyticsYoutubeRepository } from 'src/analytics/analytics-youtube/analytics-youtube.repository';
-import { UserRepository } from '../user/user.repository';
 import { Platforms } from 'src/common/constants/enums';
 
 @Injectable()
@@ -16,7 +15,6 @@ export class IntegrationService {
     private readonly googleOAuth2Service: GoogleService,
     private readonly analyticsRepository: AnalyticsRepository,
     private readonly analyticsYoutubeRepository: AnalyticsYoutubeRepository,
-    private readonly userRepository: UserRepository,
     private readonly dataSource: DataSource
   ) {}
 
@@ -31,14 +29,27 @@ export class IntegrationService {
     userId: number,
     createIntegrationDto: CreateIntegrationDto
   ) {
+    const { authorizationCode, platform } = createIntegrationDto;
+
+    const analyticsPlatformMap = new Map();
+    analyticsPlatformMap.set(Platforms.YOUTUBE, 'youtubeLinked');
+    analyticsPlatformMap.set(Platforms.TIKTOK, 'tiktokLinked');
+
+    const analyticsPlatformKey = analyticsPlatformMap.get(platform);
+
+    const analytics = await this.analyticsRepository.findByUserId(userId);
+
+    if (analytics[analyticsPlatformKey])
+      throw new Error(`User already has integration for ${platform}`);
+
+    const analyticsId = analytics.id;
+
     const queryRunner = this.dataSource.createQueryRunner();
 
     await queryRunner.connect();
     await queryRunner.startTransaction();
 
     try {
-      const { authorizationCode, analyticsId } = createIntegrationDto;
-
       const {
         access_token: accessToken,
         expiry_date: expiryDate,
@@ -58,53 +69,36 @@ export class IntegrationService {
 
       const integrationId = newIntegration.id;
 
-      let newPlatformAnalytics;
-
       switch (createIntegrationDto.platform) {
         case Platforms.YOUTUBE:
-          newPlatformAnalytics =
-            await this.analyticsYoutubeRepository.createAndSave(
-              {
-                integrationId
-              },
-              queryRunner
-            );
+          await this.analyticsYoutubeRepository.createAndSave(
+            {
+              analyticsId,
+              integrationId
+            },
+            queryRunner
+          );
           break;
 
         case Platforms.TIKTOK:
-          newPlatformAnalytics = 'analytics tiktok...';
+          Logger.log('analytics tiktok...');
           break;
 
         default:
           throw new Error('Invalid Platform');
       }
 
-      const newPlatformAnalyticsId = newPlatformAnalytics.id;
-
-      const analyticsMap = new Map();
-      analyticsMap.set(Platforms.YOUTUBE, 'analyticsYoutubeId');
-      analyticsMap.set(Platforms.TIKTOK, 'analyticsTiktokId');
-
-      const newPlatformAnalyticsIdKey = analyticsMap.get(
-        createIntegrationDto.platform
-      );
-
       await this.analyticsRepository.updateById(
         analyticsId,
         {
-          [newPlatformAnalyticsIdKey]: newPlatformAnalyticsId
+          [analyticsPlatformKey]: true
         },
         queryRunner
       );
 
       await queryRunner.commitTransaction();
 
-      return {
-        userId,
-        analyticsId,
-        [newPlatformAnalyticsIdKey]: newPlatformAnalyticsId,
-        integrationId
-      };
+      return {};
     } catch (err) {
       Logger.error(`Integration creation transaction has failed.`);
       await queryRunner.rollbackTransaction();

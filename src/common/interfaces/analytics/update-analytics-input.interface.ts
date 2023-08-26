@@ -1,3 +1,4 @@
-import { ICreateAnalyticsInput } from './create-analytics-input.interface';
-
-export interface IUpdateAnalyticsInput extends ICreateAnalyticsInput {}
+export interface IUpdateAnalyticsInput {
+  youtubeLinked?: boolean;
+  tiktokLinked?: boolean;
+}

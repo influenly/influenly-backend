@@ -19,11 +19,6 @@ export class CreateIntegrationDto {
 
   @ApiProperty()
   @IsNotEmpty()
-  @IsNumber()
-  analyticsId: number;
-
-  @ApiProperty()
-  @IsNotEmpty()
   @IsString()
   @IsIn(platforms)
   platform: Platform;

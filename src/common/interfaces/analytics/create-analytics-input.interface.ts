@@ -1,4 +1,3 @@
 export interface ICreateAnalyticsInput {
-  analyticsYoutubeId?: number;
-  analyticsTiktokId?: number;
+  userId: number;
 }

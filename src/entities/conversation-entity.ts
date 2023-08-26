@@ -8,6 +8,7 @@ import {
   PrimaryGeneratedColumn,
   OneToOne
 } from 'typeorm';
+import { User } from './user.entity';
 
 @Entity('conversation')
 export class Conversation extends BaseEntity {
@@ -28,4 +29,12 @@ export class Conversation extends BaseEntity {
 
   @UpdateDateColumn({ type: 'timestamp' })
   updatedAt: Date;
+
+  @OneToOne(() => User)
+  @JoinColumn({ name: 'userId' })
+  advertiserUser: User;
+
+  @OneToOne(() => User)
+  @JoinColumn({ name: 'userId' })
+  creatorUser: User;
 }

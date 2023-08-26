@@ -3,7 +3,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { AnalyticsModule } from 'src/analytics/analytics.module';
 import { AuthModule } from 'src/auth/auth.module';
-import { UserModule } from 'src/user/user.module';
 
 import { Integration } from 'src/entities';
 
@@ -21,7 +20,6 @@ import { UserRepository } from 'src/user/user.repository';
   imports: [
     TypeOrmModule.forFeature([Integration]),
     AuthModule,
-    UserModule,
     AnalyticsModule
   ],
   controllers: [IntegrationController],
@@ -30,8 +28,7 @@ import { UserRepository } from 'src/user/user.repository';
     IntegrationRepository,
     GoogleService,
     AnalyticsRepository,
-    AnalyticsYoutubeRepository,
-    UserRepository
+    AnalyticsYoutubeRepository
   ]
 })
 export class IntegrationModule {}

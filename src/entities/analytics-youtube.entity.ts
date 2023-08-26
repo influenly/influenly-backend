@@ -9,11 +9,15 @@ import {
   JoinColumn
 } from 'typeorm';
 import { Integration } from './integration.entitiy';
+import { Analytics } from './analytics.entity';
 
 @Entity('analytics_youtube')
 export class AnalyticsYoutube extends BaseEntity {
   @PrimaryGeneratedColumn('increment')
   id: number;
+
+  @Column({ type: 'int' })
+  analyticsId: number;
 
   @Column('int', { unique: true })
   integrationId: number;
@@ -32,6 +36,10 @@ export class AnalyticsYoutube extends BaseEntity {
 
   @UpdateDateColumn({ type: 'timestamp' })
   updatedAt: Date;
+
+  @OneToOne(() => Analytics)
+  @JoinColumn({ name: 'analyticsId' })
+  analytics: Analytics;
 
   @OneToOne(() => Integration)
   @JoinColumn({ name: 'integrationId' })

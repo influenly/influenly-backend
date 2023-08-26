@@ -1,17 +1,22 @@
-import { ISocialNetworks } from 'src/common/interfaces/profile';
 import {
   BaseEntity,
   Column,
   CreateDateColumn,
   Entity,
   PrimaryGeneratedColumn,
-  UpdateDateColumn
+  UpdateDateColumn,
+  OneToOne,
+  JoinColumn
 } from 'typeorm';
+import { User } from './user.entity';
 
 @Entity('profile')
 export class Profile extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
+
+  @Column({ type: 'int' })
+  userId: number;
 
   @Column('varchar', { unique: true, length: 50 })
   username: string;
@@ -36,4 +41,8 @@ export class Profile extends BaseEntity {
 
   @UpdateDateColumn({ type: 'timestamp' })
   updatedAt: Date;
+
+  @OneToOne(() => User)
+  @JoinColumn({ name: 'userId' })
+  user: User;
 }

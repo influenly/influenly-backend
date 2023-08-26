@@ -16,12 +16,6 @@ export class User extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: 'int', nullable: true, unique: true })
-  profileId: number;
-
-  @Column({ type: 'int', nullable: true, unique: true })
-  analyticsId: number;
-
   @Column({ unique: true, type: 'varchar', length: 120 })
   email: string;
 
@@ -45,12 +39,4 @@ export class User extends BaseEntity {
 
   @UpdateDateColumn({ type: 'timestamp' })
   updatedAt: Date;
-
-  @OneToOne(() => Analytics)
-  @JoinColumn({ name: 'analyticsId' })
-  analytics: Analytics;
-
-  @OneToOne(() => Profile)
-  @JoinColumn({ name: 'profileId' })
-  profile: Profile;
 }

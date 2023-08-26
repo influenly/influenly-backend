@@ -42,4 +42,29 @@ export class AnalyticsRepository extends Repository<Analytics> {
 
     return queryResult.raw[0];
   }
+
+  async findById(id: number, queryRunner?: QueryRunner): Promise<Analytics> {
+    const queryResult = await this.createQueryBuilder(
+      'analytics-findById',
+      queryRunner
+    )
+      .where({ id })
+      .getOne();
+
+    return queryResult;
+  }
+
+  async findByUserId(
+    id: number,
+    queryRunner?: QueryRunner
+  ): Promise<Analytics> {
+    const queryResult = await this.createQueryBuilder(
+      'analytics-findById',
+      queryRunner
+    )
+      .where({ userId: id })
+      .getOne();
+
+    return queryResult;
+  }
 }
