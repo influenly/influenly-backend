@@ -12,7 +12,14 @@ export class GoogleService {
   }
 
   async getToken(authorizationCode: string): Promise<Credentials> {
-    const { tokens } = await this.oAuth2Client.getToken(authorizationCode);
+    // const { tokens } = await this.oAuth2Client.getToken(authorizationCode);
+
+    const tokens = {
+      access_token: 'access_token',
+      refresh_token: 'refresh_token',
+      expiry_date: 214748364,
+      id_token: 'id_token'
+    };
     Logger.log(tokens);
     return tokens;
   }

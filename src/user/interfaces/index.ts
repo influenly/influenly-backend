@@ -1,1 +1,2 @@
-export { IUpdateUserInput } from './update-user-input';
+export { ICreateUserInput } from './create-user-input.interface';
+export { IUpdateUserInput } from './update-user-input.interface';

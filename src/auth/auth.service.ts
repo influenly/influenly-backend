@@ -1,15 +1,15 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
-import { UserRepository } from 'src/user/user.repository';
 import { SignInRequestDto, SignUpRequestDto } from '../common/dto';
 import { IJwtPayload } from './interfaces/jwt-payload.interface';
 import { Errors } from 'src/common/constants/enums';
+import { UserService } from 'src/user/user.service';
 
 @Injectable()
 export class AuthService {
   constructor(
-    private readonly userRepository: UserRepository,
+    private readonly userService: UserService,
     private readonly jwService: JwtService
   ) {}
   async signUp(signUpRequestDto: SignUpRequestDto) {
@@ -20,7 +20,7 @@ export class AuthService {
 
       signUpRequestDto = { ...signUpRequestDto, password: hashedPassword };
 
-      const newUser = await this.userRepository.createAndSave(signUpRequestDto);
+      const newUser = await this.userService.createUser(signUpRequestDto);
 
       const { id: userId } = newUser;
 
@@ -44,7 +44,7 @@ export class AuthService {
     try {
       const { email, password } = signInRequestDto;
 
-      const user = await this.userRepository.findByEmail(email);
+      const user = await this.userService.getUserByEmail(email);
 
       if (!user) {
         throw new Error(Errors.INVALID_EMAIL);

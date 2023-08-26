@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { SignUpRequestDto } from 'src/common/dto';
 import { User } from 'src/entities';
 import { Repository, DataSource, QueryRunner } from 'typeorm';
-import { IUpdateUserInput } from './interfaces';
+import { ICreateUserInput, IUpdateUserInput } from './interfaces';
 
 @Injectable()
 export class UserRepository extends Repository<User> {
@@ -10,12 +9,12 @@ export class UserRepository extends Repository<User> {
     super(User, dataSource.createEntityManager());
   }
   async createAndSave(
-    createUserInput: SignUpRequestDto,
+    createUserInput: ICreateUserInput,
     queryRunner?: QueryRunner
   ): Promise<User> {
     const newUser = this.create(createUserInput);
     const queryResult = await this.createQueryBuilder(
-      'createAndSave',
+      'user-createAndSave',
       queryRunner
     )
       .insert()

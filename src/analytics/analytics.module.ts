@@ -9,6 +9,11 @@ import { AnalyticsYoutubeRepository } from './analytics-youtube/analytics-youtub
 @Module({
   imports: [TypeOrmModule.forFeature([Analytics, AnalyticsYoutube])],
   controllers: [AnalyticsController],
-  providers: [AnalyticsService, AnalyticsRepository, AnalyticsYoutubeRepository]
+  providers: [
+    AnalyticsService,
+    AnalyticsRepository,
+    AnalyticsYoutubeRepository
+  ],
+  exports: [AnalyticsRepository]
 })
 export class AnalyticsModule {}

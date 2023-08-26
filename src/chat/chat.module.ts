@@ -9,4 +9,4 @@ import { Conversation, Message } from 'src/entities';
   //   controllers: [],
   //   providers: [AnalyticsService, AnalyticsRepository, AnalyticsYoutubeRepository]
 })
-export class AnalyticsModule {}
+export class ChatModule {}

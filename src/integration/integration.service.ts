@@ -7,6 +7,7 @@ import { IntegrationRepository } from './integration.repository';
 import { AnalyticsRepository } from 'src/analytics/analytics.repository';
 import { AnalyticsYoutubeRepository } from 'src/analytics/analytics-youtube/analytics-youtube.repository';
 import { UserRepository } from '../user/user.repository';
+import { Platforms } from 'src/common/constants/enums';
 
 @Injectable()
 export class IntegrationService {
@@ -36,7 +37,7 @@ export class IntegrationService {
     await queryRunner.startTransaction();
 
     try {
-      const authorizationCode = createIntegrationDto.authorizationCode;
+      const { authorizationCode, analyticsId } = createIntegrationDto;
 
       const {
         access_token: accessToken,
@@ -57,35 +58,51 @@ export class IntegrationService {
 
       const integrationId = newIntegration.id;
 
-      const newAnalyticsYoutube =
-        await this.analyticsYoutubeRepository.createAndSave(
-          {
-            integrationId
-          },
-          queryRunner
-        );
+      let newPlatformAnalytics;
 
-      const analyticsYoutubeId = newAnalyticsYoutube.id;
+      switch (createIntegrationDto.platform) {
+        case Platforms.YOUTUBE:
+          newPlatformAnalytics =
+            await this.analyticsYoutubeRepository.createAndSave(
+              {
+                integrationId
+              },
+              queryRunner
+            );
+          break;
 
-      const newAnalytics = await this.analyticsRepository.createAndSave(
+        case Platforms.TIKTOK:
+          newPlatformAnalytics = 'analytics tiktok...';
+          break;
+
+        default:
+          throw new Error('Invalid Platform');
+      }
+
+      const newPlatformAnalyticsId = newPlatformAnalytics.id;
+
+      const analyticsMap = new Map();
+      analyticsMap.set(Platforms.YOUTUBE, 'analyticsYoutubeId');
+      analyticsMap.set(Platforms.TIKTOK, 'analyticsTiktokId');
+
+      const newPlatformAnalyticsIdKey = analyticsMap.get(
+        createIntegrationDto.platform
+      );
+
+      await this.analyticsRepository.updateById(
+        analyticsId,
         {
-          analyticsYoutubeId
+          [newPlatformAnalyticsIdKey]: newPlatformAnalyticsId
         },
         queryRunner
       );
-
-      const analyticsId = newAnalytics.id;
-
-      await this.userRepository.updateById(userId, {
-        analyticsId
-      });
 
       await queryRunner.commitTransaction();
 
       return {
         userId,
         analyticsId,
-        analyticsYoutubeId,
+        [newPlatformAnalyticsIdKey]: newPlatformAnalyticsId,
         integrationId
       };
     } catch (err) {

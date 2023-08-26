@@ -5,14 +5,16 @@ import { User } from 'src/entities';
 import { DataSource } from 'typeorm';
 import { UpdateUserDto } from './dto';
 import { UserRepository } from './user.repository';
-import { UserTypes } from 'src/common/constants';
 import { CompleteOnboardingDto } from './dto';
 import { ICreateProfileInput } from './profile/interfaces/create-profile-input.interface';
+import { AnalyticsRepository } from 'src/analytics/analytics.repository';
+import { ICreateUserInput } from './interfaces';
 
 @Injectable()
 export class UserService {
   constructor(
     private readonly userRepository: UserRepository,
+    private readonly analyticsRepository: AnalyticsRepository,
     private readonly profileRepository: ProfileRepository,
     private readonly dataSource: DataSource
   ) {}
@@ -29,10 +31,41 @@ export class UserService {
   }
 
   async createUser(signUpRequestDto: SignUpRequestDto): Promise<User> {
-    const newUser = this.userRepository.create(signUpRequestDto);
-    await this.userRepository.save(newUser);
-    delete newUser.password;
-    return newUser;
+    const queryRunner = this.dataSource.createQueryRunner();
+
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+    try {
+      const newAnalytics = await this.analyticsRepository.createAndSave(
+        {},
+        queryRunner
+      );
+
+      const analyticsId = newAnalytics.id;
+
+      const createUserInput: ICreateUserInput = {
+        ...signUpRequestDto,
+        analyticsId
+      };
+
+      const newUser = await this.userRepository.createAndSave(
+        createUserInput,
+        queryRunner
+      );
+
+      await queryRunner.commitTransaction();
+
+      Logger.log(`User ${newUser?.id} created succesfully.`);
+
+      delete newUser.password;
+      return newUser;
+    } catch (err) {
+      Logger.error(`User creation has failed`);
+      await queryRunner.rollbackTransaction();
+      throw new Error(err.message);
+    } finally {
+      await queryRunner.release();
+    }
   }
 
   async updateById(id: number, updateUserDto: UpdateUserDto): Promise<User> {
@@ -84,15 +117,11 @@ export class UserService {
         queryRunner
       );
 
-      const isCreator = updatedUser.type === UserTypes.CREATOR;
-
-      // if (!creator.youtubeLinked)
-      //   throw new Error(`Creator has not youtube linked`);
-
       await queryRunner.commitTransaction();
       Logger.log(
         `User ${updatedUser?.id} updated onboaring completed succesfully.`
       );
+
       return {
         ...updatedUser
       };

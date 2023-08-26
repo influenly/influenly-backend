@@ -1,7 +1,10 @@
 import { DataSource, Repository, QueryRunner } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { Analytics } from 'src/entities';
-import { ICreateAnalyticsInput } from 'src/common/interfaces/analytics';
+import {
+  ICreateAnalyticsInput,
+  IUpdateAnalyticsInput
+} from 'src/common/interfaces/analytics';
 
 @Injectable()
 export class AnalyticsRepository extends Repository<Analytics> {
@@ -21,6 +24,22 @@ export class AnalyticsRepository extends Repository<Analytics> {
       .values(newAnalytics)
       .returning('*')
       .execute();
+    return queryResult.raw[0];
+  }
+
+  async updateById(
+    id: number,
+    updateAnalyticsInput: IUpdateAnalyticsInput,
+    queryRunner?: QueryRunner
+  ): Promise<Analytics> {
+    const queryResult = await this.createQueryBuilder('updateById', queryRunner)
+      .update(updateAnalyticsInput)
+      .where({
+        id
+      })
+      .returning('*')
+      .execute();
+
     return queryResult.raw[0];
   }
 }
