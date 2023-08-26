@@ -23,4 +23,18 @@ export class ProfileRepository extends Repository<Profile> {
       .execute();
     return queryResult.raw[0];
   }
+
+  async findByUserId(
+    userId: number,
+    queryRunner?: QueryRunner
+  ): Promise<Profile> {
+    const queryResult = await this.createQueryBuilder(
+      'profile-findByUserId',
+      queryRunner
+    )
+      .where({ userId })
+      .getOne();
+
+    return queryResult;
+  }
 }

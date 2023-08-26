@@ -5,6 +5,7 @@ import { User } from 'src/entities';
 import { UserController } from './user.controller';
 import { UserRepository } from './user.repository';
 import { UserService } from './user.service';
+import { ProfileService } from './profile/profile.service';
 import { ProfileRepository } from './profile/profile.repository';
 import { AnalyticsModule } from 'src/analytics/analytics.module';
 import { AnalyticsRepository } from 'src/analytics/analytics.repository';
@@ -19,6 +20,7 @@ import { AnalyticsRepository } from 'src/analytics/analytics.repository';
   providers: [
     UserService,
     UserRepository,
+    ProfileService,
     ProfileRepository,
     AnalyticsRepository
   ],

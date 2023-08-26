@@ -17,12 +17,16 @@ import { UserService } from './user.service';
 import { CompleteOnboardingDto, UpdateUserDto } from './dto';
 import { Auth, GetUser } from 'src/auth/decorators';
 import { User } from 'src/entities';
+import { ProfileService } from './profile/profile.service';
 
 @Auth()
 @ApiTags('user')
 @Controller('user')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    private readonly userService: UserService,
+    private readonly profileService: ProfileService
+  ) {}
 
   @Post('/onboarding')
   @UsePipes(ValidationPipe)
@@ -72,14 +76,21 @@ export class UserController {
     }
   }
 
-  @Delete(':id')
-  async deleteUser(@Param('id', ParseIntPipe) userId: number) {
+  @Get(':id/profile')
+  async getUserProfile(
+    @GetUser() { type, onboardingCompleted }: User,
+    @Param('id', ParseIntPipe) userId: number
+  ) {
     try {
-      const deletedUser = await this.userService.deleteUser(userId);
-      if (!deletedUser) {
-        throw new Error('Problem at deleting');
+      if (!onboardingCompleted)
+        throw new Error(
+          `User with id ${userId} has not completed the onboarding`
+        );
+      const profile = await this.profileService.getByUserId(userId);
+      if (!profile) {
+        throw new Error(`User with id ${userId} not found`);
       }
-      return deletedUser;
+      return { ...profile, type };
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
