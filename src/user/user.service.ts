@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { SignUpRequestDto } from 'src/common/dto';
+import { SignUpRequestDto } from 'src/auth/dto';
 import { ProfileRepository } from './profile/profile.repository';
 import { User } from 'src/entities';
 import { DataSource } from 'typeorm';
@@ -75,7 +75,6 @@ export class UserService {
     { id, onboardingCompleted, type }: Partial<User>,
     completeOnboardingDto: CompleteOnboardingDto
   ) {
-    console.log(onboardingCompleted);
     if (onboardingCompleted)
       throw new Error('User has already completed the onboarding');
 

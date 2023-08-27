@@ -1,7 +1,7 @@
 import { DataSource, Repository, QueryRunner } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { Integration } from 'src/entities';
-import { ICreateIntegrationInput } from 'src/common/interfaces/integration';
+import { ICreateIntegrationInput } from './interfaces';
 
 @Injectable()
 export class IntegrationRepository extends Repository<Integration> {

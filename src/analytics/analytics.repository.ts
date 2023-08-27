@@ -1,10 +1,7 @@
 import { DataSource, Repository, QueryRunner } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { Analytics } from 'src/entities';
-import {
-  ICreateAnalyticsInput,
-  IUpdateAnalyticsInput
-} from 'src/common/interfaces/analytics';
+import { ICreateAnalyticsInput, IUpdateAnalyticsInput } from './interfaces';
 
 @Injectable()
 export class AnalyticsRepository extends Repository<Analytics> {

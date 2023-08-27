@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
-import { SignInRequestDto, SignUpRequestDto } from '../common/dto';
+import { SignInRequestDto, SignUpRequestDto } from './dto';
 import { IJwtPayload } from './interfaces/jwt-payload.interface';
 import { Errors } from 'src/common/constants/enums';
 import { UserService } from 'src/user/user.service';
