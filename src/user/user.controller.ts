@@ -18,6 +18,7 @@ import { CompleteOnboardingDto, UpdateUserDto } from './dto';
 import { Auth, GetUser } from 'src/auth/decorators';
 import { User } from 'src/entities';
 import { ProfileService } from './profile/profile.service';
+import { UpdateProfileDto } from './profile/dto/update-profile.dto';
 
 @Auth()
 @ApiTags('user')
@@ -77,6 +78,23 @@ export class UserController {
         updateUserDto
       );
       return updatedUserResult;
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  @Patch('/profile')
+  @UsePipes(ValidationPipe)
+  async updateUserProfile(
+    @GetUser() user: User,
+    @Body() updateProfileDto: UpdateProfileDto
+  ) {
+    try {
+      const updatedProfileResult = await this.profileService.updateByUserId(
+        user.id,
+        updateProfileDto
+      );
+      return updatedProfileResult;
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }

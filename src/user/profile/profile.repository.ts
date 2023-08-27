@@ -2,6 +2,7 @@ import { DataSource, Repository, QueryRunner } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { Profile } from 'src/entities';
 import { ICreateProfileInput } from './interfaces/create-profile-input.interface';
+import { IUpdateProfileInput } from './interfaces/update-profile-input.interface';
 
 @Injectable()
 export class ProfileRepository extends Repository<Profile> {
@@ -36,5 +37,24 @@ export class ProfileRepository extends Repository<Profile> {
       .getOne();
 
     return queryResult;
+  }
+
+  async updateByUserId(
+    id: number,
+    updateProfileInput: IUpdateProfileInput,
+    queryRunner?: QueryRunner
+  ): Promise<Profile> {
+    const queryResult = await this.createQueryBuilder(
+      'profile-updateById',
+      queryRunner
+    )
+      .update(updateProfileInput)
+      .where({
+        userId: id
+      })
+      .returning('*')
+      .execute();
+
+    return queryResult.raw[0];
   }
 }
