@@ -14,7 +14,6 @@ import { IntegrationService } from './integration.service';
 import { IntegrationRepository } from './integration.repository';
 import { AnalyticsRepository } from 'src/analytics/analytics.repository';
 import { AnalyticsYoutubeRepository } from 'src/analytics/analytics-youtube/analytics-youtube.repository';
-import { UserRepository } from 'src/user/user.repository';
 
 @Module({
   imports: [

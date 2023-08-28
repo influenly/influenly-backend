@@ -22,7 +22,7 @@ export class Conversation extends BaseEntity {
   creatorUserId: number;
 
   @Column({ type: 'varchar' })
-  status: number;
+  status: string;
 
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;

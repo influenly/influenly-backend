@@ -14,6 +14,7 @@ import APP_CONFIG from './config/app';
 import DATABASE_CONFIG from './config/database';
 import GOOGLE_CONFIG from './config/google';
 import { LoggerMiddleware } from './middlewares/logger.middleware';
+import { ChatModule } from './chat/chat.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -58,7 +59,8 @@ import { LoggerMiddleware } from './middlewares/logger.middleware';
     AuthModule,
     UserModule,
     MailModule,
-    GoogleModule
+    GoogleModule,
+    ChatModule
   ],
   providers: [
     {

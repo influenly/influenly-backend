@@ -21,12 +21,4 @@ export class AnalyticsService {
     });
     return analytics;
   }
-
-  // async createAnalytics(
-  //   createAnalyticsDto: CreateAnalyticsDto
-  // ): Promise<Analytics> {
-  //   const newAnalytics = this.analyticsRepository.create(createAnalyticsDto);
-  //   await this.analyticsRepository.save(newAnalytics);
-  //   return newAnalytics;
-  // }
 }
