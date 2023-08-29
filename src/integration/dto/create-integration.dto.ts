@@ -1,12 +1,10 @@
 import {
   IsNotEmpty,
-  MinLength,
   IsString,
   IsIn,
-  IsNumber
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { Platform } from 'src/common/constants/types/platform';
+import { Platform } from 'src/common/constants/types/platform.type';
 import { Platforms } from 'src/common/constants/enums';
 
 const platforms = Object.keys(Platforms);

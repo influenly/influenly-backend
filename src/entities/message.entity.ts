@@ -12,6 +12,7 @@ import {
 import { Conversation } from './conversation-entity';
 import { UserType } from 'src/common/constants';
 import { User } from './user.entity';
+import { MessageType } from 'src/common/constants/types';
 
 @Entity('message')
 export class Message extends BaseEntity {
@@ -27,8 +28,8 @@ export class Message extends BaseEntity {
   @Column({ type: 'varchar' })
   content: string;
 
-  @Column({ type: 'boolean' })
-  initialMessage: boolean;
+  @Column({ type: 'varchar' })
+  type: MessageType;
 
   @OneToOne(() => Conversation)
   @JoinColumn({ name: 'conversationId' })
