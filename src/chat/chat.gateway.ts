@@ -15,12 +15,15 @@ import {
   AuthSocket,
   WSAuthMiddleware
 } from 'src/middlewares/socket-auth.middleware';
+import { SendMessageEventDto } from './dto/send-message-event.dto';
+import { UsePipes, ValidationPipe } from '@nestjs/common';
 
 @WebSocketGateway(3001, {
   cors: {
-    origin: 'http://localhost:3002'
+    origin: '*'
   }
 })
+@UsePipes(new ValidationPipe())
 export class ChatGateway implements NestGateway {
   constructor(
     private readonly chatService: ChatService,
@@ -33,10 +36,8 @@ export class ChatGateway implements NestGateway {
   @SubscribeMessage('sendMessage')
   async handleSendMessage(
     @ConnectedSocket() client: AuthSocket,
-    @MessageBody() eventBody: ISendMessageEvent
+    @MessageBody() eventBody: SendMessageEventDto
   ): Promise<void> {
-    console.log(client.id);
-    console.log(`message a emitir: recMessage-${client.user.id}`);
     // await this.chatService.createMessage(eventPayload);
     this.server.emit(`recMessage-${client.user.id}`, eventBody);
   }

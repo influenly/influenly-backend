@@ -6,14 +6,14 @@ import { ConfigService } from '@nestjs/config';
 import helmet from 'helmet';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule)
+  const app = await NestFactory.create(AppModule);
 
   const {
     api: { port }
   } = app.get(ConfigService).get('app');
 
   app.use(helmet());
-  app.enableCors({origin: ['http://asdasd:3000']});
+  app.enableCors({ origin: '*' });
 
   const swaggerConfig = new DocumentBuilder()
     .setTitle('Content API')

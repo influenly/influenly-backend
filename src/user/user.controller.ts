@@ -33,7 +33,7 @@ export class UserController {
     @Body() completeOnboardingDto: CompleteOnboardingDto
   ) {
     try {
-      const { id, onboardingCompleted, type } = user;
+      const { id, onboardingCompleted, type, country } = user;
 
       const completeOnboardingResult =
         await this.userService.completeOnboarding(
@@ -41,7 +41,7 @@ export class UserController {
           completeOnboardingDto
         );
 
-      return completeOnboardingResult;
+      return { ...completeOnboardingResult, country };
     } catch (error) {
       throw new HttpException(
         { error: true, message: error.message },
@@ -81,15 +81,15 @@ export class UserController {
 
   @Patch('/profile')
   async updateUserProfile(
-    @GetUser() user: User,
+    @GetUser() { id, country }: User,
     @Body() updateProfileDto: UpdateProfileDto
   ) {
     try {
       const updatedProfileResult = await this.profileService.updateByUserId(
-        user.id,
+        id,
         updateProfileDto
       );
-      return updatedProfileResult;
+      return { ...updatedProfileResult, country };
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
@@ -97,7 +97,7 @@ export class UserController {
 
   @Get(':id/profile')
   async getUserProfile(
-    @GetUser() { type, onboardingCompleted }: User,
+    @GetUser() { type, onboardingCompleted, country }: User,
     @Param('id', ParseIntPipe) userId: number
   ) {
     try {
@@ -109,7 +109,7 @@ export class UserController {
       if (!profile) {
         throw new Error(`User with id ${userId} not found`);
       }
-      return { ...profile, type };
+      return { ...profile, type, country };
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
