@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString, IsIn } from 'class-validator';
+import { IsNotEmpty, IsString, IsIn, IsNumber } from 'class-validator';
 import { MessageTypes } from 'src/common/constants/enums';
 import { MessageType } from 'src/common/constants/types';
 
@@ -6,12 +6,12 @@ const messageTypes = Object.keys(MessageTypes);
 
 export class SendMessageEventDto {
   @IsNotEmpty()
-  @IsString()
-  conversationId: string;
+  @IsNumber()
+  conversationId: number;
 
   @IsNotEmpty()
-  @IsString()
-  receiverUserId: string;
+  @IsNumber()
+  receiverUserId: number;
 
   @IsNotEmpty()
   @IsString()

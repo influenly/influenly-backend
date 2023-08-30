@@ -4,11 +4,8 @@ import {
   CreateDateColumn,
   Entity,
   PrimaryGeneratedColumn,
-  UpdateDateColumn,
-  OneToOne,
-  JoinColumn
+  UpdateDateColumn
 } from 'typeorm';
-import { Analytics, Profile } from 'src/entities';
 import { UserRoles, UserType } from 'src/common/constants';
 
 @Entity('user')

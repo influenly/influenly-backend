@@ -17,7 +17,6 @@ export const WSAuthMiddleware = (
 ): SocketMiddleware => {
   return async (socket: AuthSocket, next) => {
     try {
-      console.log(socket.handshake.headers.authorization);
       const jwtPayload = jwtService.verify(
         socket.handshake.headers.authorization ?? ''
       ) as IJwtPayload;
@@ -32,7 +31,6 @@ export const WSAuthMiddleware = (
         });
       }
     } catch (error) {
-      console.log(error);
       next({
         name: 'Unauthorizaed',
         message: 'Unauthorizaed'
