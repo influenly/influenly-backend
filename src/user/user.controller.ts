@@ -8,9 +8,7 @@ import {
   Param,
   ParseIntPipe,
   Patch,
-  Post,
-  UsePipes,
-  ValidationPipe
+  Post
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { UserService } from './user.service';
@@ -30,7 +28,6 @@ export class UserController {
   ) {}
 
   @Post('/onboarding')
-  @UsePipes(ValidationPipe)
   async completeOnboarding(
     @GetUser() user: User,
     @Body() completeOnboardingDto: CompleteOnboardingDto
@@ -67,7 +64,6 @@ export class UserController {
   }
 
   @Patch()
-  @UsePipes(ValidationPipe)
   async updateUser(
     @GetUser() user: User,
     @Body() updateUserDto: UpdateUserDto
@@ -84,7 +80,6 @@ export class UserController {
   }
 
   @Patch('/profile')
-  @UsePipes(ValidationPipe)
   async updateUserProfile(
     @GetUser() user: User,
     @Body() updateProfileDto: UpdateProfileDto

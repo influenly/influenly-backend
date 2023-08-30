@@ -7,18 +7,25 @@ import { MessageRepository } from './message/message.repository';
 import { ConversationRepository } from './conversation/conversation.repository';
 import { ConversationService } from './conversation/conversation.service';
 import { ChatGateway } from './chat.gateway';
-import { AuthModule } from '../auth/auth.module';
+import { UserModule } from '../user/user.module';
+import { UserService } from 'src/user/user.service';
+import { ProfileRepository } from 'src/user/profile/profile.repository';
 
 @Module({
-  imports: [AuthModule, TypeOrmModule.forFeature([Conversation, Message])],
+  imports: [
+    UserModule,
+    TypeOrmModule.forFeature([Conversation, Message])
+  ],
   //   controllers: [],
   providers: [
     ChatGateway,
     ChatService,
+    UserService,
     MessageService,
     MessageRepository,
     ConversationRepository,
-    ConversationService
+    ConversationService,
+    ProfileRepository
   ]
 })
 export class ChatModule {}

@@ -16,6 +16,7 @@ import { ProfileRepository } from 'src/user/profile/profile.repository';
     UserModule,
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.registerAsync({
+      global: true,
       imports: [],
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => {

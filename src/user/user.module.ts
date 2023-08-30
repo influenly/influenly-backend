@@ -24,6 +24,6 @@ import { AnalyticsRepository } from 'src/analytics/analytics.repository';
     ProfileRepository,
     AnalyticsRepository
   ],
-  exports: [UserService, UserRepository]
+  exports: [UserService, UserRepository, AnalyticsModule]
 })
 export class UserModule {}

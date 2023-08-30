@@ -5,8 +5,6 @@ import {
   HttpException,
   HttpStatus,
   Post,
-  UsePipes,
-  ValidationPipe
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
@@ -18,7 +16,6 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('/sign-up')
-  @UsePipes(ValidationPipe)
   async signUp(
     @Body()
     signUpRequestDto: SignUpRequestDto
@@ -35,7 +32,6 @@ export class AuthController {
   }
 
   @Post('/sign-in')
-  @UsePipes(ValidationPipe)
   async signIn(@Body() signInRequestDto: SignInRequestDto) {
     try {
       const signInResult = await this.authService.signIn(signInRequestDto);

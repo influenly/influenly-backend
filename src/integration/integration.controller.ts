@@ -3,9 +3,7 @@ import {
   Controller,
   HttpException,
   HttpStatus,
-  Post,
-  UsePipes,
-  ValidationPipe
+  Post
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { Auth, GetUser } from 'src/auth/decorators';
@@ -21,7 +19,6 @@ export class IntegrationController {
   constructor(private readonly integrationService: IntegrationService) {}
 
   @Post()
-  @UsePipes(ValidationPipe)
   async createIntegration(
     @GetUser() user: User,
     @Body() createIntegrationDto: CreateIntegrationDto
