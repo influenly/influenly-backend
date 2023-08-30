@@ -29,7 +29,7 @@ export class AnalyticsRepository extends Repository<Analytics> {
     updateAnalyticsInput: IUpdateAnalyticsInput,
     queryRunner?: QueryRunner
   ): Promise<Analytics> {
-    const queryResult = await this.createQueryBuilder('updateById', queryRunner)
+    const queryResult = await this.createQueryBuilder('analytics-updateById', queryRunner)
       .update(updateAnalyticsInput)
       .where({
         id

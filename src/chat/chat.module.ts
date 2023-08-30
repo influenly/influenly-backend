@@ -10,13 +10,16 @@ import { ChatGateway } from './chat.gateway';
 import { UserModule } from '../user/user.module';
 import { UserService } from 'src/user/user.service';
 import { ProfileRepository } from 'src/user/profile/profile.repository';
+import { ConversationController } from './conversation/converation.controller';
+import { AuthModule } from '../auth/auth.module';
 
 @Module({
   imports: [
+    AuthModule,
     UserModule,
     TypeOrmModule.forFeature([Conversation, Message])
   ],
-  //   controllers: [],
+  controllers: [ConversationController],
   providers: [
     ChatGateway,
     ChatService,

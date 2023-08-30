@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { ProfileRepository } from './profile.repository';
 import { Profile } from 'src/entities';
 import { UpdateProfileDto } from './dto/update-profile.dto';
-// import { ICreateProfileInput } from './profile/interfaces/create-profile-input.interface';
 
 @Injectable()
 export class ProfileService {
