@@ -9,6 +9,22 @@ export class ConversationRepository extends Repository<Conversation> {
   constructor(dataSource: DataSource) {
     super(Conversation, dataSource.createEntityManager());
   }
+
+  async findByUserId(
+    userId: number,
+    field: string,
+    queryRunner?: QueryRunner
+  ): Promise<Conversation[]> {
+    const queryResult = await this.createQueryBuilder(
+      'conversation-findByUserId',
+      queryRunner
+    )
+      .where({ [field]: userId })
+      .getManyAndCount();
+
+    return queryResult[0];
+  }
+
   async createAndSave(
     createConversationInput: ICreateConversationInput,
     queryRunner?: QueryRunner

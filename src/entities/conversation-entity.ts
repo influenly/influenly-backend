@@ -6,10 +6,12 @@ import {
   Entity,
   UpdateDateColumn,
   PrimaryGeneratedColumn,
-  OneToOne
+  ManyToOne,
+  Unique
 } from 'typeorm';
 import { User } from './user.entity';
 
+@Unique(['advertiserUserId', 'creatorUserId'])
 @Entity('conversation')
 export class Conversation extends BaseEntity {
   @PrimaryGeneratedColumn({ type: 'int' })
@@ -30,11 +32,11 @@ export class Conversation extends BaseEntity {
   @UpdateDateColumn({ type: 'timestamp' })
   updatedAt: Date;
 
-  @OneToOne(() => User)
+  @ManyToOne(() => User)
   @JoinColumn({ name: 'advertiserUserId' })
   advertiserUser: User;
 
-  @OneToOne(() => User)
+  @ManyToOne(() => User)
   @JoinColumn({ name: 'creatorUserId' })
   creatorUser: User;
 }
