@@ -36,13 +36,13 @@ export class SocketGateway implements NestGateway {
   @SubscribeMessage('sendMessage')
   async handleSendMessage(
     @ConnectedSocket() client: AuthSocket,
-    @MessageBody() eventBody: SendMessageEventDto
+    @MessageBody() sendMessageEventBody: SendMessageEventDto
   ): Promise<void> {
+    this.server.emit(`recMessage-${client.user.id}`, sendMessageEventBody);
     await this.chatService.createMessage({
-      ...eventBody,
+      ...sendMessageEventBody,
       senderUserId: client.user.id
     });
-    this.server.emit(`recMessage-${client.user.id}`, eventBody);
   }
 
   afterInit(server: SocketIOServer) {
