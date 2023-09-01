@@ -8,6 +8,21 @@ export class MessageRepository extends Repository<Message> {
   constructor(dataSource: DataSource) {
     super(Message, dataSource.createEntityManager());
   }
+
+  async findByConversationId(
+    conversationId: number,
+    queryRunner?: QueryRunner
+  ): Promise<Message[]> {
+    const queryResult = await this.createQueryBuilder(
+      'message-findByUserId',
+      queryRunner
+    )
+      .where({ conversationId })
+      .getManyAndCount();
+
+    return queryResult[0];
+  }
+
   async createAndSave(
     createMessageInput: ICreateMessageInput,
     queryRunner?: QueryRunner

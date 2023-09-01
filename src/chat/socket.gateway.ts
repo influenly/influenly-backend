@@ -23,12 +23,13 @@ import { Logger, UsePipes, ValidationPipe } from '@nestjs/common';
   }
 })
 @UsePipes(new ValidationPipe())
-export class ChatGateway implements NestGateway {
+export class SocketGateway implements NestGateway {
   constructor(
     private readonly chatService: ChatService,
     private readonly jwtService: JwtService,
     private readonly userService: UserService
   ) {}
+
   @WebSocketServer()
   server: SocketIOServer;
 
@@ -47,8 +48,9 @@ export class ChatGateway implements NestGateway {
   afterInit(server: SocketIOServer) {
     const middle = WSAuthMiddleware(this.jwtService, this.userService);
     server.use(middle);
-    Logger.log(`WS ${ChatGateway.name} init`);
+    Logger.log(`WS ${SocketGateway.name} init`);
   }
+
   handleDisconnect(client: Socket) {
     Logger.log('client disconnect', client.id);
   }
