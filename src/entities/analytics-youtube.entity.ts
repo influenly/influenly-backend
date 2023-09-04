@@ -6,11 +6,13 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
   OneToOne,
-  JoinColumn
+  JoinColumn,
+  Unique
 } from 'typeorm';
 import { Integration } from './integration.entitiy';
 import { Analytics } from './analytics.entity';
 
+@Unique(['analyticsId', 'integrationId'])
 @Entity('analytics_youtube')
 export class AnalyticsYoutube extends BaseEntity {
   @PrimaryGeneratedColumn('increment')

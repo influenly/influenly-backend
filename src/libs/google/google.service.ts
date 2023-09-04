@@ -1,9 +1,9 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, Scope } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Credentials, OAuth2Client } from 'google-auth-library';
 import { google } from 'googleapis';
 
-@Injectable()
+@Injectable({ scope: Scope.TRANSIENT })
 export class GoogleService {
   private oAuth2Client: OAuth2Client;
   constructor(private readonly configService: ConfigService) {
@@ -24,8 +24,16 @@ export class GoogleService {
     return tokens;
   }
 
-  // private async setCredentials(authorizationCode: string) {
-  //   const tokens = await this.getToken(authorizationCode);
-  //   this.oAuth2Client.setCredentials(tokens);
-  // }
+  private async setCredentials(tokens) {
+    this.oAuth2Client.setCredentials(tokens);
+  }
+
+  async getChannel(auth) {
+    var service = google.youtube('v3');
+    const a = await service.channels.list({
+      auth: this.oAuth2Client,
+      part: ['snippet,contentDetails,statistics'],
+      mine: true
+    });
+  }
 }
