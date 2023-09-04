@@ -32,8 +32,8 @@ export class UserService {
   }
 
   async getProfile(id: number) {
-    const userWithProfile = await this.userRepository.findWithProfile(id);
-    return { ...userWithProfile.profile, country: userWithProfile.country };
+    const { profile, country } = await this.userRepository.findWithProfile(id);
+    return { ...profile, country };
   }
 
   async createUser(signUpRequestDto: SignUpRequestDto): Promise<User> {
