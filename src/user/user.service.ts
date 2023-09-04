@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { SignUpRequestDto } from 'src/auth/dto';
 import { ProfileRepository } from './profile/profile.repository';
-import { Profile, User } from 'src/entities';
+import { User } from 'src/entities';
 import { DataSource } from 'typeorm';
 import { UpdateUserDto } from './dto';
 import { UserRepository } from './user.repository';
@@ -32,8 +32,9 @@ export class UserService {
   }
 
   async getProfile(id: number) {
-    const { profile, country } = await this.userRepository.findWithProfile(id);
-    return { ...profile, country };
+    const { profile, country, type } =
+      await this.userRepository.findWithProfile(id);
+    return { ...profile, country, type };
   }
 
   async createUser(signUpRequestDto: SignUpRequestDto): Promise<User> {
