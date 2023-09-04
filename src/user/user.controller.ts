@@ -97,7 +97,7 @@ export class UserController {
 
   @Get(':id/profile')
   async getUserProfile(
-    @GetUser() { type, onboardingCompleted, country }: User,
+    @GetUser() { onboardingCompleted }: User,
     @Param('id', ParseIntPipe) userId: number
   ) {
     try {
@@ -105,11 +105,11 @@ export class UserController {
         throw new Error(
           `User with id ${userId} has not completed the onboarding`
         );
-      const profile = await this.profileService.getByUserId(userId);
+      const profile = await this.userService.getProfile(userId);
       if (!profile) {
         throw new Error(`User with id ${userId} not found`);
       }
-      return { ...profile, type, country };
+      return { ...profile };
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }

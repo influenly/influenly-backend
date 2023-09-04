@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { SignUpRequestDto } from 'src/auth/dto';
 import { ProfileRepository } from './profile/profile.repository';
-import { User } from 'src/entities';
+import { Profile, User } from 'src/entities';
 import { DataSource } from 'typeorm';
 import { UpdateUserDto } from './dto';
 import { UserRepository } from './user.repository';
@@ -29,6 +29,11 @@ export class UserService {
     //here is an example of whay error handle should be in service layer
     const user = await this.userRepository.findByEmail(email);
     return user;
+  }
+
+  async getProfile(id: number) {
+    const userWithProfile = await this.userRepository.findWithProfile(id);
+    return { ...userWithProfile.profile, country: userWithProfile.country };
   }
 
   async createUser(signUpRequestDto: SignUpRequestDto): Promise<User> {

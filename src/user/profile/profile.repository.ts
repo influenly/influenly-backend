@@ -25,19 +25,18 @@ export class ProfileRepository extends Repository<Profile> {
     return queryResult.raw[0];
   }
 
-  async findByUserId(
-    userId: number,
-    queryRunner?: QueryRunner
-  ): Promise<Profile> {
-    const queryResult = await this.createQueryBuilder(
-      'profile-findByUserId',
-      queryRunner
-    )
-      .where({ userId })
-      .getOne();
+  // async findByUserId(
+  //   userId: number,
+  //   queryRunner?: QueryRunner
+  // ): Promise<Profile> {
+  // const queryResult = await this.createQueryBuilder('profile')
+  //     .leftJoin('profile.user', 'user')
+  //     .addSelect(['user.type', 'user.country'])
+  //     .where('user.id = :userId', { userId })
+  //     .getOne();
 
-    return queryResult;
-  }
+  //   return queryResult;
+  // }
 
   async updateByUserId(
     id: number,

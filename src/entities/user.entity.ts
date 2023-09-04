@@ -4,9 +4,11 @@ import {
   CreateDateColumn,
   Entity,
   PrimaryGeneratedColumn,
-  UpdateDateColumn
+  UpdateDateColumn,
+  OneToOne
 } from 'typeorm';
 import { UserRoles, UserType } from 'src/common/constants';
+import { Profile } from './profile.entity';
 
 @Entity('user')
 export class User extends BaseEntity {
@@ -36,4 +38,7 @@ export class User extends BaseEntity {
 
   @UpdateDateColumn({ type: 'timestamp' })
   updatedAt: Date;
+
+  @OneToOne(() => Profile, (profile) => profile.user)
+  profile: Profile;
 }

@@ -42,7 +42,7 @@ export class Profile extends BaseEntity {
   @UpdateDateColumn({ type: 'timestamp' })
   updatedAt: Date;
 
-  @OneToOne(() => User)
+  @OneToOne(() => User, (user) => user.profile)
   @JoinColumn({ name: 'userId' })
   user: User;
 }
