@@ -11,7 +11,8 @@ export class ConversationRepository extends Repository<Conversation> {
   }
 
   async findByUserId(userId: number, field: string, queryRunner?: QueryRunner) {
-    const userType = field.substring(0, field.length - 2);
+    const userType =
+      field === 'creatorUserId' ? 'advertiserUser' : 'creatorUser';
     const queryResult = await this.createQueryBuilder('conversation')
 
       .leftJoinAndSelect(`conversation.${userType}`, 'user')
