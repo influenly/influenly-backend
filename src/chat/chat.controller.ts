@@ -51,11 +51,12 @@ export class ChatController {
   @Auth({ type: UserTypes.ADVERTISER })
   @Post('/conversation')
   async createConversation(
+    @GetUser() { id, type }: User,
     @Body() createConversationDto: CreateConversationDto
   ) {
     try {
       const createdConversationResult =
-        await this.chatService.createConversation(createConversationDto);
+        await this.chatService.createConversation({...createConversationDto, advertiserUserId: id});
       return createdConversationResult;
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);

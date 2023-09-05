@@ -6,12 +6,15 @@ import { CreateConversationDto } from './conversation/dto/create-conversation.dt
 import { ConversationService } from './conversation/conversation.service';
 import { UserTypes } from 'src/common/constants';
 import { UpdateConversationDto } from './conversation/dto/update-conversation.dto';
+import { ICreateConversationInput } from './conversation/interfaces/create-conversation-input.interface';
+import { UserService } from 'src/user/user.service';
 
 @Injectable()
 export class ChatService {
   constructor(
     private readonly messageService: MessageService,
-    private readonly conversationService: ConversationService
+    private readonly conversationService: ConversationService,
+    private readonly userService: UserService
   ) {}
   async createMessage(createMessageInput: ICreateMessageInput): Promise<void> {
     const newMessage = await this.messageService.create(createMessageInput);
@@ -19,16 +22,22 @@ export class ChatService {
   }
 
   async createConversation(
-    createConversationDto: CreateConversationDto
+    createConversationInput: Omit<ICreateConversationInput, 'status'>
   ): Promise<Conversation> {
     const newConversation = {
-      ...createConversationDto,
+      ...createConversationInput,
       status: 'APPROVAL_PENDING'
     };
-    const createdConversation = await this.conversationService.create(
-      newConversation
+    const targetUser = await this.userService.getUserById(
+      createConversationInput.creatorUserId
     );
-    return createdConversation;
+    if (targetUser.type === UserTypes.CREATOR) {
+      const createdConversation = await this.conversationService.create(
+        newConversation
+      );
+      return createdConversation;
+    }
+    throw new Error('Invalid creator user id');
   }
 
   async getConversationsByUserId(
