@@ -32,8 +32,7 @@ export class UserService {
   }
 
   async getProfile(id: number) {
-    const { profile, country, type } =
-      await this.userRepository.findWithProfile(id);
+    const { profile, country, type } = await this.userRepository.findWithProfile(id);
     return { ...profile, country, type };
   }
 

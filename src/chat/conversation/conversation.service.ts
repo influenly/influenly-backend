@@ -1,9 +1,7 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { ConversationRepository } from './conversation.repository';
 import { Conversation } from 'src/entities';
-import { CreateConversationDto } from './dto/create-conversation.dto';
 import { UpdateConversationDto } from './dto/update-conversation.dto';
-import { UserTypes } from 'src/common/constants';
 import { ICreateConversationInput } from './interfaces/create-conversation-input.interface';
 
 @Injectable()

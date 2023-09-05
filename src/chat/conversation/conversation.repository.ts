@@ -10,19 +10,27 @@ export class ConversationRepository extends Repository<Conversation> {
     super(Conversation, dataSource.createEntityManager());
   }
 
-  async findByUserId(
-    userId: number,
-    field: string,
-    queryRunner?: QueryRunner
-  ): Promise<Conversation[]> {
-    const queryResult = await this.createQueryBuilder(
-      'conversation-findByUserId',
-      queryRunner
-    )
-      .where({ [field]: userId })
-      .getManyAndCount();
+  async findByUserId(userId: number, field: string, queryRunner?: QueryRunner) {
+    const userType = field.substring(0, field.length - 2);
+    const queryResult = await this.createQueryBuilder('conversation')
 
-    return queryResult[0];
+      .leftJoinAndSelect(`conversation.${userType}`, 'user')
+      .leftJoinAndSelect('user.profile', 'profile')
+      .select([
+        'conversation.id',
+        'conversation.advertiserUserId',
+        'conversation.creatorUserId',
+        'conversation.status',
+        'user.id',
+        'profile.username',
+        'profile.profileImg'
+      ])
+      .where(`conversation.${field} = :userId`, { userId })
+      .getMany();
+
+    console.log(queryResult);
+
+    return queryResult;
   }
 
   async createAndSave(

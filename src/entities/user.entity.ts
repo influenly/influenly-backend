@@ -5,10 +5,12 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
-  OneToOne
+  OneToOne,
+  OneToMany
 } from 'typeorm';
 import { UserRoles, UserType } from 'src/common/constants';
 import { Profile } from './profile.entity';
+import { Conversation } from './conversation-entity';
 
 @Entity('user')
 export class User extends BaseEntity {
@@ -41,4 +43,10 @@ export class User extends BaseEntity {
 
   @OneToOne(() => Profile, (profile) => profile.user)
   profile: Profile;
+
+  // @OneToMany(() => Conversation, (conversation) => conversation.creatorUser)
+  // conversations: Conversation[];
+
+  // @OneToMany(() => Conversation, (conversation) => conversation.advertiserUser)
+  // conversations: Conversation[];
 }
