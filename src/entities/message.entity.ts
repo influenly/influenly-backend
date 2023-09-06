@@ -31,11 +31,11 @@ export class Message extends BaseEntity {
   @Column({ type: 'varchar' })
   type: MessageType;
 
-  @OneToOne(() => Conversation)
+  @ManyToOne(() => Conversation)
   @JoinColumn({ name: 'conversationId' })
   conversation: Conversation;
 
-  @OneToOne(() => User)
+  @ManyToOne(() => User)
   @JoinColumn({ name: 'senderUserId' })
   senderUser: User;
 

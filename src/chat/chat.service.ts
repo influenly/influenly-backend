@@ -8,7 +8,6 @@ import { UpdateConversationDto } from './conversation/dto/update-conversation.dt
 import { ICreateConversationInput } from './conversation/interfaces/create-conversation-input.interface';
 import { UserService } from 'src/user/user.service';
 import { DataSource } from 'typeorm';
-import { MessageType } from '../common/constants/types/message-type.type';
 import { MessageTypes } from 'src/common/constants/enums';
 
 @Injectable()
