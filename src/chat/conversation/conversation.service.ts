@@ -3,6 +3,7 @@ import { ConversationRepository } from './conversation.repository';
 import { Conversation } from 'src/entities';
 import { UpdateConversationDto } from './dto/update-conversation.dto';
 import { ICreateConversationInput } from './interfaces/create-conversation-input.interface';
+import { QueryRunner } from 'typeorm';
 
 @Injectable()
 export class ConversationService {
@@ -21,9 +22,13 @@ export class ConversationService {
     return conversations;
   }
 
-  async create(conversation: ICreateConversationInput): Promise<Conversation> {
+  async create(
+    conversation: ICreateConversationInput,
+    queryRunner?: QueryRunner
+  ): Promise<Conversation> {
     const newConversation = await this.conversationRepository.createAndSave(
-      conversation
+      conversation,
+      queryRunner
     );
     return newConversation;
   }

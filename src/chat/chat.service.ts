@@ -2,19 +2,22 @@ import { Injectable, Logger } from '@nestjs/common';
 import { MessageService } from './message/message.service';
 import { ICreateMessageInput } from './message/interfaces/create-message-input.interface';
 import { Conversation, Message } from 'src/entities';
-import { CreateConversationDto } from './conversation/dto/create-conversation.dto';
 import { ConversationService } from './conversation/conversation.service';
 import { UserTypes } from 'src/common/constants';
 import { UpdateConversationDto } from './conversation/dto/update-conversation.dto';
 import { ICreateConversationInput } from './conversation/interfaces/create-conversation-input.interface';
 import { UserService } from 'src/user/user.service';
+import { DataSource } from 'typeorm';
+import { MessageType } from '../common/constants/types/message-type.type';
+import { MessageTypes } from 'src/common/constants/enums';
 
 @Injectable()
 export class ChatService {
   constructor(
     private readonly messageService: MessageService,
     private readonly conversationService: ConversationService,
-    private readonly userService: UserService
+    private readonly userService: UserService,
+    private readonly dataSource: DataSource
   ) {}
   async createMessage(createMessageInput: ICreateMessageInput): Promise<void> {
     const newMessage = await this.messageService.create(createMessageInput);
@@ -22,22 +25,54 @@ export class ChatService {
   }
 
   async createConversation(
-    createConversationInput: Omit<ICreateConversationInput, 'status'>
+    createConversationInput: Omit<ICreateConversationInput, 'status'> & {
+      message: string;
+    }
   ): Promise<Conversation> {
-    const newConversation = {
-      ...createConversationInput,
-      status: 'APPROVAL_PENDING'
-    };
     const targetUser = await this.userService.getUserById(
       createConversationInput.creatorUserId
     );
-    if (targetUser.type === UserTypes.CREATOR) {
-      const createdConversation = await this.conversationService.create(
-        newConversation
-      );
-      return createdConversation;
+    if (targetUser.type !== UserTypes.CREATOR) {
+      throw new Error('Invalid creator user id');
     }
-    throw new Error('Invalid creator user id');
+
+    const queryRunner = this.dataSource.createQueryRunner();
+
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      const newConversation = {
+        ...createConversationInput,
+        status: 'APPROVAL_PENDING'
+      };
+      const createdConversation = await this.conversationService.create(
+        newConversation,
+        queryRunner
+      );
+      const newMessage: ICreateMessageInput = {
+        conversationId: createdConversation.id,
+        senderUserId: createConversationInput.advertiserUserId,
+        content: createConversationInput.message,
+        type: MessageTypes.INITIALIZER
+      };
+      const createdMessage = await this.messageService.create(
+        newMessage,
+        queryRunner
+      );
+
+      await queryRunner.commitTransaction();
+
+      console.log(createdMessage);
+
+      return createdConversation;
+    } catch (err) {
+      Logger.error(`Conversation and initial message creation has failed.`);
+      await queryRunner.rollbackTransaction();
+      throw new Error(err.message);
+    } finally {
+      await queryRunner.release();
+    }
   }
 
   async getConversationsByUserId(

@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Analytics } from 'src/entities';
 import { Repository } from 'typeorm';
-// import { CreateAnalyticsDto } from './dto';
 
 @Injectable()
 export class AnalyticsService {
