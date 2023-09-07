@@ -1,13 +1,12 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { IsIn, IsNotEmpty } from 'class-validator';
+import { ConversationTypes } from 'src/common/constants/enums';
+
+const conversationTypes = Object.keys(ConversationTypes);
 
 export class UpdateConversationDto {
-  @IsNotEmpty()
-  @IsNumber()
-  id: number;
-
   @ApiPropertyOptional()
   @IsNotEmpty()
-  @IsString()
-  status: string;
+  @IsIn(conversationTypes)
+  status: ConversationTypes;
 }

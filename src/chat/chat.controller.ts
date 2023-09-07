@@ -66,12 +66,14 @@ export class ChatController {
     }
   }
 
-  @Patch('/conversation')
+  @Patch('/conversation/:id')
   async updateConversation(
+    @Param('id', ParseIntPipe) conversationId: number,
     @Body() updateConversationDto: UpdateConversationDto
   ) {
     try {
       const updatedConversationResult = await this.chatService.updateById(
+        conversationId,
         updateConversationDto
       );
       return updatedConversationResult;

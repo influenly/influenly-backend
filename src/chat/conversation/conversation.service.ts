@@ -4,6 +4,7 @@ import { Conversation } from 'src/entities';
 import { UpdateConversationDto } from './dto/update-conversation.dto';
 import { ICreateConversationInput } from './interfaces/create-conversation-input.interface';
 import { QueryRunner } from 'typeorm';
+import { IUpdateConversationInput } from './interfaces/update-conversation-input.interface';
 
 @Injectable()
 export class ConversationService {
@@ -33,13 +34,15 @@ export class ConversationService {
     return newConversation;
   }
 
-  async updateById({
-    id,
-    status
-  }: UpdateConversationDto): Promise<Conversation> {
+  async updateById(
+    conversationId,
+    { status }: IUpdateConversationInput
+  ): Promise<Conversation> {
     const updatedConversation = await this.conversationRepository.updateById(
-      id,
-      { status }
+      conversationId,
+      {
+        status
+      }
     );
     return updatedConversation;
   }

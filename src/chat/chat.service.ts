@@ -8,7 +8,8 @@ import { UpdateConversationDto } from './conversation/dto/update-conversation.dt
 import { ICreateConversationInput } from './conversation/interfaces/create-conversation-input.interface';
 import { UserService } from 'src/user/user.service';
 import { DataSource } from 'typeorm';
-import { MessageTypes } from 'src/common/constants/enums';
+import { ConversationTypes, MessageTypes } from 'src/common/constants/enums';
+import { IUpdateConversationInput } from './conversation/interfaces/update-conversation-input.interface';
 
 @Injectable()
 export class ChatService {
@@ -43,7 +44,7 @@ export class ChatService {
     try {
       const newConversation = {
         ...createConversationInput,
-        status: 'APPROVAL_PENDING'
+        status: ConversationTypes.INIT_APPROVAL_PENDING
       };
       const createdConversation = await this.conversationService.create(
         newConversation,
@@ -97,10 +98,12 @@ export class ChatService {
   }
 
   async updateById(
-    updateConversationDto: UpdateConversationDto
+    conversationId: number,
+    { status }: IUpdateConversationInput
   ): Promise<Conversation> {
     const updatedConversation = await this.conversationService.updateById(
-      updateConversationDto
+      conversationId,
+      { status }
     );
     return updatedConversation;
   }

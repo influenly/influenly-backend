@@ -10,6 +10,8 @@ import {
   Unique
 } from 'typeorm';
 import { User } from './user.entity';
+import { ConversationType } from 'src/common/constants/types';
+import { ConversationTypes } from 'src/common/constants/enums';
 
 @Unique(['advertiserUserId', 'creatorUserId'])
 @Entity('conversation')
@@ -23,8 +25,8 @@ export class Conversation extends BaseEntity {
   @Column({ type: 'int' })
   creatorUserId: number;
 
-  @Column({ type: 'varchar' })
-  status: string;
+  @Column({ type: 'enum', enum: ConversationTypes })
+  status: ConversationType;
 
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
