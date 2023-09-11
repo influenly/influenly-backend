@@ -4,9 +4,13 @@ import {
   CreateDateColumn,
   Entity,
   PrimaryGeneratedColumn,
-  UpdateDateColumn
+  UpdateDateColumn,
+  OneToOne,
+  OneToMany
 } from 'typeorm';
 import { UserRoles, UserType } from 'src/common/constants';
+import { Profile } from './profile.entity';
+import { Conversation } from './conversation-entity';
 
 @Entity('user')
 export class User extends BaseEntity {
@@ -36,4 +40,13 @@ export class User extends BaseEntity {
 
   @UpdateDateColumn({ type: 'timestamp' })
   updatedAt: Date;
+
+  @OneToOne(() => Profile, (profile) => profile.user)
+  profile: Profile;
+
+  // @OneToMany(() => Conversation, (conversation) => conversation.creatorUser)
+  // conversations: Conversation[];
+
+  // @OneToMany(() => Conversation, (conversation) => conversation.advertiserUser)
+  // conversations: Conversation[];
 }

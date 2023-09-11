@@ -13,11 +13,9 @@ export class MessageRepository extends Repository<Message> {
     conversationId: number,
     queryRunner?: QueryRunner
   ): Promise<Message[]> {
-    const queryResult = await this.createQueryBuilder(
-      'message-findByUserId',
-      queryRunner
-    )
+    const queryResult = await this.createQueryBuilder('message', queryRunner)
       .where({ conversationId })
+      .orderBy('message.createdAt', 'DESC')
       .getManyAndCount();
 
     return queryResult[0];

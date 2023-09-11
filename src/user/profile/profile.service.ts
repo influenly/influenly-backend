@@ -7,10 +7,10 @@ import { UpdateProfileDto } from './dto/update-profile.dto';
 export class ProfileService {
   constructor(private readonly profileRepository: ProfileRepository) {}
 
-  async getByUserId(id: number): Promise<Profile> {
-    const profile = await this.profileRepository.findByUserId(id);
-    return profile;
-  }
+  // async getByUserId(id: number): Promise<Profile> {
+  //   const profile = await this.profileRepository.findByUserId(id);
+  //   return profile;
+  // }
 
   async updateByUserId(userId: number, updateProfileDto: UpdateProfileDto) {
     const updatedProfile = await this.profileRepository.updateByUserId(

@@ -1,5 +1,5 @@
 export enum MessageTypes {
   REGULAR = 'REGULAR',
-  INITIAL = 'INITIAL',
-  FINAL = 'FINAL'
+  INITIALIZER = 'INITIALIZER',
+  FINISHER = 'FINISHER'
 }

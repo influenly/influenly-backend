@@ -1,10 +1,10 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { ConversationRepository } from './conversation.repository';
 import { Conversation } from 'src/entities';
-import { CreateConversationDto } from './dto/create-conversation.dto';
 import { UpdateConversationDto } from './dto/update-conversation.dto';
-import { UserTypes } from 'src/common/constants';
 import { ICreateConversationInput } from './interfaces/create-conversation-input.interface';
+import { QueryRunner } from 'typeorm';
+import { IUpdateConversationInput } from './interfaces/update-conversation-input.interface';
 
 @Injectable()
 export class ConversationService {
@@ -23,20 +23,26 @@ export class ConversationService {
     return conversations;
   }
 
-  async create(conversation: ICreateConversationInput): Promise<Conversation> {
+  async create(
+    conversation: ICreateConversationInput,
+    queryRunner?: QueryRunner
+  ): Promise<Conversation> {
     const newConversation = await this.conversationRepository.createAndSave(
-      conversation
+      conversation,
+      queryRunner
     );
     return newConversation;
   }
 
-  async updateById({
-    id,
-    status
-  }: UpdateConversationDto): Promise<Conversation> {
+  async updateById(
+    conversationId,
+    { status }: IUpdateConversationInput
+  ): Promise<Conversation> {
     const updatedConversation = await this.conversationRepository.updateById(
-      id,
-      { status }
+      conversationId,
+      {
+        status
+      }
     );
     return updatedConversation;
   }

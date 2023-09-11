@@ -5,11 +5,6 @@ export class CreateConversationDto {
   @ApiProperty()
   @IsNotEmpty()
   @IsNumber()
-  advertiserUserId: number;
-
-  @ApiProperty()
-  @IsNotEmpty()
-  @IsNumber()
   creatorUserId: number;
 
   @ApiProperty()

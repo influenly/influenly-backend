@@ -31,6 +31,11 @@ export class UserService {
     return user;
   }
 
+  async getProfile(id: number) {
+    const { profile, country, type } = await this.userRepository.findWithProfile(id);
+    return { ...profile, country, type };
+  }
+
   async createUser(signUpRequestDto: SignUpRequestDto): Promise<User> {
     const queryRunner = this.dataSource.createQueryRunner();
 
