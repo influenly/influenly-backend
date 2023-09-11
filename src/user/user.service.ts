@@ -32,7 +32,8 @@ export class UserService {
   }
 
   async getProfile(id: number) {
-    const { profile, country, type } = await this.userRepository.findWithProfile(id);
+    const { profile, country, type } =
+      await this.userRepository.findWithProfile(id);
     return { ...profile, country, type };
   }
 
@@ -51,10 +52,11 @@ export class UserService {
         queryRunner
       );
 
-      await this.analyticsRepository.createAndSave(
-        { userId: newUser.id },
-        queryRunner
-      );
+      if (newUser.type === UserTypes.CREATOR)
+        await this.analyticsRepository.createAndSave(
+          { userId: newUser.id },
+          queryRunner
+        );
 
       await queryRunner.commitTransaction();
 

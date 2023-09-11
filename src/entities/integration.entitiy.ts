@@ -15,13 +15,16 @@ export class Integration extends BaseEntity {
   @Column({ type: 'varchar' })
   accessToken: string;
 
-  @Column({ type: 'int' })
+  @Column({ type: 'bigint' })
   expiryDate: number;
 
   @Column({ type: 'varchar' })
   refreshToken: string;
 
   @Column({ type: 'varchar' })
+  scope: string;
+
+  @Column({ type: 'varchar', nullable: true })
   idToken: string;
 
   @CreateDateColumn({ type: 'timestamp' })

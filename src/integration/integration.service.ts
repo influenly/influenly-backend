@@ -12,7 +12,7 @@ import { Platforms } from 'src/common/constants/enums';
 export class IntegrationService {
   constructor(
     private readonly integrationRepository: IntegrationRepository,
-    private readonly googleOAuth2Service: GoogleService,
+    private readonly googleService: GoogleService,
     private readonly analyticsRepository: AnalyticsRepository,
     private readonly analyticsYoutubeRepository: AnalyticsYoutubeRepository,
     private readonly dataSource: DataSource
@@ -54,14 +54,16 @@ export class IntegrationService {
         access_token: accessToken,
         expiry_date: expiryDate,
         id_token: idToken,
+        scope,
         refresh_token: refreshToken
-      } = await this.googleOAuth2Service.getToken(authorizationCode);
+      } = await this.googleService.getToken(authorizationCode);
 
       const newIntegration = await this.integrationRepository.createAndSave(
         {
           accessToken,
           expiryDate,
           idToken,
+          scope,
           refreshToken
         },
         queryRunner
@@ -96,15 +98,27 @@ export class IntegrationService {
         queryRunner
       );
 
+      await this.googleService.setCredentials({
+        access_token: accessToken,
+        expiryDate,
+        idToken,
+        scope,
+        refreshToken
+      });
+
+      const a = await this.googleService.getAnalytics();
+      console.log(a);
+
       await queryRunner.commitTransaction();
 
-      Logger.error(`Integration id: ${newIntegration.id} created successfully`);
+      Logger.log(`Integration id: ${newIntegration.id} created successfully`);
 
       return {
         error: false,
         message: 'Integration created successfully'
       };
     } catch (err) {
+      console.log(err);
       Logger.error(`Integration creation transaction has failed.`);
       await queryRunner.rollbackTransaction();
       throw new Error(err.message);
