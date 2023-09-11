@@ -12,28 +12,29 @@ export class GoogleService {
   }
 
   async getToken(authorizationCode: string): Promise<Credentials> {
-    // const { tokens } = await this.oAuth2Client.getToken(authorizationCode);
+    const { tokens } = await this.oAuth2Client.getToken(authorizationCode);
 
-    const tokens = {
-      access_token: 'access_token',
-      refresh_token: 'refresh_token',
-      expiry_date: 214748364,
-      id_token: 'id_token'
-    };
+    // const tokens = {
+    //   access_token: 'access_token',
+    //   refresh_token: 'refresh_token',
+    //   expiry_date: 214748364,
+    //   id_token: 'id_token'
+    // };
     Logger.log(tokens);
     return tokens;
   }
 
-  private async setCredentials(tokens) {
+  async setCredentials(tokens) {
     this.oAuth2Client.setCredentials(tokens);
   }
 
-  async getChannel(auth) {
+  async getChannel() {
     var service = google.youtube('v3');
     const a = await service.channels.list({
       auth: this.oAuth2Client,
       part: ['snippet,contentDetails,statistics'],
       mine: true
     });
+    console.log(a);
   }
 }
