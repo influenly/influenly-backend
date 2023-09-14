@@ -32,14 +32,22 @@ export class AnalyticsService {
     const youtubeDataApiResponseData = youtubeDataApiResponse.data;
     console.log(youtubeDataApiResponseData);
 
-    const newAnalyticsYoutube = 'asd'
-      // await this.analyticsYoutubeRepository.createAndSave(
-      //   {
-      //     ...youtubeDataApiResponseData,
-      //     integrationId
-      //   },
-      //   queryRunner
-      // );
+    const newAnalyticsYoutube = 'asd';
+    // await this.analyticsYoutubeRepository.createAndSave(
+    //   {
+    //     ...youtubeDataApiResponseData,
+    //     integrationId
+    //   },
+    //   queryRunner
+    // );
     return newAnalyticsYoutube;
+  }
+
+  async getBasicAnalyticsByUserId(userId: number, queryRunner?: QueryRunner) {
+    const analyticsYoutube = await this.analyticsYoutubeRepository.findByUserId(
+      userId,
+      queryRunner
+    );
+    return analyticsYoutube;
   }
 }

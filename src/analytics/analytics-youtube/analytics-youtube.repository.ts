@@ -1,6 +1,6 @@
 import { DataSource, Repository, QueryRunner } from 'typeorm';
 import { Injectable } from '@nestjs/common';
-import { AnalyticsYoutube } from 'src/entities';
+import { AnalyticsYoutube, Integration } from 'src/entities';
 import { ICreateAnalyticsYoutubeInput } from './interfaces/create-analytics-youtube-input.interface';
 
 @Injectable()
@@ -22,5 +22,19 @@ export class AnalyticsYoutubeRepository extends Repository<AnalyticsYoutube> {
       .returning('*')
       .execute();
     return queryResult.raw[0];
+  }
+
+  async findByUserId(userId: number, queryRunner?: QueryRunner) {
+    const queryResult = await this.createQueryBuilder(
+      'analytics_youtube',
+      queryRunner
+    )
+      .innerJoin('analytics_youtube.integration', 'integration')
+      .where('integraion.userId = :userId', { userId })
+      .getMany();
+
+    console.log(queryResult);
+
+    return queryResult;
   }
 }
