@@ -21,25 +21,25 @@ export class AnalyticsService {
   //   });
   //   return analytics;
   // }
-  // async createBasicAnalytics(
-  //   integrationId: number,
-  //   credential: Credential,
-  //   queryRunner?: QueryRunner
-  // ) {
-  //   const youtubeDataApiResponse = await this.youtubeService.getChannelInfo(
-  //     credential
-  //   );
-  //   const youtubeDataApiResponseData = youtubeDataApiResponse.data;
-  //   console.log(youtubeDataApiResponseData);
+  async createBasicAnalytics(
+    integrationId: number,
+    credential: Credential,
+    queryRunner?: QueryRunner
+  ) {
+    const youtubeDataApiResponse = await this.youtubeService.getChannelInfo(
+      credential
+    );
+    const youtubeDataApiResponseData = youtubeDataApiResponse.data;
+    console.log(youtubeDataApiResponseData);
 
-  //   const newAnalyticsYoutube =
-  //     await this.analyticsYoutubeRepository.createAndSave(
-  //       {
-  //         ...youtubeDataApiResponseData,
-  //         integrationId
-  //       },
-  //       queryRunner
-  //     );
-  //   return newAnalyticsYoutube;
-  // }
+    const newAnalyticsYoutube = 'asd'
+      // await this.analyticsYoutubeRepository.createAndSave(
+      //   {
+      //     ...youtubeDataApiResponseData,
+      //     integrationId
+      //   },
+      //   queryRunner
+      // );
+    return newAnalyticsYoutube;
+  }
 }

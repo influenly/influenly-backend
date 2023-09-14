@@ -4,9 +4,6 @@ import { Credential, Integration } from 'src/entities';
 import { YoutubeService } from 'src/libs/youtube/youtube.service';
 import { CreateIntegrationDto } from './dto';
 import { IntegrationRepository } from './integration.repository';
-import { AnalyticsRepository } from 'src/analytics/analytics.repository';
-import { AnalyticsYoutubeRepository } from 'src/analytics/analytics-youtube/analytics-youtube.repository';
-import { Platforms } from 'src/common/constants/enums';
 import { CredentialService } from './credential/credential.service';
 
 @Injectable()
@@ -15,8 +12,6 @@ export class IntegrationService {
     private readonly integrationRepository: IntegrationRepository,
     private readonly credentialService: CredentialService,
     private readonly youtubeService: YoutubeService,
-    private readonly analyticsRepository: AnalyticsRepository,
-    private readonly analyticsYoutubeRepository: AnalyticsYoutubeRepository,
     private readonly dataSource: DataSource
   ) {}
 

@@ -11,7 +11,6 @@ import {
 } from 'typeorm';
 import { Integration } from './integration.entity';
 
-@Unique(['analyticsId', 'integrationId'])
 @Entity('analytics_youtube')
 export class AnalyticsYoutube extends BaseEntity {
   @PrimaryGeneratedColumn('increment')

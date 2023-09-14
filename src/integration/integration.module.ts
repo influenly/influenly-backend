@@ -1,33 +1,28 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { AnalyticsModule } from 'src/analytics/analytics.module';
 import { AuthModule } from 'src/auth/auth.module';
 
 import { Integration } from 'src/entities';
 
 import { IntegrationController } from './integration.controller';
+import { IntegrationService } from './integration.service';
+import { IntegrationRepository } from './integration.repository';
 
 import { YoutubeService } from 'src/libs/youtube/youtube.service';
-import { IntegrationService } from './integration.service';
-
-import { IntegrationRepository } from './integration.repository';
-import { AnalyticsRepository } from 'src/analytics/analytics.repository';
-import { AnalyticsYoutubeRepository } from 'src/analytics/analytics-youtube/analytics-youtube.repository';
+import { CredentialService } from './credential/credential.service';
+import { CredentialRepository } from './credential/credential.repository';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([Integration]),
-    AuthModule,
-    AnalyticsModule
-  ],
+  imports: [TypeOrmModule.forFeature([Integration])],
   controllers: [IntegrationController],
   providers: [
     IntegrationService,
     IntegrationRepository,
-    AnalyticsRepository,
     YoutubeService,
-    AnalyticsYoutubeRepository
-  ]
+    CredentialService,
+    CredentialRepository
+  ],
+  exports: [IntegrationService, IntegrationRepository, CredentialService]
 })
 export class IntegrationModule {}

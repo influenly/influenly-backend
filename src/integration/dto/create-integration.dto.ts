@@ -4,7 +4,7 @@ import {
   IsIn,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { Platform } from 'src/common/constants/types/platform.type';
+import { PlatformType } from 'src/common/constants/types/platform.type';
 import { Platforms } from 'src/common/constants/enums';
 
 const platforms = Object.keys(Platforms);
@@ -19,5 +19,5 @@ export class CreateIntegrationDto {
   @IsNotEmpty()
   @IsString()
   @IsIn(platforms)
-  platform: Platform;
+  platform: PlatformType;
 }

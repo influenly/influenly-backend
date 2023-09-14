@@ -8,16 +8,15 @@ import { UserService } from './user.service';
 import { ProfileService } from './profile/profile.service';
 import { ProfileRepository } from './profile/profile.repository';
 import { AnalyticsModule } from 'src/analytics/analytics.module';
-import { AnalyticsRepository } from 'src/analytics/analytics.repository';
 import { IntegrationModule } from 'src/integration/integration.module';
 import { IntegrationService } from 'src/integration/integration.service';
+import { AnalyticsService } from 'src/analytics/analytics.service';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([User]),
-    IntegrationModule,
     AnalyticsModule,
-    forwardRef(() => AuthModule)
+    IntegrationModule
   ],
   controllers: [UserController],
   providers: [
@@ -26,8 +25,14 @@ import { IntegrationService } from 'src/integration/integration.service';
     ProfileService,
     ProfileRepository,
     IntegrationService,
-    AnalyticsRepository
+    AnalyticsService
   ],
-  exports: [UserService, UserRepository, AnalyticsModule]
+  exports: [
+    UserService,
+    UserRepository,
+    AnalyticsService,
+    IntegrationService,
+    ProfileRepository
+  ]
 })
 export class UserModule {}

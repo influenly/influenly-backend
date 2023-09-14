@@ -15,26 +15,26 @@ import { AnalyticsService } from './analytics.service';
 export class AnalyticsController {
   constructor(private readonly analyticsService: AnalyticsService) {}
 
-  @Get()
-  async getAllAnalytics() {
-    try {
-      const analytics = await this.analyticsService.getAllAnalyitcs();
-      return analytics;
-    } catch (error) {
-      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
-    }
-  }
+  // @Get()
+  // async getAllAnalytics() {
+  //   try {
+  //     const analytics = await this.analyticsService.getAllAnalyitcs();
+  //     return analytics;
+  //   } catch (error) {
+  //     throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+  //   }
+  // }
 
-  @Get(':id')
-  async getAnalytics(@Param('id', ParseIntPipe) analyticsId: number) {
-    try {
-      const analytics = await this.analyticsService.getAnalytics(analyticsId);
-      if (!analytics) {
-        throw new Error(`Analytics with id ${analyticsId} not found`);
-      }
-      return analytics;
-    } catch (error) {
-      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
-    }
-  }
+  // @Get(':id')
+  // async getAnalytics(@Param('id', ParseIntPipe) analyticsId: number) {
+  //   try {
+  //     const analytics = await this.analyticsService.getAnalytics(analyticsId);
+  //     if (!analytics) {
+  //       throw new Error(`Analytics with id ${analyticsId} not found`);
+  //     }
+  //     return analytics;
+  //   } catch (error) {
+  //     throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+  //   }
+  // }
 }
