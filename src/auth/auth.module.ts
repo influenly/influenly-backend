@@ -7,8 +7,6 @@ import { UserService } from 'src/user/user.service';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { JwtStrategy } from './strategies/jwt-strategy';
-import { ProfileRepository } from 'src/user/profile/profile.repository';
-import { UserRepository } from 'src/user/user.repository';
 
 @Module({
   imports: [
