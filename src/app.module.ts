@@ -9,7 +9,6 @@ import { UserModule } from './user/user.module';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 import { MailModule } from './libs/mail/mail.module';
-import { GoogleModule } from './libs/google/google.module';
 import APP_CONFIG from './config/app';
 import DATABASE_CONFIG from './config/database';
 import GOOGLE_CONFIG from './config/google';
@@ -59,7 +58,6 @@ import { ChatModule } from './chat/chat.module';
     AuthModule,
     UserModule,
     MailModule,
-    GoogleModule,
     ChatModule
   ],
   providers: [

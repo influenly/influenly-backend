@@ -23,4 +23,17 @@ export class IntegrationRepository extends Repository<Integration> {
       .execute();
     return queryResult.raw[0];
   }
+
+  async findByUserId(userId: number, queryRunner?: QueryRunner) {
+    const queryResult = await this.createQueryBuilder(
+      'integration',
+      queryRunner
+    )
+      .where({ userId })
+      .getMany();
+
+    console.log(queryResult);
+
+    return queryResult;
+  }
 }

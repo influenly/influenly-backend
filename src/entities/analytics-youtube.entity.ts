@@ -9,8 +9,7 @@ import {
   JoinColumn,
   Unique
 } from 'typeorm';
-import { Integration } from './integration.entitiy';
-import { Analytics } from './analytics.entity';
+import { Integration } from './integration.entity';
 
 @Unique(['analyticsId', 'integrationId'])
 @Entity('analytics_youtube')
@@ -18,30 +17,26 @@ export class AnalyticsYoutube extends BaseEntity {
   @PrimaryGeneratedColumn('increment')
   id: number;
 
-  @Column({ type: 'int' })
-  analyticsId: number;
-
-  @Column('int', { unique: true })
+  @Column({ type: 'int', unique: true })
   integrationId: number;
 
-  @Column({ type: 'int', nullable: true })
+  @Column({ type: 'varchar', unique: true })
+  channelId: string;
+
+  @Column({ type: 'int' })
   totalSubs: number;
 
-  @Column({ type: 'int', nullable: true })
+  @Column({ type: 'int' })
   totalVideos: number;
 
-  @Column({ type: 'int', nullable: true })
-  totalLikes: number;
+  @Column({ type: 'int' })
+  totalViews: number;
 
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
 
   @UpdateDateColumn({ type: 'timestamp' })
   updatedAt: Date;
-
-  @OneToOne(() => Analytics)
-  @JoinColumn({ name: 'analyticsId' })
-  analytics: Analytics;
 
   @OneToOne(() => Integration)
   @JoinColumn({ name: 'integrationId' })

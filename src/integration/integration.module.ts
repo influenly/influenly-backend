@@ -8,7 +8,7 @@ import { Integration } from 'src/entities';
 
 import { IntegrationController } from './integration.controller';
 
-import { GoogleService } from 'src/libs/google/google.service';
+import { YoutubeService } from 'src/libs/youtube/youtube.service';
 import { IntegrationService } from './integration.service';
 
 import { IntegrationRepository } from './integration.repository';
@@ -25,8 +25,8 @@ import { AnalyticsYoutubeRepository } from 'src/analytics/analytics-youtube/anal
   providers: [
     IntegrationService,
     IntegrationRepository,
-    GoogleService,
     AnalyticsRepository,
+    YoutubeService,
     AnalyticsYoutubeRepository
   ]
 })

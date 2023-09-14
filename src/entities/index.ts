@@ -2,13 +2,13 @@ import { User } from './user.entity';
 import { Message } from './message.entity';
 import { Conversation } from './conversation-entity';
 import { Profile } from './profile.entity';
-import { Analytics } from './analytics.entity';
+import { Integration } from './integration.entity';
 import { AnalyticsYoutube } from './analytics-youtube.entity';
-import { Integration } from './integration.entitiy';
+import { Credential } from './credential.entitiy';
 
 const entities = [
   Profile,
-  Analytics,
+  Credential,
   AnalyticsYoutube,
   Integration,
   User,
@@ -18,7 +18,7 @@ const entities = [
 
 export {
   Profile,
-  Analytics,
+  Credential,
   AnalyticsYoutube,
   Integration,
   User,

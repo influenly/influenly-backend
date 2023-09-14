@@ -1,3 +1,3 @@
 import { Platforms } from '../enums';
 
-export type Platform = Platforms.YOUTUBE | Platforms.TIKTOK;
+export type PlatformType = keyof typeof Platforms;

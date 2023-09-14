@@ -4,13 +4,19 @@ import {
   CreateDateColumn,
   Entity,
   PrimaryGeneratedColumn,
-  UpdateDateColumn
+  UpdateDateColumn,
+  OneToOne,
+  JoinColumn
 } from 'typeorm';
+import { Integration } from './integration.entity';
 
-@Entity('integration')
-export class Integration extends BaseEntity {
+@Entity('credential')
+export class Credential extends BaseEntity {
   @PrimaryGeneratedColumn('increment')
   id: number;
+
+  @Column('int', { unique: true })
+  integrationId: number;
 
   @Column({ type: 'varchar' })
   accessToken: string;
@@ -32,4 +38,8 @@ export class Integration extends BaseEntity {
 
   @UpdateDateColumn({ type: 'timestamp' })
   updatedAt: Date;
+
+  @OneToOne(() => Integration)
+  @JoinColumn({ name: 'integrationId' })
+  integration: Integration;
 }

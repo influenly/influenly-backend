@@ -9,20 +9,19 @@ import {
   JoinColumn
 } from 'typeorm';
 import { User } from './user.entity';
+import { PlatformType } from 'src/common/constants/types/platform.type';
+import { Platforms } from 'src/common/constants/enums';
 
-@Entity('analytics')
-export class Analytics extends BaseEntity {
+@Entity('integration')
+export class Integration extends BaseEntity {
   @PrimaryGeneratedColumn('increment')
   id: number;
 
   @Column({ type: 'int' })
   userId: number;
 
-  @Column({ type: 'boolean', default: false })
-  youtubeLinked: boolean;
-
-  @Column({ type: 'boolean', default: false })
-  tiktokLinked: boolean;
+  @Column({ type: 'enum', enum: Platforms })
+  platform: PlatformType;
 
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;

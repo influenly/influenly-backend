@@ -9,10 +9,13 @@ import { ProfileService } from './profile/profile.service';
 import { ProfileRepository } from './profile/profile.repository';
 import { AnalyticsModule } from 'src/analytics/analytics.module';
 import { AnalyticsRepository } from 'src/analytics/analytics.repository';
+import { IntegrationModule } from 'src/integration/integration.module';
+import { IntegrationService } from 'src/integration/integration.service';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([User]),
+    IntegrationModule,
     AnalyticsModule,
     forwardRef(() => AuthModule)
   ],
@@ -22,6 +25,7 @@ import { AnalyticsRepository } from 'src/analytics/analytics.repository';
     UserRepository,
     ProfileService,
     ProfileRepository,
+    IntegrationService,
     AnalyticsRepository
   ],
   exports: [UserService, UserRepository, AnalyticsModule]

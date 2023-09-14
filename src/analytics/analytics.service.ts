@@ -1,23 +1,45 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Analytics } from 'src/entities';
-import { Repository } from 'typeorm';
+import { AnalyticsYoutubeRepository } from './analytics-youtube/analytics-youtube.repository';
+import { QueryRunner } from 'typeorm';
+import { YoutubeService } from '../libs/youtube/youtube.service';
+import { Credential } from 'src/entities';
 
 @Injectable()
 export class AnalyticsService {
   constructor(
-    @InjectRepository(Analytics)
-    private readonly analyticsRepository: Repository<Analytics>
+    private readonly analyticsYoutubeRepository: AnalyticsYoutubeRepository,
+    private readonly youtubeService: YoutubeService
   ) {}
-  async getAllAnalyitcs(): Promise<Analytics[]> {
-    const analytics = await this.analyticsRepository.find();
-    return analytics;
-  }
+  // async getAllAnalyitcs(): Promise<Analytics[]> {
+  //   const analytics = await this.analyticsRepository.find();
+  //   return analytics;
+  // }
 
-  async getAnalytics(id: number): Promise<Analytics> {
-    const analytics = await this.analyticsRepository.findOne({
-      where: { id }
-    });
-    return analytics;
-  }
+  // async getAnalytics(id: number): Promise<Analytics> {
+  //   const analytics = await this.analyticsRepository.findOne({
+  //     where: { id }
+  //   });
+  //   return analytics;
+  // }
+  // async createBasicAnalytics(
+  //   integrationId: number,
+  //   credential: Credential,
+  //   queryRunner?: QueryRunner
+  // ) {
+  //   const youtubeDataApiResponse = await this.youtubeService.getChannelInfo(
+  //     credential
+  //   );
+  //   const youtubeDataApiResponseData = youtubeDataApiResponse.data;
+  //   console.log(youtubeDataApiResponseData);
+
+  //   const newAnalyticsYoutube =
+  //     await this.analyticsYoutubeRepository.createAndSave(
+  //       {
+  //         ...youtubeDataApiResponseData,
+  //         integrationId
+  //       },
+  //       queryRunner
+  //     );
+  //   return newAnalyticsYoutube;
+  // }
 }

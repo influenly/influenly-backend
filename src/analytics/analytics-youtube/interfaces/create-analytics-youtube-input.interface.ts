@@ -1,4 +1,7 @@
 export interface ICreateAnalyticsYoutubeInput {
-  analyticsId: number;
   integrationId: number;
+  channelId: string;
+  totalSubs: number;
+  totalVideos: number;
+  totalViews: number;
 }

@@ -7,15 +7,17 @@ import { UpdateUserDto } from './dto';
 import { UserRepository } from './user.repository';
 import { CompleteOnboardingDto } from './dto';
 import { ICreateProfileInput } from './profile/interfaces/create-profile-input.interface';
-import { AnalyticsRepository } from 'src/analytics/analytics.repository';
 import { ICreateUserInput } from './interfaces';
 import { UserTypes } from 'src/common/constants';
+import { IntegrationService } from 'src/integration/integration.service';
+import { AnalyticsService } from 'src/analytics/analytics.service';
 
 @Injectable()
 export class UserService {
   constructor(
     private readonly userRepository: UserRepository,
-    private readonly analyticsRepository: AnalyticsRepository,
+    private readonly analyticsService: AnalyticsService,
+    private readonly integrationService: IntegrationService,
     private readonly profileRepository: ProfileRepository,
     private readonly dataSource: DataSource
   ) {}
@@ -38,27 +40,12 @@ export class UserService {
   }
 
   async createUser(signUpRequestDto: SignUpRequestDto): Promise<User> {
-    const queryRunner = this.dataSource.createQueryRunner();
-
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
     try {
       const createUserInput: ICreateUserInput = {
         ...signUpRequestDto
       };
 
-      const newUser = await this.userRepository.createAndSave(
-        createUserInput,
-        queryRunner
-      );
-
-      if (newUser.type === UserTypes.CREATOR)
-        await this.analyticsRepository.createAndSave(
-          { userId: newUser.id },
-          queryRunner
-        );
-
-      await queryRunner.commitTransaction();
+      const newUser = await this.userRepository.createAndSave(createUserInput);
 
       Logger.log(`User ${newUser?.id} created succesfully.`);
 
@@ -66,10 +53,7 @@ export class UserService {
       return newUser;
     } catch (err) {
       Logger.error(`User creation has failed`);
-      await queryRunner.rollbackTransaction();
       throw new Error(err.message);
-    } finally {
-      await queryRunner.release();
     }
   }
 
@@ -94,7 +78,9 @@ export class UserService {
       const { description, birthDate, username, contentTags, socialNetworks } =
         completeOnboardingDto;
 
-      if (!birthDate && type === UserTypes.CREATOR)
+      const isCreator = type === UserTypes.CREATOR;
+
+      if (!birthDate && isCreator)
         throw new Error(
           'birthDate is required to complete the onboarding of a creator'
         );
@@ -112,6 +98,28 @@ export class UserService {
         createProfileInput,
         queryRunner
       );
+
+      if (isCreator) {
+        const integration = await this.integrationService.getByUserId(
+          id,
+          queryRunner
+        );
+        if (integration.length !== 1)
+          throw new Error(
+            `Problem getting creator integrations. Should be 1 but there are ${integration.length}`
+          );
+        const credential =
+          await this.integrationService.getCredentialByIntegrationId(
+            integration[0].id,
+            queryRunner
+          );
+        const basicAnalytics = await this.analyticsService.createBasicAnalytics(
+          integration[0].id,
+          credential,
+          queryRunner
+        );
+        console.log(basicAnalytics);
+      }
 
       await this.userRepository.updateById(
         id,
