@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AnalyticsYoutube } from 'src/entities';
 import { AnalyticsController } from './analytics.controller';
@@ -15,7 +15,7 @@ import { CredentialRepository } from 'src/integration/credential/credential.repo
 @Module({
   imports: [
     TypeOrmModule.forFeature([AnalyticsYoutube]),
-    IntegrationModule
+    forwardRef(() => IntegrationModule)
     // AuthModule
   ],
   controllers: [AnalyticsController],

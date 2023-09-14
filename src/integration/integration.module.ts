@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { AuthModule } from 'src/auth/auth.module';
@@ -14,7 +14,7 @@ import { CredentialService } from './credential/credential.service';
 import { CredentialRepository } from './credential/credential.repository';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Integration])],
+  imports: [TypeOrmModule.forFeature([Integration]), AuthModule],
   controllers: [IntegrationController],
   providers: [
     IntegrationService,
@@ -23,6 +23,11 @@ import { CredentialRepository } from './credential/credential.repository';
     CredentialService,
     CredentialRepository
   ],
-  exports: [IntegrationService, IntegrationRepository, CredentialService]
+  exports: [
+    IntegrationService,
+    IntegrationRepository,
+    CredentialService,
+    AuthModule
+  ]
 })
 export class IntegrationModule {}

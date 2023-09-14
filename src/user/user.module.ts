@@ -15,8 +15,8 @@ import { AnalyticsService } from 'src/analytics/analytics.service';
 @Module({
   imports: [
     TypeOrmModule.forFeature([User]),
-    AnalyticsModule,
-    IntegrationModule
+    forwardRef(() => AnalyticsModule),
+    forwardRef(() => IntegrationModule)
   ],
   controllers: [UserController],
   providers: [
