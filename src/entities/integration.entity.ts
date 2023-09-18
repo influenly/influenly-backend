@@ -8,9 +8,7 @@ import {
   OneToOne,
   JoinColumn
 } from 'typeorm';
-import { User } from './user.entity';
-import { PlatformType } from 'src/common/constants/types/platform.type';
-import { Platforms } from 'src/common/constants/enums';
+import { Network } from './network.entity';
 
 @Entity('integration')
 export class Integration extends BaseEntity {
@@ -18,10 +16,7 @@ export class Integration extends BaseEntity {
   id: number;
 
   @Column({ type: 'int' })
-  userId: number;
-
-  @Column({ type: 'enum', enum: Platforms })
-  platform: PlatformType;
+  networkId: number;
 
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
@@ -29,7 +24,7 @@ export class Integration extends BaseEntity {
   @UpdateDateColumn({ type: 'timestamp' })
   updatedAt: Date;
 
-  @OneToOne(() => User)
-  @JoinColumn({ name: 'userId' })
-  user: User;
+  @OneToOne(() => Network)
+  @JoinColumn({ name: 'networkId' })
+  network: Network;
 }

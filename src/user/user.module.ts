@@ -1,16 +1,15 @@
 import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AuthModule } from 'src/auth/auth.module';
 import { User } from 'src/entities';
 import { UserController } from './user.controller';
 import { UserRepository } from './user.repository';
 import { UserService } from './user.service';
-import { ProfileService } from './profile/profile.service';
-import { ProfileRepository } from './profile/profile.repository';
 import { AnalyticsModule } from 'src/analytics/analytics.module';
 import { IntegrationModule } from 'src/integration/integration.module';
 import { IntegrationService } from 'src/integration/integration.service';
 import { AnalyticsService } from 'src/analytics/analytics.service';
+import { NetworkRepository } from './network/network.repository';
+import { NetworkService } from './network/network.service';
 
 @Module({
   imports: [
@@ -22,17 +21,11 @@ import { AnalyticsService } from 'src/analytics/analytics.service';
   providers: [
     UserService,
     UserRepository,
-    ProfileService,
-    ProfileRepository,
+    NetworkService,
+    NetworkRepository,
     IntegrationService,
     AnalyticsService
   ],
-  exports: [
-    UserService,
-    UserRepository,
-    AnalyticsService,
-    IntegrationService,
-    ProfileRepository
-  ]
+  exports: [UserService, UserRepository, AnalyticsService, IntegrationService]
 })
 export class UserModule {}

@@ -1,6 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { SignUpRequestDto } from 'src/auth/dto';
-import { ProfileRepository } from './profile/profile.repository';
 import { User } from 'src/entities';
 import { DataSource } from 'typeorm';
 import { UpdateUserDto } from './dto';
@@ -11,14 +10,15 @@ import { ICreateUserInput } from './interfaces';
 import { UserTypes } from 'src/common/constants';
 import { IntegrationService } from 'src/integration/integration.service';
 import { AnalyticsService } from 'src/analytics/analytics.service';
+import { NetworkService } from './network/network.service';
 
 @Injectable()
 export class UserService {
   constructor(
     private readonly userRepository: UserRepository,
+    private readonly networkService: NetworkService,
     private readonly analyticsService: AnalyticsService,
     private readonly integrationService: IntegrationService,
-    private readonly profileRepository: ProfileRepository,
     private readonly dataSource: DataSource
   ) {}
 
@@ -28,20 +28,20 @@ export class UserService {
   }
 
   async getUserByEmail(email: string): Promise<User> {
-    //here is an example of whay error handle should be in service layer
     const user = await this.userRepository.findByEmail(email);
     return user;
   }
 
   async getProfile(id: number) {
-    const [{ profile, country, type }, basicAnalytics] = await Promise.all([
-      this.userRepository.findWithProfile(id),
+    const [user, userNetworks, basicAnalytics] = await Promise.all([
+      this.userRepository.findById(id),
+      this.networkService.getByUserId(id),
       this.analyticsService.getBasicAnalyticsByUserId(id)
     ]);
-    return { ...profile, country, type, basicAnalytics };
+    return { user, userNetworks, basicAnalytics };
   }
 
-  async createUser(signUpRequestDto: SignUpRequestDto): Promise<User> {
+  async create(signUpRequestDto: SignUpRequestDto): Promise<User> {
     try {
       const createUserInput: ICreateUserInput = {
         ...signUpRequestDto
@@ -96,11 +96,12 @@ export class UserService {
         birthDate
       };
 
-      const createdProfile = await this.profileRepository.createAndSave(
-        createProfileInput,
-        queryRunner
-      );
+      // const createdProfile = await this.profileRepository.createAndSave(
+      //   createProfileInput,
+      //   queryRunner
+      // );
 
+      let basicAnalytics;
       if (isCreator) {
         const integration = await this.integrationService.getByUserId(
           id,
@@ -115,7 +116,7 @@ export class UserService {
             integration[0].id,
             queryRunner
           );
-        const basicAnalytics = await this.analyticsService.createBasicAnalytics(
+        basicAnalytics = await this.analyticsService.createBasicAnalytics(
           integration[0].id,
           credential,
           queryRunner
@@ -135,11 +136,14 @@ export class UserService {
       Logger.log(`User ${id} onboaring completed succesfully.`);
 
       return {
-        ...createdProfile,
+        // ...createdProfile,
+        basicAnalytics,
         type
       };
     } catch (err) {
-      Logger.error(`Onboarding completion transaction has failed.`);
+      Logger.error(
+        `Onboarding completion transaction has failed. Error: ${err}`
+      );
       await queryRunner.rollbackTransaction();
       throw new Error(err.message);
     } finally {

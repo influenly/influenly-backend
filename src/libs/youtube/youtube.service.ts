@@ -1,13 +1,18 @@
-import { Injectable, Logger, Scope } from '@nestjs/common';
+import { HttpService } from '@nestjs/axios';
+import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { AxiosResponse } from 'axios';
 import { Credentials, OAuth2Client } from 'google-auth-library';
 import { google } from 'googleapis';
-import { Credential } from 'src/entities';
+import { Observable, map } from 'rxjs';
 
 @Injectable()
 export class YoutubeService {
   private oAuth2Client: OAuth2Client;
-  constructor(private readonly configService: ConfigService) {
+  constructor(
+    private readonly configService: ConfigService,
+    private readonly httpService: HttpService
+  ) {
     const { clientId, clientSecret } = configService.get('google');
     this.oAuth2Client = new google.auth.OAuth2(
       clientId,
@@ -19,7 +24,9 @@ export class YoutubeService {
   async getToken(authorizationCode: string): Promise<Credentials> {
     const { tokens } = await this.oAuth2Client.getToken(authorizationCode);
 
-    Logger.log(tokens);
+    console.log('tokens', tokens);
+    const infoToken = await this.oAuth2Client.getTokenInfo(tokens.access_token);
+    console.log(infoToken);
     return tokens;
   }
 
@@ -27,16 +34,36 @@ export class YoutubeService {
 
   // }
 
-  async getChannelInfo(credential: Credential) {
+  async getChannelInfo(credential: Credentials) {
     const service = google.youtube('v3');
     const oAuth2Client = this.oAuth2Client;
+    console.log(credential);
     oAuth2Client.setCredentials(credential);
     const a = await service.channels.list({
       auth: oAuth2Client,
-      part: ['snippet,contentDetails,statistics,id'],
+      part: ['snippet,statistics,id'],
       mine: true
     });
-    return a;
+    return a.data.items;
+  }
+
+  async getChannelIdFrom(
+    customUrlChannelName: string
+  ): Promise<Observable<string>> {
+    const url = `https://www.youtube.com/${customUrlChannelName}`;
+
+    return this.httpService.get(url).pipe(
+      map((response: AxiosResponse<string>) => {
+        const data = response.data;
+        const channelIdMatch = data.match(/"channelId":"([^"]+)"/);
+        console.log(channelIdMatch);
+        if (channelIdMatch && channelIdMatch.length > 1) {
+          return channelIdMatch[1];
+        } else {
+          throw new Error('Channel ID not found');
+        }
+      })
+    );
   }
 
   // async getAnalytics() {

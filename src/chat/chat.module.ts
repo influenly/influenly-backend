@@ -9,9 +9,10 @@ import { ConversationService } from './conversation/conversation.service';
 import { SocketGateway } from './socket.gateway';
 import { UserModule } from '../user/user.module';
 import { UserService } from 'src/user/user.service';
-import { ProfileRepository } from 'src/user/profile/profile.repository';
 import { ChatController } from './chat.controller';
 import { AuthModule } from '../auth/auth.module';
+import { NetworkService } from 'src/user/network/network.service';
+import { NetworkRepository } from 'src/user/network/network.repository';
 
 @Module({
   imports: [
@@ -24,11 +25,12 @@ import { AuthModule } from '../auth/auth.module';
     SocketGateway,
     ChatService,
     UserService,
+    NetworkService,
+    NetworkRepository,
     MessageService,
     MessageRepository,
     ConversationRepository,
-    ConversationService,
-    ProfileRepository
+    ConversationService
   ]
 })
 export class ChatModule {}

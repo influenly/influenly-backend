@@ -32,15 +32,6 @@ export class UserRepository extends Repository<User> {
     return queryResult;
   }
 
-  async findWithProfile(id: number, queryRunner?: QueryRunner): Promise<User> {
-    const userWithProfile = await this.createQueryBuilder('user')
-      .leftJoinAndSelect('user.profile', 'profile')
-      .where('user.id = :userId', { userId: id })
-      .getOne();
-
-    return userWithProfile;
-  }
-
   async findByEmail(email: string, queryRunner?: QueryRunner): Promise<User> {
     const queryResult = await this.createQueryBuilder(
       'findByEmail',

@@ -1,7 +1,6 @@
 import {
   Body,
   Controller,
-  Delete,
   Get,
   HttpException,
   HttpStatus,
@@ -15,17 +14,12 @@ import { UserService } from './user.service';
 import { CompleteOnboardingDto, UpdateUserDto } from './dto';
 import { Auth, GetUser } from 'src/auth/decorators';
 import { User } from 'src/entities';
-import { ProfileService } from './profile/profile.service';
-import { UpdateProfileDto } from './profile/dto/update-profile.dto';
 
 @Auth()
 @ApiTags('user')
 @Controller('user')
 export class UserController {
-  constructor(
-    private readonly userService: UserService,
-    private readonly profileService: ProfileService
-  ) {}
+  constructor(private readonly userService: UserService) {}
 
   @Post('/onboarding')
   async completeOnboarding(
@@ -79,21 +73,21 @@ export class UserController {
     }
   }
 
-  @Patch('/profile')
-  async updateUserProfile(
-    @GetUser() { id, country }: User,
-    @Body() updateProfileDto: UpdateProfileDto
-  ) {
-    try {
-      const updatedProfileResult = await this.profileService.updateByUserId(
-        id,
-        updateProfileDto
-      );
-      return { ...updatedProfileResult, country };
-    } catch (error) {
-      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
-    }
-  }
+  // @Patch('/profile')
+  // async updateUserProfile(
+  //   @GetUser() { id, country }: User,
+  //   @Body() updateProfileDto: UpdateProfileDto
+  // ) {
+  //   try {
+  //     const updatedProfileResult = await this.profileService.updateByUserId(
+  //       id,
+  //       updateProfileDto
+  //     );
+  //     return { ...updatedProfileResult, country };
+  //   } catch (error) {
+  //     throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+  //   }
+  // }
 
   @Get(':id/profile')
   async getUserProfile(
@@ -105,11 +99,11 @@ export class UserController {
         throw new Error(
           `User with id ${userId} has not completed the onboarding`
         );
-      const profile = await this.userService.getProfile(userId);
-      if (!profile) {
+      const fullProfile = await this.userService.getProfile(userId);
+      if (!fullProfile) {
         throw new Error(`User with id ${userId} not found`);
       }
-      return { ...profile };
+      return { ...fullProfile };
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }

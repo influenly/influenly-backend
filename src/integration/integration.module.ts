@@ -12,9 +12,10 @@ import { IntegrationRepository } from './integration.repository';
 import { YoutubeService } from 'src/libs/youtube/youtube.service';
 import { CredentialService } from './credential/credential.service';
 import { CredentialRepository } from './credential/credential.repository';
+import { HttpModule } from '@nestjs/axios';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Integration]), AuthModule],
+  imports: [TypeOrmModule.forFeature([Integration]), HttpModule, AuthModule],
   controllers: [IntegrationController],
   providers: [
     IntegrationService,

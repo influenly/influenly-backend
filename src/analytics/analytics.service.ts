@@ -3,6 +3,7 @@ import { AnalyticsYoutubeRepository } from './analytics-youtube/analytics-youtub
 import { QueryRunner } from 'typeorm';
 import { YoutubeService } from '../libs/youtube/youtube.service';
 import { Credential } from 'src/entities';
+import { ICreateAnalyticsYoutubeInput } from './analytics-youtube/interfaces/create-analytics-youtube-input.interface';
 
 @Injectable()
 export class AnalyticsService {
@@ -27,20 +28,36 @@ export class AnalyticsService {
     queryRunner?: QueryRunner
   ) {
     const youtubeDataApiResponse = await this.youtubeService.getChannelInfo(
-      credential
+      {
+        access_token: credential.accessToken,
+      }
     );
-    const youtubeDataApiResponseData = youtubeDataApiResponse.data;
-    console.log(youtubeDataApiResponseData);
+    const channelId = youtubeDataApiResponse[0].id;
+    const channelName = youtubeDataApiResponse[0].snippet.title;
+    const channelImg = youtubeDataApiResponse[0].snippet.thumbnails.default.url;
+    const totalSubs = parseInt(
+      youtubeDataApiResponse[0].statistics.subscriberCount
+    );
+    const totalViews = parseInt(youtubeDataApiResponse[0].statistics.viewCount);
+    const totalVideos = parseInt(
+      youtubeDataApiResponse[0].statistics.videoCount
+    );
 
-    const newAnalyticsYoutube = 'asd';
-    // await this.analyticsYoutubeRepository.createAndSave(
-    //   {
-    //     ...youtubeDataApiResponseData,
-    //     integrationId
-    //   },
-    //   queryRunner
-    // );
-    return newAnalyticsYoutube;
+    const newAnalyticsYoutube: ICreateAnalyticsYoutubeInput = {
+      integrationId,
+      channelId,
+      channelName,
+      channelImg,
+      totalSubs,
+      totalVideos,
+      totalViews
+    };
+    const createdAnalyticsYoutube =
+      await this.analyticsYoutubeRepository.createAndSave(
+        newAnalyticsYoutube,
+        queryRunner
+      );
+    return createdAnalyticsYoutube;
   }
 
   async getBasicAnalyticsByUserId(userId: number, queryRunner?: QueryRunner) {

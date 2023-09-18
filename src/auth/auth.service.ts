@@ -20,7 +20,7 @@ export class AuthService {
 
       signUpRequestDto = { ...signUpRequestDto, password: hashedPassword };
 
-      const newUser = await this.userService.createUser(signUpRequestDto);
+      const newUser = await this.userService.create(signUpRequestDto);
 
       const { id: userId } = newUser;
 

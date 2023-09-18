@@ -4,13 +4,9 @@ import {
   CreateDateColumn,
   Entity,
   PrimaryGeneratedColumn,
-  UpdateDateColumn,
-  OneToOne,
-  OneToMany
+  UpdateDateColumn
 } from 'typeorm';
 import { UserRoles, UserType } from 'src/common/constants';
-import { Profile } from './profile.entity';
-import { Conversation } from './conversation-entity';
 
 @Entity('user')
 export class User extends BaseEntity {
@@ -35,14 +31,26 @@ export class User extends BaseEntity {
   @Column({ type: 'varchar', length: 20 })
   type: UserType;
 
+  @Column('varchar', { unique: true, length: 50, nullable: true })
+  username: string;
+
+  @Column('varchar', { length: 50, nullable: true })
+  profileImg: string;
+
+  @Column('varchar', { length: 400, nullable: true })
+  description: string;
+
+  @Column('varchar', { length: 60, array: true, nullable: true })
+  contentTags: string[];
+
+  @Column('date', { nullable: true })
+  birthDate: Date;
+
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
 
   @UpdateDateColumn({ type: 'timestamp' })
   updatedAt: Date;
-
-  @OneToOne(() => Profile, (profile) => profile.user)
-  profile: Profile;
 
   // @OneToMany(() => Conversation, (conversation) => conversation.creatorUser)
   // conversations: Conversation[];

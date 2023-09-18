@@ -57,10 +57,22 @@ export class IntegrationService {
         refresh_token: refreshToken
       } = await this.youtubeService.getToken(authorizationCode);
 
+      if (
+        !(
+          scope ===
+            'https://www.googleapis.com/auth/yt-analytics.readonly https://www.googleapis.com/auth/youtube.readonly' ||
+          scope ===
+            'https://www.googleapis.com/auth/youtube.readonly https://www.googleapis.com/auth/yt-analytics.readonly'
+        )
+      ) {
+        throw new Error(
+          'Both permission should be accepted to create integration'
+        );
+      }
+      const networkId = 2;
       const newIntegration = await this.integrationRepository.createAndSave(
         {
-          userId,
-          platform
+          networkId
         },
         queryRunner
       );

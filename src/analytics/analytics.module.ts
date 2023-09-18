@@ -10,11 +10,13 @@ import { YoutubeService } from 'src/libs/youtube/youtube.service';
 import { IntegrationRepository } from 'src/integration/integration.repository';
 import { CredentialService } from 'src/integration/credential/credential.service';
 import { CredentialRepository } from 'src/integration/credential/credential.repository';
+import { HttpModule } from '@nestjs/axios';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([AnalyticsYoutube]),
-    forwardRef(() => IntegrationModule)
+    forwardRef(() => IntegrationModule),
+    HttpModule
   ],
   controllers: [AnalyticsController],
   providers: [

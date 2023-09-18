@@ -16,7 +16,7 @@ async function bootstrap() {
   app.enableCors({ origin: '*' });
 
   const swaggerConfig = new DocumentBuilder()
-    .setTitle('Content API')
+    .setTitle('influenly API')
     .setDescription('MVP Api :)')
     .setVersion('1.0')
     .build();
