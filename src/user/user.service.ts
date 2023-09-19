@@ -5,12 +5,12 @@ import { DataSource } from 'typeorm';
 import { UpdateUserDto } from './dto';
 import { UserRepository } from './user.repository';
 import { CompleteOnboardingDto } from './dto';
-import { ICreateProfileInput } from './profile/interfaces/create-profile-input.interface';
 import { ICreateUserInput } from './interfaces';
 import { UserTypes } from 'src/common/constants';
 import { IntegrationService } from 'src/integration/integration.service';
 import { AnalyticsService } from 'src/analytics/analytics.service';
 import { NetworkService } from './network/network.service';
+import { IUpdateUserProfileInput } from './profile/interfaces/update-user-profile-input.interface';
 
 @Injectable()
 export class UserService {
@@ -87,8 +87,7 @@ export class UserService {
           'birthDate is required to complete the onboarding of a creator'
         );
 
-      const createProfileInput: ICreateProfileInput = {
-        userId: id,
+      const updateUserProfileInput: IUpdateUserProfileInput = {
         description,
         socialNetworks,
         username,
@@ -96,32 +95,18 @@ export class UserService {
         birthDate
       };
 
-      // const createdProfile = await this.profileRepository.createAndSave(
-      //   createProfileInput,
-      //   queryRunner
-      // );
+      const updatedUser = await this.userRepository.updateProfileById(
+        id,
+        updateUserProfileInput,
+        queryRunner
+      );
 
-      let basicAnalytics;
       if (isCreator) {
-        const integration = await this.integrationService.getByUserId(
-          id,
-          queryRunner
-        );
+        const integration = await this.integrationService.getByUserId(id);
         if (integration.length !== 1)
           throw new Error(
             `Problem getting creator integrations. Should be 1 but there are ${integration.length}`
           );
-        const credential =
-          await this.integrationService.getCredentialByIntegrationId(
-            integration[0].id,
-            queryRunner
-          );
-        basicAnalytics = await this.analyticsService.createBasicAnalytics(
-          integration[0].id,
-          credential,
-          queryRunner
-        );
-        console.log(basicAnalytics);
       }
 
       await this.userRepository.updateById(
@@ -136,8 +121,7 @@ export class UserService {
       Logger.log(`User ${id} onboaring completed succesfully.`);
 
       return {
-        // ...createdProfile,
-        basicAnalytics,
+        updatedUser,
         type
       };
     } catch (err) {

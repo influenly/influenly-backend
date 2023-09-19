@@ -11,6 +11,8 @@ import { IntegrationRepository } from 'src/integration/integration.repository';
 import { CredentialService } from 'src/integration/credential/credential.service';
 import { CredentialRepository } from 'src/integration/credential/credential.repository';
 import { HttpModule } from '@nestjs/axios';
+import { NetworkService } from 'src/user/network/network.service';
+import { NetworkRepository } from 'src/user/network/network.repository';
 
 @Module({
   imports: [
@@ -22,6 +24,8 @@ import { HttpModule } from '@nestjs/axios';
   providers: [
     AnalyticsService,
     IntegrationRepository,
+    NetworkService,
+    NetworkRepository,
     CredentialService,
     CredentialRepository,
     AnalyticsYoutubeRepository,

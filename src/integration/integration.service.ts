@@ -5,11 +5,15 @@ import { YoutubeService } from 'src/libs/youtube/youtube.service';
 import { CreateIntegrationDto } from './dto';
 import { IntegrationRepository } from './integration.repository';
 import { CredentialService } from './credential/credential.service';
+import { NetworkService } from 'src/user/network/network.service';
+import { AnalyticsService } from 'src/analytics/analytics.service';
 
 @Injectable()
 export class IntegrationService {
   constructor(
     private readonly integrationRepository: IntegrationRepository,
+    private readonly networkService: NetworkService,
+    private readonly analyticsService: AnalyticsService,
     private readonly credentialService: CredentialService,
     private readonly youtubeService: YoutubeService,
     private readonly dataSource: DataSource
@@ -57,19 +61,27 @@ export class IntegrationService {
         refresh_token: refreshToken
       } = await this.youtubeService.getToken(authorizationCode);
 
-      if (
-        !(
-          scope ===
-            'https://www.googleapis.com/auth/yt-analytics.readonly https://www.googleapis.com/auth/youtube.readonly' ||
-          scope ===
-            'https://www.googleapis.com/auth/youtube.readonly https://www.googleapis.com/auth/yt-analytics.readonly'
-        )
-      ) {
+      if (scope.split(' ').length !== 2)
         throw new Error(
           'Both permission should be accepted to create integration'
         );
-      }
-      const networkId = 2;
+
+      const channelInfo = await this.youtubeService.getChannelInfo(accessToken);
+
+      const newNetwork = await this.networkService.create(
+        {
+          channelId: channelInfo.id,
+          name: channelInfo.name,
+          platform,
+          profileImg: channelInfo.profileImg,
+          url: `https://youtube.com/channel/${channelInfo.id}`,
+          userId
+        },
+        queryRunner
+      );
+
+      const networkId = newNetwork.id;
+
       const newIntegration = await this.integrationRepository.createAndSave(
         {
           networkId
@@ -78,6 +90,16 @@ export class IntegrationService {
       );
 
       const integrationId = newIntegration.id;
+
+      const { totalSubs, totalVideos, totalViews } = channelInfo;
+
+      await this.analyticsService.createBasicAnalytics({
+        integrationId,
+        totalViews: parseInt(totalViews),
+        totalSubs: parseInt(totalSubs),
+        totalVideos: parseInt(totalVideos),
+        channelId: channelInfo.id
+      }, queryRunner);
 
       const newCredential = await this.credentialService.create(
         {

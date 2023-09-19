@@ -1,4 +1,4 @@
-export interface IUpdateProfileInput {
+export interface IUpdateUserProfileInput {
   username?: string;
   profileImg?: string;
   socialNetworks?: string[];

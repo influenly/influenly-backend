@@ -34,17 +34,32 @@ export class YoutubeService {
 
   // }
 
-  async getChannelInfo(credential: Credentials) {
+  async getChannelInfo(accessToken: string) {
     const service = google.youtube('v3');
+
     const oAuth2Client = this.oAuth2Client;
-    console.log(credential);
-    oAuth2Client.setCredentials(credential);
-    const a = await service.channels.list({
+    oAuth2Client.setCredentials({
+      access_token: accessToken
+    });
+
+    const {
+      data: { items }
+    } = await service.channels.list({
       auth: oAuth2Client,
       part: ['snippet,statistics,id'],
       mine: true
     });
-    return a.data.items;
+
+    const channelInfo = items[0];
+
+    return {
+      id: channelInfo.id,
+      name: channelInfo.snippet.title,
+      profileImg: channelInfo.snippet.thumbnails.default.url,
+      totalSubs: channelInfo.statistics.subscriberCount,
+      totalViews: channelInfo.statistics.viewCount,
+      totalVideos: channelInfo.statistics.videoCount
+    };
   }
 
   async getChannelIdFrom(
