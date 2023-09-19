@@ -62,21 +62,17 @@ export class YoutubeService {
     };
   }
 
-  async getChannelIdFrom(
+  async getChannelIdFromCustomUrl(
     customUrlChannelName: string
   ): Promise<Observable<string>> {
+    const startsWithAt = customUrlChannelName[0] === '@';
     const url = `https://www.youtube.com/${customUrlChannelName}`;
 
     return this.httpService.get(url).pipe(
       map((response: AxiosResponse<string>) => {
         const data = response.data;
-        const channelIdMatch = data.match(/"channelId":"([^"]+)"/);
-        console.log(channelIdMatch);
-        if (channelIdMatch && channelIdMatch.length > 1) {
-          return channelIdMatch[1];
-        } else {
-          throw new Error('Channel ID not found');
-        }
+        const channelIdArr = data.split('channel_id=');
+        return channelIdArr[1].slice(0, 24);
       })
     );
   }

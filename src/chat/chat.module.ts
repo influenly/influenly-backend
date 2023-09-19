@@ -13,9 +13,12 @@ import { ChatController } from './chat.controller';
 import { AuthModule } from '../auth/auth.module';
 import { NetworkService } from 'src/user/network/network.service';
 import { NetworkRepository } from 'src/user/network/network.repository';
+import { YoutubeService } from 'src/libs/youtube/youtube.service';
+import { HttpModule } from '@nestjs/axios';
 
 @Module({
   imports: [
+    HttpModule,
     AuthModule,
     UserModule,
     TypeOrmModule.forFeature([Conversation, Message])
@@ -30,7 +33,8 @@ import { NetworkRepository } from 'src/user/network/network.repository';
     MessageService,
     MessageRepository,
     ConversationRepository,
-    ConversationService
+    ConversationService,
+    YoutubeService
   ]
 })
 export class ChatModule {}

@@ -11,6 +11,7 @@ import { IntegrationService } from 'src/integration/integration.service';
 import { AnalyticsService } from 'src/analytics/analytics.service';
 import { NetworkService } from './network/network.service';
 import { IUpdateUserProfileInput } from './profile/interfaces/update-user-profile-input.interface';
+import { YoutubeService } from '../libs/youtube/youtube.service';
 
 @Injectable()
 export class UserService {
@@ -19,6 +20,7 @@ export class UserService {
     private readonly networkService: NetworkService,
     private readonly analyticsService: AnalyticsService,
     private readonly integrationService: IntegrationService,
+    private readonly youtubeService: YoutubeService,
     private readonly dataSource: DataSource
   ) {}
 
@@ -87,9 +89,36 @@ export class UserService {
           'birthDate is required to complete the onboarding of a creator'
         );
 
+      const youtubeUrls = socialNetworks.filter((network) =>
+        /youtube/.test(network)
+      );
+
+      let youtubeChannels;
+
+      if (youtubeUrls.length)
+        youtubeChannels = youtubeUrls.map((youtubeUrl) => {
+          return {
+            type: /channel/.test(youtubeUrl) ? 'id' : 'customUrl',
+            value: youtubeUrl.substring(youtubeUrl.lastIndexOf('/') + 1)
+          };
+        });
+
+      if (youtubeUrls.length)
+        youtubeChannels = youtubeUrls.map(async (youtubeUrl) => {
+          const channelValue = youtubeUrl.substring(
+            youtubeUrl.lastIndexOf('/') + 1
+          );
+          if (/channel/.test(youtubeUrl)) {
+            return channelValue;
+          }
+          const channelId = await this.youtubeService.getChannelIdFromCustomUrl(
+            channelValue
+          );
+          return channelId;
+        });
+
       const updateUserProfileInput: IUpdateUserProfileInput = {
         description,
-        socialNetworks,
         username,
         contentTags,
         birthDate

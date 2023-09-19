@@ -9,10 +9,13 @@ import { AuthService } from './auth.service';
 import { JwtStrategy } from './strategies/jwt-strategy';
 import { NetworkService } from 'src/user/network/network.service';
 import { NetworkRepository } from 'src/user/network/network.repository';
+import { YoutubeService } from 'src/libs/youtube/youtube.service';
+import { HttpModule } from '@nestjs/axios';
 
 @Module({
   imports: [
     UserModule,
+    HttpModule,
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.registerAsync({
       global: true,
@@ -29,7 +32,14 @@ import { NetworkRepository } from 'src/user/network/network.repository';
     })
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy, UserService, NetworkService, NetworkRepository],
+  providers: [
+    AuthService,
+    JwtStrategy,
+    UserService,
+    NetworkService,
+    NetworkRepository,
+    YoutubeService
+  ],
   exports: [PassportModule, JwtStrategy]
 })
 export class AuthModule {}
