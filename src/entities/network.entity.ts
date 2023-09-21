@@ -6,7 +6,8 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
   ManyToOne,
-  JoinColumn
+  JoinColumn,
+  Unique
 } from 'typeorm';
 import { User } from './user.entity';
 import { PlatformType } from 'src/common/constants/types/platform.type';
@@ -44,9 +45,4 @@ export class Network extends BaseEntity {
   @ManyToOne(() => User)
   @JoinColumn({ name: 'userId' })
   user: User;
-}
-function Unique(
-  arg0: string[]
-): (target: typeof Network) => void | typeof Network {
-  throw new Error('Function not implemented.');
 }
