@@ -65,7 +65,8 @@ export class YoutubeService {
   async getChannelIdFromCustomUrl(
     customUrlChannelName: string
   ): Promise<Observable<string>> {
-    const startsWithAt = customUrlChannelName[0] === '@';
+    if (!customUrlChannelName.startsWith('@'))
+      customUrlChannelName = `@${customUrlChannelName}`;
     const url = `https://www.youtube.com/${customUrlChannelName}`;
 
     return this.httpService.get(url).pipe(

@@ -89,33 +89,57 @@ export class UserService {
           'birthDate is required to complete the onboarding of a creator'
         );
 
+      const networks = socialNetworks.map(async (networkUrl) => {
+        if (/youtube/.test(networkUrl)) {
+          const channelValue = networkUrl.substring(
+            networkUrl.lastIndexOf('/') + 1
+          );
+          if (/channel/.test(networkUrl)) {
+            return {
+              url: `https://www.youtube.com/channel/${channelValue}`,
+              id: channelValue
+            };
+          }
+          const channelId = await this.youtubeService.getChannelIdFromCustomUrl(
+            channelValue
+          );
+          return {
+            url: `https://www.youtube.com/channel/${channelId}`,
+            id: channelId
+          };
+        }
+        const parts = networkUrl.split('/');
+        const name = parts[parts.length - 1];
+        return { url: networkUrl, name, channelId: null };
+      });
+
       const youtubeUrls = socialNetworks.filter((network) =>
         /youtube/.test(network)
       );
 
       let youtubeChannels;
 
-      if (youtubeUrls.length)
-        youtubeChannels = youtubeUrls.map((youtubeUrl) => {
-          return {
-            type: /channel/.test(youtubeUrl) ? 'id' : 'customUrl',
-            value: youtubeUrl.substring(youtubeUrl.lastIndexOf('/') + 1)
-          };
-        });
-
-      if (youtubeUrls.length)
+      if (youtubeUrls.length && isCreator)
         youtubeChannels = youtubeUrls.map(async (youtubeUrl) => {
           const channelValue = youtubeUrl.substring(
             youtubeUrl.lastIndexOf('/') + 1
           );
           if (/channel/.test(youtubeUrl)) {
-            return channelValue;
+            return {
+              url: `https://youtube.com/channel/${channelValue}`,
+              id: channelValue
+            };
           }
           const channelId = await this.youtubeService.getChannelIdFromCustomUrl(
             channelValue
           );
-          return channelId;
+          return {
+            url: `https://youtube.com/channel/${channelId}`,
+            id: channelId
+          };
         });
+
+      // const networks =
 
       const updateUserProfileInput: IUpdateUserProfileInput = {
         description,

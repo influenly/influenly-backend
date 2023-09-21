@@ -11,7 +11,7 @@ import {
 import { User } from './user.entity';
 import { PlatformType } from 'src/common/constants/types/platform.type';
 import { Platforms } from 'src/common/constants/enums';
-
+@Unique(['userId', 'url'])
 @Entity('network')
 export class Network extends BaseEntity {
   @PrimaryGeneratedColumn()
@@ -44,4 +44,9 @@ export class Network extends BaseEntity {
   @ManyToOne(() => User)
   @JoinColumn({ name: 'userId' })
   user: User;
+}
+function Unique(
+  arg0: string[]
+): (target: typeof Network) => void | typeof Network {
+  throw new Error('Function not implemented.');
 }
