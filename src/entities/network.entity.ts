@@ -33,7 +33,7 @@ export class Network extends BaseEntity {
   @Column('varchar', { length: 50 })
   name: string;
 
-  @Column('varchar', { length: 200 })
+  @Column('varchar', { length: 200, nullable: true })
   profileImg: string;
 
   @CreateDateColumn({ type: 'timestamp' })

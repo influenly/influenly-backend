@@ -6,8 +6,10 @@ import {
   IsArray,
   IsDateString,
   IsISO8601,
-  Length
+  Length,
+  IsNumber
 } from 'class-validator';
+import { ISocialNetworks } from 'src/common/interfaces';
 
 export class CompleteOnboardingDto {
   @ApiProperty()
@@ -26,7 +28,12 @@ export class CompleteOnboardingDto {
   @ApiProperty()
   @IsNotEmpty()
   @IsArray()
-  socialNetworks: string[];
+  socialNetworks: ISocialNetworks;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsNumber()
+  networkIntegratedId: number;
 
   @ApiProperty()
   @IsNotEmpty()

@@ -74,7 +74,7 @@ export class IntegrationService {
           name: channelInfo.name,
           platform,
           profileImg: channelInfo.profileImg,
-          url: `https://youtube.com/channel/${channelInfo.id}`,
+          url: `https://www.youtube.com/channel/${channelInfo.id}`,
           userId
         },
         queryRunner
@@ -93,13 +93,16 @@ export class IntegrationService {
 
       const { totalSubs, totalVideos, totalViews } = channelInfo;
 
-      await this.analyticsService.createBasicAnalytics({
-        integrationId,
-        totalViews: parseInt(totalViews),
-        totalSubs: parseInt(totalSubs),
-        totalVideos: parseInt(totalVideos),
-        channelId: channelInfo.id
-      }, queryRunner);
+      await this.analyticsService.createBasicAnalytics(
+        {
+          integrationId,
+          totalViews: parseInt(totalViews),
+          totalSubs: parseInt(totalSubs),
+          totalVideos: parseInt(totalVideos),
+          channelId: channelInfo.id
+        },
+        queryRunner
+      );
 
       const newCredential = await this.credentialService.create(
         {
@@ -121,6 +124,7 @@ export class IntegrationService {
 
       return {
         error: false,
+        networkIntegratedId: newNetwork.id,
         message: 'Integration created successfully'
       };
     } catch (err) {

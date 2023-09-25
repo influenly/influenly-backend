@@ -4,7 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import { AxiosResponse } from 'axios';
 import { Credentials, OAuth2Client } from 'google-auth-library';
 import { google } from 'googleapis';
-import { Observable, map } from 'rxjs';
+import { Observable, firstValueFrom, map } from 'rxjs';
 
 @Injectable()
 export class YoutubeService {
@@ -23,10 +23,6 @@ export class YoutubeService {
 
   async getToken(authorizationCode: string): Promise<Credentials> {
     const { tokens } = await this.oAuth2Client.getToken(authorizationCode);
-
-    console.log('tokens', tokens);
-    const infoToken = await this.oAuth2Client.getTokenInfo(tokens.access_token);
-    console.log(infoToken);
     return tokens;
   }
 
@@ -62,19 +58,40 @@ export class YoutubeService {
     };
   }
 
-  async getChannelIdFromCustomUrl(
-    customUrlChannelName: string
-  ): Promise<Observable<string>> {
-    if (!customUrlChannelName.startsWith('@'))
-      customUrlChannelName = `@${customUrlChannelName}`;
-    const url = `https://www.youtube.com/${customUrlChannelName}`;
+  async getChannelInfoFromUrl(url: string) {
+    return firstValueFrom(
+      this.httpService.get(url).pipe(
+        map((response: AxiosResponse<string>) => {
+          const data = response.data;
 
-    return this.httpService.get(url).pipe(
-      map((response: AxiosResponse<string>) => {
-        const data = response.data;
-        const channelIdArr = data.split('channel_id=');
-        return channelIdArr[1].slice(0, 24);
-      })
+          const channelInfo = data.split('"header":{')[1];
+
+          // const regexVideos = /"videosCountText":{"runs":\[{"text":"([^"]+)"}/;
+          // const totalVideos = channelInfo.match(regexVideos)[1];
+
+          // const regexSubs =
+          //   /"subscriberCountText":{"accessibility":{"accessibilityData":{"label":"[^"]+"}},"simpleText":"([^"]+)"}/;
+          // const matchSubs = channelInfo.match(regexSubs);
+          // const totalSubs = matchSubs ? matchSubs[1] : '0';
+
+          const regexChannelId = /"channelId":"([^"]+)"/;
+          const channelId = channelInfo.match(regexChannelId)[1];
+
+          const regexChannelName = /"title":"([^"]+)"/;
+          const channelName = channelInfo.match(regexChannelName)[1];
+
+          const regexChannelImg = /"thumbnails":\[\{"url":"([^"]*s48[^"]*)"/;
+          const channelImg = channelInfo.match(regexChannelImg)[1];
+
+          return {
+            // totalVideos,
+            // totalSubs,
+            id: channelId,
+            name: channelName,
+            profileImg: channelImg
+          };
+        })
+      )
     );
   }
 

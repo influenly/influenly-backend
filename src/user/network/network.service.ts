@@ -8,15 +8,17 @@ import { ICreateNetworkInput } from './interfaces/create-network.interface';
 export class NetworkService {
   constructor(private readonly networkRepository: NetworkRepository) {}
 
-  async create(
-    createNetworkInput: ICreateNetworkInput,
-    queryRunner: QueryRunner
-  ): Promise<Network> {
+  async create(createNetworkInput, queryRunner: QueryRunner): Promise<Network> {
     const newNetwork = await this.networkRepository.createAndSave(
       createNetworkInput,
       queryRunner
     );
     return newNetwork;
+  }
+
+  async getById(id: number, queryRunner?: QueryRunner): Promise<Network> {
+    const network = await this.networkRepository.findById(id, queryRunner);
+    return network;
   }
 
   async getByUserId(

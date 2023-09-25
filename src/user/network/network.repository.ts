@@ -9,7 +9,7 @@ export class NetworkRepository extends Repository<Network> {
     super(Network, dataSource.createEntityManager());
   }
   async createAndSave(
-    createNetworkInput: ICreateNetworkInput,
+    createNetworkInput,
     queryRunner?: QueryRunner
   ): Promise<Network> {
     const newNetwork = this.create(createNetworkInput);
@@ -24,7 +24,18 @@ export class NetworkRepository extends Repository<Network> {
     return queryResult.raw[0];
   }
 
-  async findByUserId(userId: number, queryRunner?: QueryRunner) {
+  async findById(id: number, queryRunner?: QueryRunner): Promise<Network> {
+    const queryResult = await this.createQueryBuilder('network', queryRunner)
+      .where({ id })
+      .getOne();
+
+    return queryResult;
+  }
+
+  async findByUserId(
+    userId: number,
+    queryRunner?: QueryRunner
+  ): Promise<Network[]> {
     const queryResult = await this.createQueryBuilder('network', queryRunner)
       .where({ userId })
       .getMany();

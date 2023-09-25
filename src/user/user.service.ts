@@ -79,8 +79,14 @@ export class UserService {
     await queryRunner.startTransaction();
 
     try {
-      const { description, birthDate, username, contentTags, socialNetworks } =
-        completeOnboardingDto;
+      const {
+        description,
+        birthDate,
+        username,
+        contentTags,
+        socialNetworks,
+        networkIntegratedId
+      } = completeOnboardingDto;
 
       const isCreator = type === UserTypes.CREATOR;
 
@@ -89,57 +95,31 @@ export class UserService {
           'birthDate is required to complete the onboarding of a creator'
         );
 
-      const networks = socialNetworks.map(async (networkUrl) => {
-        if (/youtube/.test(networkUrl)) {
-          const channelValue = networkUrl.substring(
-            networkUrl.lastIndexOf('/') + 1
-          );
-          if (/channel/.test(networkUrl)) {
-            return {
-              url: `https://www.youtube.com/channel/${channelValue}`,
-              id: channelValue
-            };
-          }
-          const channelId = await this.youtubeService.getChannelIdFromCustomUrl(
-            channelValue
-          );
-          return {
-            url: `https://www.youtube.com/channel/${channelId}`,
-            id: channelId
-          };
-        }
-        const parts = networkUrl.split('/');
-        const name = parts[parts.length - 1];
-        return { url: networkUrl, name, channelId: null };
-      });
+      const { channelId: integratedChannelId } =
+        await this.networkService.getById(networkIntegratedId);
 
-      const youtubeUrls = socialNetworks.filter((network) =>
-        /youtube/.test(network)
+      const { youtube } = socialNetworks;
+
+      const youtubeChannelsInfo = await Promise.all(
+        youtube.map((url) => this.youtubeService.getChannelInfoFromUrl(url))
       );
 
-      let youtubeChannels;
+      const newYoutubeNetworksInfo = youtubeChannelsInfo
+        .filter((channelInfo) => channelInfo.id != integratedChannelId)
+        .map((channelInfo) => ({
+          ...channelInfo,
+          url: `https://www.youtube.com/channel/${channelInfo.id}`,
+          userId: id
+        }));
 
-      if (youtubeUrls.length && isCreator)
-        youtubeChannels = youtubeUrls.map(async (youtubeUrl) => {
-          const channelValue = youtubeUrl.substring(
-            youtubeUrl.lastIndexOf('/') + 1
-          );
-          if (/channel/.test(youtubeUrl)) {
-            return {
-              url: `https://youtube.com/channel/${channelValue}`,
-              id: channelValue
-            };
-          }
-          const channelId = await this.youtubeService.getChannelIdFromCustomUrl(
-            channelValue
-          );
-          return {
-            url: `https://youtube.com/channel/${channelId}`,
-            id: channelId
-          };
-        });
+      const newNetworks = [...newYoutubeNetworksInfo];
 
-      // const networks =
+      const networksCreated = await this.networkService.create(
+        newNetworks,
+        queryRunner
+      );
+
+      console.log(networksCreated);
 
       const updateUserProfileInput: IUpdateUserProfileInput = {
         description,
