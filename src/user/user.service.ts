@@ -12,6 +12,7 @@ import { AnalyticsService } from 'src/analytics/analytics.service';
 import { NetworkService } from './network/network.service';
 import { IUpdateUserProfileInput } from './profile/interfaces/update-user-profile-input.interface';
 import { YoutubeService } from '../libs/youtube/youtube.service';
+import { Platforms } from 'src/common/constants/enums';
 
 @Injectable()
 export class UserService {
@@ -98,7 +99,7 @@ export class UserService {
       const { channelId: integratedChannelId } =
         await this.networkService.getById(networkIntegratedId);
 
-      const { youtube } = socialNetworks;
+      const { youtube, tiktok } = socialNetworks;
 
       const youtubeChannelsInfo = await Promise.all(
         youtube.map((url) => this.youtubeService.getChannelInfoFromUrl(url))
@@ -109,10 +110,19 @@ export class UserService {
         .map((channelInfo) => ({
           ...channelInfo,
           url: `https://www.youtube.com/channel/${channelInfo.id}`,
-          userId: id
+          userId: id,
+          platform: Platforms.YOUTUBE
         }));
 
-      const newNetworks = [...newYoutubeNetworksInfo];
+      const newTiktokNetworks = tiktok.map((url) => ({
+        url,
+        profileImg: 'default tiktok',
+        name: url.split('.com/')[1],
+        platform: Platforms.TIKTOK,
+        userId: id
+      }));
+
+      const newNetworks = [...newYoutubeNetworksInfo, ...newTiktokNetworks];
 
       const networksCreated = await this.networkService.create(
         newNetworks,
