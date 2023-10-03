@@ -37,4 +37,15 @@ export class AnalyticsYoutubeRepository extends Repository<AnalyticsYoutube> {
 
     return queryResult;
   }
+
+  async findByIntegrationId(integrationId: number, queryRunner?: QueryRunner) {
+    const queryResult = await this.createQueryBuilder(
+      'analytics_youtube',
+      queryRunner
+    )
+      .where({ integrationId })
+      .getOne();
+
+    return queryResult;
+  }
 }

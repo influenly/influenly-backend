@@ -94,8 +94,17 @@ export class UserService {
           'birthDate is required to complete the onboarding of a creator'
         );
 
-      const { channelId: integratedChannelId } =
-        await this.networkService.getById(networkIntegratedId);
+      const integration = await this.integrationService.getByUserId(id);
+
+      if (isCreator && integration.length !== 1) {
+        throw new Error(
+          `Problem getting creator integrations. Should be 1 but there are ${integration.length}`
+        );
+      }
+
+      const integratedNetwork = await this.networkService.getById(
+        networkIntegratedId
+      );
 
       const { youtube } = socialNetworks;
 
@@ -104,7 +113,7 @@ export class UserService {
       );
 
       const newYoutubeNetworksInfo = youtubeChannelsInfo
-        .filter((channelInfo) => channelInfo.id != integratedChannelId)
+        .filter((channelInfo) => channelInfo.id != integratedNetwork.channelId)
         .map((channelInfo) => ({
           ...channelInfo,
           url: `https://www.youtube.com/channel/${channelInfo.id}`,
@@ -140,14 +149,6 @@ export class UserService {
 
       console.log(networksCreated);
 
-      if (isCreator) {
-        const integration = await this.integrationService.getByUserId(id);
-        if (integration.length !== 1)
-          throw new Error(
-            `Problem getting creator integrations. Should be 1 but there are ${integration.length}`
-          );
-      }
-
       const updatedUser = await this.userRepository.updateById(
         id,
         {
@@ -165,6 +166,7 @@ export class UserService {
 
       return {
         updatedUser,
+        networks: 2,
         type
       };
     } catch (err) {
