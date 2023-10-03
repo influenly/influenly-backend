@@ -3,4 +3,9 @@ export interface IUpdateUserInput {
   email?: string;
   country?: string;
   onboardingCompleted?: boolean;
+  username?: string;
+  profileImg?: string;
+  description?: string;
+  contentTags?: string[];
+  birthDate?: string;
 }

@@ -2,15 +2,13 @@ import { Injectable, Logger } from '@nestjs/common';
 import { SignUpRequestDto } from 'src/auth/dto';
 import { User } from 'src/entities';
 import { DataSource } from 'typeorm';
-import { UpdateUserDto } from './dto';
 import { UserRepository } from './user.repository';
 import { CompleteOnboardingDto } from './dto';
-import { ICreateUserInput } from './interfaces';
+import { ICreateUserInput, IUpdateUserInput } from './interfaces';
 import { UserTypes } from 'src/common/constants';
 import { IntegrationService } from 'src/integration/integration.service';
 import { AnalyticsService } from 'src/analytics/analytics.service';
 import { NetworkService } from './network/network.service';
-import { IUpdateUserProfileInput } from './profile/interfaces/update-user-profile-input.interface';
 import { YoutubeService } from '../libs/youtube/youtube.service';
 import { Platforms } from 'src/common/constants/enums';
 
@@ -62,7 +60,7 @@ export class UserService {
     }
   }
 
-  async updateById(id: number, updateUserDto: UpdateUserDto): Promise<User> {
+  async updateById(id: number, updateUserDto: IUpdateUserInput): Promise<User> {
     const updatedUser = await this.userRepository.updateById(id, updateUserDto);
     return updatedUser;
   }
@@ -99,7 +97,7 @@ export class UserService {
       const { channelId: integratedChannelId } =
         await this.networkService.getById(networkIntegratedId);
 
-      const { youtube, tiktok } = socialNetworks;
+      const { youtube } = socialNetworks;
 
       const youtubeChannelsInfo = await Promise.all(
         youtube.map((url) => this.youtubeService.getChannelInfoFromUrl(url))
@@ -114,15 +112,26 @@ export class UserService {
           platform: Platforms.YOUTUBE
         }));
 
-      const newTiktokNetworks = tiktok.map((url) => ({
-        url,
-        profileImg: 'default tiktok',
-        name: url.split('.com/')[1],
-        platform: Platforms.TIKTOK,
-        userId: id
-      }));
+      const nonIntegratedNetworks = { ...socialNetworks };
+      delete nonIntegratedNetworks.youtube;
 
-      const newNetworks = [...newYoutubeNetworksInfo, ...newTiktokNetworks];
+      let newNetworksInfo;
+
+      for (const [platformName, platformNetworks] of Object.entries(
+        nonIntegratedNetworks
+      )) {
+        platformNetworks.forEach((url) => {
+          newNetworksInfo.push({
+            url,
+            profileImg: 'default',
+            name: url.split('.com/')[1],
+            platform: Platforms[platformName.toUpperCase()],
+            userId: id
+          });
+        });
+      }
+
+      const newNetworks = [...newYoutubeNetworksInfo, ...newNetworksInfo];
 
       const networksCreated = await this.networkService.create(
         newNetworks,
@@ -130,19 +139,6 @@ export class UserService {
       );
 
       console.log(networksCreated);
-
-      const updateUserProfileInput: IUpdateUserProfileInput = {
-        description,
-        username,
-        contentTags,
-        birthDate
-      };
-
-      const updatedUser = await this.userRepository.updateProfileById(
-        id,
-        updateUserProfileInput,
-        queryRunner
-      );
 
       if (isCreator) {
         const integration = await this.integrationService.getByUserId(id);
@@ -152,9 +148,13 @@ export class UserService {
           );
       }
 
-      await this.userRepository.updateById(
+      const updatedUser = await this.userRepository.updateById(
         id,
         {
+          description,
+          username,
+          contentTags,
+          birthDate,
           onboardingCompleted: true
         },
         queryRunner

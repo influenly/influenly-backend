@@ -4,7 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import { AxiosResponse } from 'axios';
 import { Credentials, OAuth2Client } from 'google-auth-library';
 import { google } from 'googleapis';
-import { Observable, firstValueFrom, map } from 'rxjs';
+import { firstValueFrom, map } from 'rxjs';
 
 @Injectable()
 export class YoutubeService {

@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { User } from 'src/entities';
 import { Repository, DataSource, QueryRunner } from 'typeorm';
 import { ICreateUserInput, IUpdateUserInput } from './interfaces';
-import { IUpdateUserProfileInput } from './profile/interfaces/update-user-profile-input.interface';
 
 @Injectable()
 export class UserRepository extends Repository<User> {
@@ -51,25 +50,6 @@ export class UserRepository extends Repository<User> {
   ): Promise<User> {
     const queryResult = await this.createQueryBuilder('updateById', queryRunner)
       .update(updateUserInput)
-      .where({
-        id
-      })
-      .returning('*')
-      .execute();
-
-    return queryResult.raw[0];
-  }
-
-  async updateProfileById(
-    id: number,
-    updateUserProfileInput: IUpdateUserProfileInput,
-    queryRunner?: QueryRunner
-  ): Promise<User> {
-    const queryResult = await this.createQueryBuilder(
-      'updateProfileById',
-      queryRunner
-    )
-      .update(updateUserProfileInput)
       .where({
         id
       })
