@@ -83,7 +83,7 @@ export class UserService {
         birthDate,
         username,
         contentTags,
-        socialNetworks,
+        networks,
         networkIntegratedId
       } = completeOnboardingDto;
 
@@ -106,7 +106,7 @@ export class UserService {
         networkIntegratedId
       );
 
-      const { youtube } = socialNetworks;
+      const { youtube } = networks;
 
       const youtubeChannelsInfo = await Promise.all(
         youtube.map((url) => this.youtubeService.getChannelInfoFromUrl(url))
@@ -121,7 +121,7 @@ export class UserService {
           platform: Platforms.YOUTUBE
         }));
 
-      const nonIntegratedNetworks = { ...socialNetworks };
+      const nonIntegratedNetworks = { ...networks };
       delete nonIntegratedNetworks.youtube;
 
       let newNetworksInfo;

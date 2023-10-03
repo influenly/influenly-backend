@@ -9,7 +9,7 @@ import {
   Length,
   IsNumber
 } from 'class-validator';
-import { ISocialNetworks } from 'src/common/interfaces';
+import { INetworks } from 'src/common/interfaces';
 
 export class CompleteOnboardingDto {
   @ApiProperty()
@@ -28,7 +28,7 @@ export class CompleteOnboardingDto {
   @ApiProperty()
   @IsNotEmpty()
   @IsArray()
-  socialNetworks: ISocialNetworks;
+  networks: INetworks;
 
   @ApiProperty()
   @IsNotEmpty()

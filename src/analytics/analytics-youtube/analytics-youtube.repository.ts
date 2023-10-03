@@ -30,7 +30,7 @@ export class AnalyticsYoutubeRepository extends Repository<AnalyticsYoutube> {
       queryRunner
     )
       .innerJoin('analytics_youtube.integration', 'integration')
-      .where('integraion.userId = :userId', { userId })
+      .where('integration.userId = :userId', { userId })
       .getMany();
 
     console.log(queryResult);

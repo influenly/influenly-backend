@@ -8,6 +8,7 @@ import {
   IsISO8601,
   Length
 } from 'class-validator';
+import { INetworks } from 'src/common/interfaces';
 
 export class UpdateProfileDto {
   @ApiProperty()
@@ -28,7 +29,7 @@ export class UpdateProfileDto {
   @IsOptional()
   @IsNotEmpty()
   @IsArray()
-  socialNetworks?: string[];
+  networks?: INetworks;
 
   @ApiProperty()
   @IsOptional()

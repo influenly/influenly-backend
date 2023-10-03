@@ -1,4 +1,4 @@
-export interface ISocialNetworks {
+export interface INetworks {
   youtube: string[];
   tiktok: string[];
   instagram: string[];

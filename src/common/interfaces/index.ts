@@ -1,1 +1,1 @@
-export { ISocialNetworks } from './social-networks.interface';
+export { INetworks } from './networks.interface';
