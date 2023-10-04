@@ -37,7 +37,6 @@ export class UserService {
     const [user, userNetworks] = await Promise.all([
       this.userRepository.findById(id),
       this.networkService.getByUserId(id)
-      // this.analyticsService.getBasicAnalyticsByUserId(id)
     ]);
 
     const userNetworksWithBasicAnalytics = userNetworks.map(async (network) => {
