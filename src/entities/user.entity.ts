@@ -51,10 +51,4 @@ export class User extends BaseEntity {
 
   @UpdateDateColumn({ type: 'timestamp' })
   updatedAt: Date;
-
-  // @OneToMany(() => Conversation, (conversation) => conversation.creatorUser)
-  // conversations: Conversation[];
-
-  // @OneToMany(() => Conversation, (conversation) => conversation.advertiserUser)
-  // conversations: Conversation[];
 }

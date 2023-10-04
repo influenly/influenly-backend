@@ -34,12 +34,29 @@ export class UserService {
   }
 
   async getProfile(id: number) {
-    const [user, userNetworks, basicAnalytics] = await Promise.all([
+    const [user, userNetworks] = await Promise.all([
       this.userRepository.findById(id),
-      this.networkService.getByUserId(id),
-      this.analyticsService.getBasicAnalyticsByUserId(id)
+      this.networkService.getByUserId(id)
+      // this.analyticsService.getBasicAnalyticsByUserId(id)
     ]);
-    return { user, userNetworks, basicAnalytics };
+
+    const userNetworksWithBasicAnalytics = userNetworks.map(async (network) => {
+      if (network.integrated) {
+        const integration = await this.integrationService.getByNetworkId(
+          network.id
+        );
+        const { totalSubs, totalVideos } =
+          await this.analyticsService.getBasicAnalyticsByIntegrationId(
+            integration.id
+          );
+        return {
+          ...network,
+          basicAnalytics: { totalSubs, totalVideos }
+        };
+      }
+      return network;
+    });
+    return { user, networks: userNetworksWithBasicAnalytics };
   }
 
   async create(signUpRequestDto: SignUpRequestDto): Promise<User> {
@@ -83,7 +100,7 @@ export class UserService {
         birthDate,
         username,
         contentTags,
-        networks,
+        networks: networksInput,
         networkIntegratedId
       } = completeOnboardingDto;
 
@@ -106,7 +123,7 @@ export class UserService {
         networkIntegratedId
       );
 
-      const { youtube } = networks;
+      const { youtube } = networksInput;
 
       const youtubeChannelsInfo = await Promise.all(
         youtube.map((url) => this.youtubeService.getChannelInfoFromUrl(url))
@@ -121,7 +138,7 @@ export class UserService {
           platform: Platforms.YOUTUBE
         }));
 
-      const nonIntegratedNetworks = { ...networks };
+      const nonIntegratedNetworks = { ...networksInput };
       delete nonIntegratedNetworks.youtube;
 
       let newNetworksInfo;
@@ -147,7 +164,23 @@ export class UserService {
         queryRunner
       );
 
-      console.log(networksCreated);
+      const { totalSubs, totalVideos } =
+        await this.analyticsService.getBasicAnalyticsByIntegrationId(
+          integration[0].id,
+          queryRunner
+        );
+
+      const integratedNetworkWithBasicAnalytics = {
+        ...integratedNetwork,
+        basicAnalytics: {
+          totalSubs,
+          totalVideos
+        }
+      };
+      const networks = {
+        ...networksCreated,
+        integratedNetworkWithBasicAnalytics
+      };
 
       const updatedUser = await this.userRepository.updateById(
         id,
@@ -166,7 +199,7 @@ export class UserService {
 
       return {
         updatedUser,
-        networks: 2,
+        networks,
         type
       };
     } catch (err) {

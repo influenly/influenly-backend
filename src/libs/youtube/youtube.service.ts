@@ -53,7 +53,6 @@ export class YoutubeService {
       name: channelInfo.snippet.title,
       profileImg: channelInfo.snippet.thumbnails.default.url,
       totalSubs: channelInfo.statistics.subscriberCount,
-      totalViews: channelInfo.statistics.viewCount,
       totalVideos: channelInfo.statistics.videoCount
     };
   }

@@ -18,6 +18,9 @@ export class Integration extends BaseEntity {
   @Column({ type: 'int' })
   networkId: number;
 
+  @Column({ type: 'int' })
+  userId: number;
+
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
 

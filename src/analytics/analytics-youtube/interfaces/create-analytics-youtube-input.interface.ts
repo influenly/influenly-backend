@@ -3,5 +3,4 @@ export interface ICreateAnalyticsYoutubeInput {
   channelId: string;
   totalSubs: number;
   totalVideos: number;
-  totalViews: number;
 }

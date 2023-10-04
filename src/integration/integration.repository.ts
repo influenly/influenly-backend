@@ -36,4 +36,15 @@ export class IntegrationRepository extends Repository<Integration> {
 
     return queryResult;
   }
+
+  async findByNetworkId(networkId: number, queryRunner?: QueryRunner) {
+    const queryResult = await this.createQueryBuilder(
+      'integration',
+      queryRunner
+    )
+      .where({ networkId })
+      .getOne();
+
+    return queryResult;
+  }
 }

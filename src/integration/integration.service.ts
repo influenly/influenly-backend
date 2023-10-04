@@ -30,6 +30,17 @@ export class IntegrationService {
     return integration;
   }
 
+  async getByNetworkId(
+    networkId: number,
+    queryRunner?: QueryRunner
+  ): Promise<Integration> {
+    const integration = await this.integrationRepository.findByNetworkId(
+      networkId,
+      queryRunner
+    );
+    return integration;
+  }
+
   async getCredentialByIntegrationId(
     integrationId: number,
     queryRunner?: QueryRunner
@@ -73,6 +84,7 @@ export class IntegrationService {
           channelId: channelInfo.id,
           name: channelInfo.name,
           platform,
+          integrated: true,
           profileImg: channelInfo.profileImg,
           url: `https://www.youtube.com/channel/${channelInfo.id}`,
           userId
@@ -84,19 +96,19 @@ export class IntegrationService {
 
       const newIntegration = await this.integrationRepository.createAndSave(
         {
-          networkId
+          networkId,
+          userId
         },
         queryRunner
       );
 
       const integrationId = newIntegration.id;
 
-      const { totalSubs, totalVideos, totalViews } = channelInfo;
+      const { totalSubs, totalVideos } = channelInfo;
 
       await this.analyticsService.createBasicAnalytics(
         {
           integrationId,
-          totalViews: parseInt(totalViews),
           totalSubs: parseInt(totalSubs),
           totalVideos: parseInt(totalVideos),
           channelId: channelInfo.id

@@ -28,9 +28,6 @@ export class AnalyticsYoutube extends BaseEntity {
   @Column({ type: 'int' })
   totalVideos: number;
 
-  @Column({ type: 'int' })
-  totalViews: number;
-
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
 

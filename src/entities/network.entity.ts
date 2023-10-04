@@ -24,6 +24,9 @@ export class Network extends BaseEntity {
   @Column({ type: 'enum', enum: Platforms })
   platform: PlatformType;
 
+  @Column({ type: 'boolean', default: false })
+  integrated: boolean;
+
   @Column('varchar', { length: 150 })
   url: string;
 
