@@ -26,10 +26,6 @@ export class YoutubeService {
     return tokens;
   }
 
-  // async setCredentials(credentials) {
-
-  // }
-
   async getChannelInfo(accessToken: string) {
     const service = google.youtube('v3');
 
@@ -83,8 +79,6 @@ export class YoutubeService {
           const channelImg = channelInfo.match(regexChannelImg)[1];
 
           return {
-            // totalVideos,
-            // totalSubs,
             id: channelId,
             name: channelName,
             profileImg: channelImg
