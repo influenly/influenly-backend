@@ -6,7 +6,8 @@ import {
   IsArray,
   IsDateString,
   IsISO8601,
-  Length
+  Length,
+  IsObject
 } from 'class-validator';
 import { INetworks } from 'src/common/interfaces';
 
@@ -28,7 +29,7 @@ export class UpdateProfileDto {
   @ApiProperty()
   @IsOptional()
   @IsNotEmpty()
-  @IsArray()
+  @IsObject()
   networks?: INetworks;
 
   @ApiProperty()

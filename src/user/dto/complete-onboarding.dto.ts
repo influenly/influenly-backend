@@ -7,7 +7,8 @@ import {
   IsDateString,
   IsISO8601,
   Length,
-  IsNumber
+  IsNumber,
+  IsObject
 } from 'class-validator';
 import { INetworks } from 'src/common/interfaces';
 
@@ -27,7 +28,7 @@ export class CompleteOnboardingDto {
 
   @ApiProperty()
   @IsNotEmpty()
-  @IsArray()
+  @IsObject()
   networks: INetworks;
 
   @ApiProperty()
