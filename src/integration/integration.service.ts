@@ -79,6 +79,15 @@ export class IntegrationService {
 
       const channelInfo = await this.youtubeService.getChannelInfo(accessToken);
 
+      const userNetworks = await this.networkService.getByUserId(userId);
+
+      const isIntegrated = (network) =>
+        network.integrated && network.channelId === channelInfo.id;
+
+      if (userNetworks.some(isIntegrated)) {
+        throw new Error('Network already integrated');
+      }
+
       const newNetwork = await this.networkService.create(
         {
           channelId: channelInfo.id,
@@ -110,8 +119,7 @@ export class IntegrationService {
         {
           integrationId,
           totalSubs: parseInt(totalSubs),
-          totalVideos: parseInt(totalVideos),
-          channelId: channelInfo.id
+          totalVideos: parseInt(totalVideos)
         },
         queryRunner
       );

@@ -30,7 +30,7 @@ export class Network extends BaseEntity {
   @Column('varchar', { length: 150 })
   url: string;
 
-  @Column('varchar', { length: 24, nullable: true })
+  @Column('varchar', { length: 24, nullable: true, unique: true })
   channelId: string;
 
   @Column('varchar', { length: 50 })

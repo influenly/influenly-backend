@@ -16,11 +16,8 @@ export class AnalyticsYoutube extends BaseEntity {
   @PrimaryGeneratedColumn('increment')
   id: number;
 
-  @Column({ type: 'int', unique: true })
+  @Column({ type: 'int' })
   integrationId: number;
-
-  @Column({ type: 'varchar', unique: true })
-  channelId: string;
 
   @Column({ type: 'int' })
   totalSubs: number;
