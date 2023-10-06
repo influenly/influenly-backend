@@ -140,7 +140,7 @@ export class UserService {
       const nonIntegratedNetworks = { ...networksInput };
       delete nonIntegratedNetworks.youtube;
 
-      let newNetworksInfo;
+      let newNetworksInfo = []
 
       for (const [platformName, platformNetworks] of Object.entries(
         nonIntegratedNetworks
