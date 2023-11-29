@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { SignUpRequestDto } from 'src/auth/dto';
-import { User } from 'src/entities';
+import { Network, User } from 'src/entities';
 import { DataSource } from 'typeorm';
 import { UserRepository } from './user.repository';
 import { CompleteOnboardingDto } from './dto';
@@ -105,10 +105,17 @@ export class UserService {
 
       const isCreator = type === UserTypes.CREATOR;
 
-      if (!birthDate && isCreator)
-        throw new Error(
-          'birthDate is required to complete the onboarding of a creator'
-        );
+      if (isCreator) {
+        if (!birthDate)
+          throw new Error(
+            'birthDate is required to complete the onboarding of a creator'
+          );
+
+        if (!networkIntegratedId)
+          throw new Error(
+            'networkIntegratedId is required to complete the onboarding of a creator'
+          );
+      }
 
       const integration = await this.integrationService.getByUserId(id);
 
@@ -140,7 +147,7 @@ export class UserService {
       const nonIntegratedNetworks = { ...networksInput };
       delete nonIntegratedNetworks.youtube;
 
-      let newNetworksInfo = []
+      let newNetworksInfo: Partial<Network>[] = [];
 
       for (const [platformName, platformNetworks] of Object.entries(
         nonIntegratedNetworks

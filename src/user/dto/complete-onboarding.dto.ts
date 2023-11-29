@@ -31,10 +31,11 @@ export class CompleteOnboardingDto {
   @IsObject()
   networks: INetworks;
 
-  @ApiProperty()
+  @ApiPropertyOptional()
+  @IsOptional()
   @IsNotEmpty()
   @IsNumber()
-  networkIntegratedId: number;
+  networkIntegratedId?: number;
 
   @ApiProperty()
   @IsNotEmpty()

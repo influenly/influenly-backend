@@ -25,10 +25,10 @@ export class NetworkService {
     userId: number,
     queryRunner?: QueryRunner
   ): Promise<Network[]> {
-    const network = await this.networkRepository.findByUserId(
+    const networks = await this.networkRepository.findByUserId(
       userId,
       queryRunner
     );
-    return network;
+    return networks;
   }
 }
