@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { Network } from 'src/entities';
 import { QueryRunner } from 'typeorm';
 import { NetworkRepository } from './network.repository';
-import { ICreateNetworkInput } from './interfaces/create-network.interface';
 
 @Injectable()
 export class NetworkService {

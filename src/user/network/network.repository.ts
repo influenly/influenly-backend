@@ -1,7 +1,6 @@
 import { DataSource, Repository, QueryRunner } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { Network } from 'src/entities';
-import { ICreateNetworkInput } from './interfaces/create-network.interface';
 
 @Injectable()
 export class NetworkRepository extends Repository<Network> {

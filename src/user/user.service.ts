@@ -11,6 +11,7 @@ import { AnalyticsService } from 'src/analytics/analytics.service';
 import { NetworkService } from './network/network.service';
 import { YoutubeService } from '../libs/youtube/youtube.service';
 import { Platforms } from 'src/common/constants/enums';
+import { networksGenerator, youtubeNetworksGenerator } from 'src/utils/generateNetworks';
 
 @Injectable()
 export class UserService {
@@ -135,33 +136,15 @@ export class UserService {
         youtube.map((url) => this.youtubeService.getChannelInfoFromUrl(url))
       );
 
-      const newYoutubeNetworksInfo = youtubeChannelsInfo
-        .filter((channelInfo) => channelInfo.id != integratedNetwork.channelId)
-        .map((channelInfo) => ({
-          ...channelInfo,
-          url: `https://www.youtube.com/channel/${channelInfo.id}`,
-          userId: id,
-          platform: Platforms.YOUTUBE
-        }));
+      const newYoutubeNetworksInfo = youtubeNetworksGenerator(
+        youtubeChannelsInfo,
+        integratedNetwork
+      );
 
-      const nonIntegratedNetworks = { ...networksInput };
-      delete nonIntegratedNetworks.youtube;
-
-      let newNetworksInfo: Partial<Network>[] = [];
-
-      for (const [platformName, platformNetworks] of Object.entries(
-        nonIntegratedNetworks
-      )) {
-        platformNetworks.forEach((url) => {
-          newNetworksInfo.push({
-            url,
-            profileImg: 'default',
-            name: url.split('.com/')[1],
-            platform: Platforms[platformName.toUpperCase()],
-            userId: id
-          });
-        });
-      }
+      let newNetworksInfo: Partial<Network>[] = networksGenerator(
+        networksInput,
+        id
+      );
 
       const newNetworks = [...newYoutubeNetworksInfo, ...newNetworksInfo];
 
