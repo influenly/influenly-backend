@@ -11,7 +11,10 @@ import { AnalyticsService } from 'src/analytics/analytics.service';
 import { NetworkService } from './network/network.service';
 import { YoutubeService } from '../libs/youtube/youtube.service';
 import { Platforms } from 'src/common/constants/enums';
-import { networksGenerator, youtubeNetworksGenerator } from 'src/utils/generateNetworks';
+import {
+  networksGenerator,
+  youtubeNetworksGenerator
+} from 'src/utils/generateNetworks';
 
 @Injectable()
 export class UserService {
@@ -78,6 +81,17 @@ export class UserService {
   }
 
   async updateById(id: number, updateUserDto: IUpdateUserInput): Promise<User> {
+    if (updateUserDto.networks) {
+      const userNetworks = await this.networkService.getByUserId(id);
+
+      // check actual vs incoming user networks
+
+      const { youtube } = updateUserDto.networks;
+
+      const youtubeChannelsInfo = await Promise.all(
+        youtube.map((url) => this.youtubeService.getChannelInfoFromUrl(url))
+      );
+    }
     const updatedUser = await this.userRepository.updateById(id, updateUserDto);
     return updatedUser;
   }

@@ -14,7 +14,6 @@ import { UserService } from './user.service';
 import { CompleteOnboardingDto, UpdateUserDto } from './dto';
 import { Auth, GetUser } from 'src/auth/decorators';
 import { User } from 'src/entities';
-import { UpdateProfileDto } from './profile/dto/update-user-profile.dto';
 
 @Auth()
 @ApiTags('user')
@@ -60,31 +59,15 @@ export class UserController {
 
   @Patch()
   async updateUser(
-    @GetUser() user: User,
+    @GetUser() { id, country }: User,
     @Body() updateUserDto: UpdateUserDto
   ) {
     try {
       const updatedUserResult = await this.userService.updateById(
-        user.id,
+        id,
         updateUserDto
       );
-      return updatedUserResult;
-    } catch (error) {
-      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
-    }
-  }
-
-  @Patch('/profile')
-  async updateUserProfile(
-    @GetUser() { id, country }: User,
-    @Body() updateProfileDto: UpdateProfileDto
-  ) {
-    try {
-      const updatedUserProfileResult = await this.userService.updateById(
-        id,
-        updateProfileDto
-      );
-      return { ...updatedUserProfileResult, country };
+      return { ...updatedUserResult, country };
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }

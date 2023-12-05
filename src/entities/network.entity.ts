@@ -39,6 +39,9 @@ export class Network extends BaseEntity {
   @Column('varchar', { length: 200, nullable: true })
   profileImg: string;
 
+  @Column({ type: 'boolean', length: 200, default: false })
+  deleted: boolean;
+
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
 

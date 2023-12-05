@@ -30,4 +30,17 @@ export class NetworkService {
     );
     return networks;
   }
+
+  // async updateByUserId(
+  //   userId: number,
+  //   updateNetworksInput,
+  //   queryRunner?: QueryRunner
+  // ): Promise<Network[]> {
+  //   const updatedNetworks = await this.networkRepository.updateByUserId(
+  //     userId,
+  //     updateNetworksInput,
+  //     queryRunner
+  //   );
+  //   return updatedNetworks;
+  // }
 }

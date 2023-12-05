@@ -4,8 +4,14 @@ import {
   IsNotEmpty,
   MinLength,
   IsString,
-  IsOptional
+  IsOptional,
+  IsDateString,
+  IsISO8601,
+  Length,
+  IsObject,
+  IsArray
 } from 'class-validator';
+import { INetworks } from 'src/common/interfaces';
 
 export class UpdateUserDto {
   @ApiPropertyOptional()
@@ -27,4 +33,36 @@ export class UpdateUserDto {
   @IsNotEmpty()
   @IsString()
   country?: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsNotEmpty()
+  @IsString()
+  description?: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsNotEmpty()
+  @IsDateString()
+  @IsISO8601({ strict: true })
+  @Length(10, 10)
+  birthDate?: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsNotEmpty()
+  @IsObject()
+  networks?: INetworks;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsNotEmpty()
+  @IsString()
+  username?: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsNotEmpty()
+  @IsArray()
+  contentTags?: string[];
 }

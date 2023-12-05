@@ -41,4 +41,18 @@ export class NetworkRepository extends Repository<Network> {
 
     return queryResult;
   }
+
+  // async updateByUserId(
+  //   userId: number,
+  //   updateNetworksInput,
+  //   queryRunner?: QueryRunner
+  // ): Promise<Network[]> {
+  //   const queryResult = await this.createQueryBuilder('network', queryRunner)
+  //     .update(updateNetworksInput)
+  //     .where({ userId })
+  //     .returning('*')
+  //     .execute();
+
+  //   return queryResult.raw[0];
+  // }
 }
