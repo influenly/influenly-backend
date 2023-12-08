@@ -150,8 +150,12 @@ export class UserService {
         youtube.map((url) => this.youtubeService.getChannelInfoFromUrl(url))
       );
 
+      const existingYoutubeChannelsInfo = youtubeChannelsInfo.filter(
+        (c) => c !== 'NOT FOUND'
+      );
+
       const newYoutubeNetworksInfo = youtubeNetworksGenerator(
-        youtubeChannelsInfo,
+        existingYoutubeChannelsInfo,
         integratedNetwork
       );
 

@@ -57,32 +57,37 @@ export class YoutubeService {
     return firstValueFrom(
       this.httpService.get(url).pipe(
         map((response: AxiosResponse<string>) => {
-          const data = response.data;
+          try {
+            const data = response.data;
 
-          const channelInfo = data.split('"header":{')[1];
+            const channelInfo = data.split('"header":{')[1];
 
-          // const regexVideos = /"videosCountText":{"runs":\[{"text":"([^"]+)"}/;
-          // const totalVideos = channelInfo.match(regexVideos)[1];
+            // const regexVideos = /"videosCountText":{"runs":\[{"text":"([^"]+)"}/;
+            // const totalVideos = channelInfo.match(regexVideos)[1];
 
-          // const regexSubs =
-          //   /"subscriberCountText":{"accessibility":{"accessibilityData":{"label":"[^"]+"}},"simpleText":"([^"]+)"}/;
-          // const matchSubs = channelInfo.match(regexSubs);
-          // const totalSubs = matchSubs ? matchSubs[1] : '0';
+            // const regexSubs =
+            //   /"subscriberCountText":{"accessibility":{"accessibilityData":{"label":"[^"]+"}},"simpleText":"([^"]+)"}/;
+            // const matchSubs = channelInfo.match(regexSubs);
+            // const totalSubs = matchSubs ? matchSubs[1] : '0';
 
-          const regexChannelId = /"channelId":"([^"]+)"/;
-          const channelId = channelInfo.match(regexChannelId)[1];
+            const regexChannelId = /"channelId":"([^"]+)"/;
+            const channelId = channelInfo.match(regexChannelId)[1];
 
-          const regexChannelName = /"title":"([^"]+)"/;
-          const channelName = channelInfo.match(regexChannelName)[1];
+            const regexChannelName = /"title":"([^"]+)"/;
+            const channelName = channelInfo.match(regexChannelName)[1];
 
-          const regexChannelImg = /"thumbnails":\[\{"url":"([^"]*s48[^"]*)"/;
-          const channelImg = channelInfo.match(regexChannelImg)[1];
+            const regexChannelImg = /"thumbnails":\[\{"url":"([^"]*s48[^"]*)"/;
+            const channelImg = channelInfo.match(regexChannelImg)[1];
 
-          return {
-            id: channelId,
-            name: channelName,
-            profileImg: channelImg
-          };
+            return {
+              id: channelId,
+              name: channelName,
+              profileImg: channelImg
+            };
+          } catch (error) {
+            Logger.log(error);
+            return 'NOT FOUND';
+          }
         })
       )
     );
