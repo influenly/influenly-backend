@@ -55,4 +55,16 @@ export class NetworkRepository extends Repository<Network> {
 
   //   return queryResult.raw[0];
   // }
+
+  async deleteNetwork(id: number, queryRunner?: QueryRunner): Promise<Network> {
+    const queryResult = await this.createQueryBuilder()
+      .delete()
+      .where({
+        id
+      })
+      .returning('*')
+      .execute();
+
+    return queryResult.raw[0];
+  }
 }

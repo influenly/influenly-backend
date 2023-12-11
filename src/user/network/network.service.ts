@@ -7,7 +7,10 @@ import { NetworkRepository } from './network.repository';
 export class NetworkService {
   constructor(private readonly networkRepository: NetworkRepository) {}
 
-  async create(createNetworkInput, queryRunner: QueryRunner): Promise<Network> {
+  async create(
+    createNetworkInput,
+    queryRunner?: QueryRunner
+  ): Promise<Network> {
     const newNetwork = await this.networkRepository.createAndSave(
       createNetworkInput,
       queryRunner
@@ -31,16 +34,11 @@ export class NetworkService {
     return networks;
   }
 
-  // async updateByUserId(
-  //   userId: number,
-  //   updateNetworksInput,
-  //   queryRunner?: QueryRunner
-  // ): Promise<Network[]> {
-  //   const updatedNetworks = await this.networkRepository.updateByUserId(
-  //     userId,
-  //     updateNetworksInput,
-  //     queryRunner
-  //   );
-  //   return updatedNetworks;
-  // }
+  async deleteNetwork(id: number, queryRunner?: QueryRunner): Promise<Network> {
+    const queryResult = await this.networkRepository.deleteNetwork(
+      id,
+      queryRunner
+    );
+    return queryResult;
+  }
 }

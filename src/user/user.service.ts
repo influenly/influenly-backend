@@ -81,16 +81,58 @@ export class UserService {
   }
 
   async updateById(id: number, updateUserDto: IUpdateUserInput): Promise<User> {
-    if (updateUserDto.networks) {
+    const inputNetworks = updateUserDto.networks;
+
+    // If a user already have networks to update means that is not onboarding.
+    if (inputNetworks) {
       const userNetworks = await this.networkService.getByUserId(id);
 
-      // check actual vs incoming user networks
+      const inputNetworksUrls = [].concat(...Object.values(inputNetworks));
 
-      const { youtube } = updateUserDto.networks;
+      const networksToDelete = userNetworks.filter(
+        (network) => !inputNetworksUrls.includes(network.url)
+      );
+
+      await Promise.all(
+        networksToDelete.map((network) =>
+          this.networkService.deleteNetwork(network.id)
+        )
+      );
+
+      const userNetworksUrls = userNetworks.map((network) => network.url);
+
+      const integratedNetwork = userNetworks.filter(
+        (network) => network.integrated
+      )[0];
+
+      const { youtube } = inputNetworks;
 
       const youtubeChannelsInfo = await Promise.all(
         youtube.map((url) => this.youtubeService.getChannelInfoFromUrl(url))
       );
+
+      const existingYoutubeChannelsInfo = youtubeChannelsInfo.filter(
+        (c) => c !== 'NOT FOUND'
+      );
+
+      const newYoutubeNetworksInfo = youtubeNetworksGenerator(
+        existingYoutubeChannelsInfo,
+        integratedNetwork
+      );
+
+      const newNetworksInfo: Partial<Network>[] = networksGenerator(
+        inputNetworks,
+        id
+      );
+
+      const newNetworks = [
+        ...newYoutubeNetworksInfo,
+        ...newNetworksInfo
+      ].filter((network) => !userNetworksUrls.includes(network.url));
+
+      const networksCreated = await this.networkService.create(newNetworks);
+      console.log(networksCreated);
+      delete updateUserDto['networks'];
     }
     const updatedUser = await this.userRepository.updateById(id, updateUserDto);
     return updatedUser;
@@ -159,7 +201,7 @@ export class UserService {
         integratedNetwork
       );
 
-      let newNetworksInfo: Partial<Network>[] = networksGenerator(
+      const newNetworksInfo: Partial<Network>[] = networksGenerator(
         networksInput,
         id
       );
