@@ -10,12 +10,10 @@ import { IntegrationService } from 'src/integration/integration.service';
 import { AnalyticsService } from 'src/analytics/analytics.service';
 import { NetworkService } from './network/network.service';
 import { YoutubeService } from '../libs/youtube/youtube.service';
-import { Platforms } from 'src/common/constants/enums';
 import {
   networksGenerator,
   youtubeNetworksGenerator
 } from 'src/utils/generateNetworks';
-import { query } from 'express';
 
 @Injectable()
 export class UserService {
@@ -218,13 +216,8 @@ export class UserService {
 
       const newNetworks = [...newYoutubeNetworksInfo, ...newNetworksInfo];
 
-      let networksCreated;
-
       if (newNetworks.length) {
-        networksCreated = await this.networkService.create(
-          newNetworks,
-          queryRunner
-        );
+        await this.networkService.create(newNetworks, queryRunner);
       }
 
       const { totalSubs, totalVideos } =
@@ -241,7 +234,7 @@ export class UserService {
         }
       };
       const networks = {
-        ...networksCreated,
+        ...newNetworks,
         integratedNetworkWithBasicAnalytics
       };
 
