@@ -15,6 +15,7 @@ import {
   networksGenerator,
   youtubeNetworksGenerator
 } from 'src/utils/generateNetworks';
+import { query } from 'express';
 
 @Injectable()
 export class UserService {
@@ -83,6 +84,10 @@ export class UserService {
   async updateById(id: number, updateUserDto: IUpdateUserInput): Promise<User> {
     const inputNetworks = updateUserDto.networks;
 
+    const queryRunner = this.dataSource.createQueryRunner();
+
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
     // If a user already have networks to update means that is not onboarding.
     if (inputNetworks) {
       const userNetworks = await this.networkService.getByUserId(id);
@@ -95,7 +100,7 @@ export class UserService {
 
       await Promise.all(
         networksToDelete.map((network) =>
-          this.networkService.deleteNetwork(network.id)
+          this.networkService.deleteNetwork(network.id, queryRunner)
         )
       );
 
@@ -130,11 +135,16 @@ export class UserService {
         ...newNetworksInfo
       ].filter((network) => !userNetworksUrls.includes(network.url));
 
-      const networksCreated = await this.networkService.create(newNetworks);
-      console.log(networksCreated);
+      if (newNetworks.length) {
+        await this.networkService.create(newNetworks, queryRunner);
+      }
       delete updateUserDto['networks'];
     }
-    const updatedUser = await this.userRepository.updateById(id, updateUserDto);
+    const updatedUser = await this.userRepository.updateById(
+      id,
+      updateUserDto,
+      queryRunner
+    );
     return updatedUser;
   }
 
@@ -208,10 +218,14 @@ export class UserService {
 
       const newNetworks = [...newYoutubeNetworksInfo, ...newNetworksInfo];
 
-      const networksCreated = await this.networkService.create(
-        newNetworks,
-        queryRunner
-      );
+      let networksCreated;
+
+      if (newNetworks.length) {
+        networksCreated = await this.networkService.create(
+          newNetworks,
+          queryRunner
+        );
+      }
 
       const { totalSubs, totalVideos } =
         await this.analyticsService.getBasicAnalyticsByIntegrationId(
