@@ -36,7 +36,7 @@ export class UserService {
     return user;
   }
 
-  async getProfile(id: number) {
+  async getProfileByUserId(id: number) {
     const [user, userNetworks] = await Promise.all([
       this.userRepository.findById(id),
       this.networkService.getByUserId(id)
@@ -79,7 +79,7 @@ export class UserService {
     }
   }
 
-  async updateById(id: number, updateUserDto: IUpdateUserInput): Promise<User> {
+  async updateById(user: User, updateUserDto: IUpdateUserInput) {
     const inputNetworks = updateUserDto.networks;
 
     const queryRunner = this.dataSource.createQueryRunner();
@@ -87,9 +87,9 @@ export class UserService {
     await queryRunner.connect();
     await queryRunner.startTransaction();
     // If a user already have networks to update means that is not onboarding.
-    if (inputNetworks) {
-      const userNetworks = await this.networkService.getByUserId(id);
+    const userNetworks = await this.networkService.getByUserId(user.id);
 
+    if (inputNetworks) {
       const inputNetworksUrls = [].concat(...Object.values(inputNetworks));
 
       const networksToDelete = userNetworks.filter(
@@ -125,7 +125,7 @@ export class UserService {
 
       const newNetworksInfo: Partial<Network>[] = networksGenerator(
         inputNetworks,
-        id
+        user.id
       );
 
       const newNetworks = [
@@ -139,18 +139,19 @@ export class UserService {
       delete updateUserDto['networks'];
     }
     const updatedUser = await this.userRepository.updateById(
-      id,
+      user.id,
       updateUserDto,
       queryRunner
     );
-    return updatedUser;
+
+    return { user: updatedUser, networks: userNetworks };
   }
 
   async completeOnboarding(
-    { id, onboardingCompleted, type }: Partial<User>,
+    user: User,
     completeOnboardingDto: CompleteOnboardingDto
   ) {
-    if (onboardingCompleted)
+    if (user.onboardingCompleted)
       throw new Error('User has already completed the onboarding');
 
     const queryRunner = this.dataSource.createQueryRunner();
@@ -168,7 +169,7 @@ export class UserService {
         networkIntegratedId
       } = completeOnboardingDto;
 
-      const isCreator = type === UserTypes.CREATOR;
+      const isCreator = user.type === UserTypes.CREATOR;
 
       if (isCreator) {
         if (!birthDate)
@@ -182,7 +183,7 @@ export class UserService {
           );
       }
 
-      const integration = await this.integrationService.getByUserId(id);
+      const integration = await this.integrationService.getByUserId(user.id);
 
       if (isCreator && integration.length !== 1) {
         throw new Error(
@@ -211,7 +212,7 @@ export class UserService {
 
       const newNetworksInfo: Partial<Network>[] = networksGenerator(
         networksInput,
-        id
+        user.id
       );
 
       const newNetworks = [...newYoutubeNetworksInfo, ...newNetworksInfo];
@@ -233,13 +234,9 @@ export class UserService {
           totalVideos
         }
       };
-      const networks = {
-        ...newNetworks,
-        integratedNetworkWithBasicAnalytics
-      };
 
       const updatedUser = await this.userRepository.updateById(
-        id,
+        user.id,
         {
           description,
           username,
@@ -251,12 +248,13 @@ export class UserService {
       );
 
       await queryRunner.commitTransaction();
-      Logger.log(`User ${id} onboaring completed succesfully.`);
+      Logger.log(`User ${user.id} onboaring completed succesfully.`);
+
+      newNetworks.push(integratedNetworkWithBasicAnalytics);
 
       return {
         updatedUser,
-        networks,
-        type
+        networks: newNetworks
       };
     } catch (err) {
       Logger.error(

@@ -4,7 +4,7 @@ import {
   Controller,
   HttpException,
   HttpStatus,
-  Post,
+  Post
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';

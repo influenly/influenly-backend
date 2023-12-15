@@ -27,15 +27,16 @@ export class UserController {
     @Body() completeOnboardingDto: CompleteOnboardingDto
   ) {
     try {
-      const { id, onboardingCompleted, type, country } = user;
-
       const completeOnboardingResult =
-        await this.userService.completeOnboarding(
-          { id, onboardingCompleted, type },
-          completeOnboardingDto
-        );
+        await this.userService.completeOnboarding(user, completeOnboardingDto);
 
-      return { ...completeOnboardingResult, country };
+      return {
+        ok: true,
+        user: {
+          ...completeOnboardingResult.updatedUser,
+          networks: completeOnboardingDto.networks
+        }
+      };
     } catch (error) {
       throw new HttpException(
         { error: true, message: error.message },
@@ -59,15 +60,21 @@ export class UserController {
 
   @Patch()
   async updateUser(
-    @GetUser() { id, country }: User,
+    @GetUser() user: User,
     @Body() updateUserDto: UpdateUserDto
   ) {
     try {
       const updatedUserResult = await this.userService.updateById(
-        id,
+        user,
         updateUserDto
       );
-      return { ...updatedUserResult, country };
+      return {
+        ok: true,
+        user: {
+          ...updatedUserResult.user,
+          networks: updatedUserResult.networks
+        }
+      };
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
@@ -83,11 +90,17 @@ export class UserController {
         throw new Error(
           `User with id ${userId} has not completed the onboarding`
         );
-      const fullProfile = await this.userService.getProfile(userId);
-      if (!fullProfile) {
+      const profileResult = await this.userService.getProfileByUserId(userId);
+      if (!profileResult) {
         throw new Error(`User with id ${userId} not found`);
       }
-      return { ...fullProfile };
+      return {
+        ok: true,
+        user: {
+          ...profileResult.user,
+          networks: profileResult.networks
+        }
+      };
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
