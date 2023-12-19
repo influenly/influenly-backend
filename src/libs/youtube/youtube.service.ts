@@ -59,9 +59,6 @@ export class YoutubeService {
         map((response: AxiosResponse<string>) => {
           try {
             const data = response.data;
-
-            const channelInfo = data.split('"header":{')[1];
-
             // const regexVideos = /"videosCountText":{"runs":\[{"text":"([^"]+)"}/;
             // const totalVideos = channelInfo.match(regexVideos)[1];
 
@@ -71,16 +68,16 @@ export class YoutubeService {
             // const totalSubs = matchSubs ? matchSubs[1] : '0';
 
             const regexChannelId = /"channelId":"([^"]+)"/;
-            const channelId = channelInfo.match(regexChannelId)[1];
+            const channelId = data.match(regexChannelId)[1];
 
             const regexChannelName = /"title":"([^"]+)"/;
-            const channelName = channelInfo.match(regexChannelName)[1];
+            const channelName = data.match(regexChannelName)[1];
 
             const regexChannelImg = /"thumbnails":\[\{"url":"([^"]*s48[^"]*)"/;
-            const channelImg = channelInfo.match(regexChannelImg)[1];
+            const channelImg = data.match(regexChannelImg)[1];
 
             return {
-              id: channelId,
+              channelId,
               name: channelName,
               profileImg: channelImg
             };

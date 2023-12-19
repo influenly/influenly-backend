@@ -29,11 +29,10 @@ export const youtubeNetworksGenerator = (
   integratedNetwork: Network
 ) => {
   const newYoutubeNetworksInfo = youtubeChannelsInfo
- //ojo, que pasa si channelInfo no tiene data ?? esta funcionando OK el scrapping ?
     .filter((channelInfo) => channelInfo.id != integratedNetwork.channelId)
     .map((channelInfo) => ({
       ...channelInfo,
-      url: `https://www.youtube.com/channel/${channelInfo.id}`,
+      url: `https://www.youtube.com/channel/${channelInfo.channelId}`,
       userId: integratedNetwork.userId,
       platform: Platforms.YOUTUBE
     }));

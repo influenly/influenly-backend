@@ -34,7 +34,7 @@ export class UserController {
         ok: true,
         user: {
           ...completeOnboardingResult.updatedUser,
-          networks: completeOnboardingDto.networks
+          networks: completeOnboardingResult.networks
         }
       };
     } catch (error) {

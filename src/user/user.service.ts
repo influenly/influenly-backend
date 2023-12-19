@@ -42,15 +42,20 @@ export class UserService {
       this.networkService.getByUserId(id)
     ]);
 
+    console.log('user', user);
+    console.log('userNetworks', userNetworks);
+
     const userNetworksWithBasicAnalytics = userNetworks.map(async (network) => {
       if (network.integrated) {
         const integration = await this.integrationService.getByNetworkId(
           network.id
         );
+        console.log('integration', integration);
         const { totalSubs, totalVideos } =
           await this.analyticsService.getBasicAnalyticsByIntegrationId(
             integration.id
           );
+        console.log('totalSubs', totalSubs);
         return {
           ...network,
           basicAnalytics: { totalSubs, totalVideos }
@@ -58,6 +63,12 @@ export class UserService {
       }
       return network;
     });
+
+    console.log(
+      'userNetworksWithBasicAnalytics',
+      userNetworksWithBasicAnalytics
+    );
+
     return { user, networks: userNetworksWithBasicAnalytics };
   }
 
@@ -202,7 +213,7 @@ export class UserService {
       );
 
       const existingYoutubeChannelsInfo = youtubeChannelsInfo.filter(
-        (c) => c !== 'NOT FOUND'
+        (c) => c !== 'NOT FOUND' && c.channelId != integratedNetwork.channelId
       );
 
       const newYoutubeNetworksInfo = youtubeNetworksGenerator(
