@@ -45,24 +45,26 @@ export class UserService {
     console.log('user', user);
     console.log('userNetworks', userNetworks);
 
-    const userNetworksWithBasicAnalytics = userNetworks.map(async (network) => {
-      if (network.integrated) {
-        const integration = await this.integrationService.getByNetworkId(
-          network.id
-        );
-        console.log('integration', integration);
-        const { totalSubs, totalVideos } =
-          await this.analyticsService.getBasicAnalyticsByIntegrationId(
-            integration.id
+    const userNetworksWithBasicAnalytics = await Promise.all(
+      userNetworks.map(async (network) => {
+        if (network.integrated) {
+          const integration = await this.integrationService.getByNetworkId(
+            network.id
           );
-        console.log('totalSubs', totalSubs);
-        return {
-          ...network,
-          basicAnalytics: { totalSubs, totalVideos }
-        };
-      }
-      return network;
-    });
+          console.log('integration', integration);
+          const { totalSubs, totalVideos } =
+            await this.analyticsService.getBasicAnalyticsByIntegrationId(
+              integration.id
+            );
+          console.log('totalSubs', totalSubs);
+          return {
+            ...network,
+            basicAnalytics: { totalSubs, totalVideos }
+          };
+        }
+        return network;
+      })
+    );
 
     console.log(
       'userNetworksWithBasicAnalytics',
