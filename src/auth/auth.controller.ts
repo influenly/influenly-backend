@@ -23,11 +23,18 @@ export class AuthController {
     try {
       const signUpResult = await this.authService.signUp(signUpRequestDto);
       Logger.log(
-        `User ${signUpResult.email} created succesfully. Type: ${signUpResult.type}`
+        `User ${signUpResult.user.email} created succesfully. Type: ${signUpResult.user.type}`
       );
-      return signUpResult;
+      return {
+        ok: true,
+        user: signUpResult.user,
+        token: signUpResult.token
+      };
     } catch (error) {
-      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+      throw new HttpException(
+        { ok: false, error: error.message },
+        HttpStatus.BAD_REQUEST
+      );
     }
   }
 
@@ -35,9 +42,16 @@ export class AuthController {
   async signIn(@Body() signInRequestDto: SignInRequestDto) {
     try {
       const signInResult = await this.authService.signIn(signInRequestDto);
-      return signInResult;
+      return {
+        ok: true,
+        user: signInResult.user,
+        token: signInResult.token
+      };
     } catch (error) {
-      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+      throw new HttpException(
+        { ok: false, error: error.message },
+        HttpStatus.BAD_REQUEST
+      );
     }
   }
 }

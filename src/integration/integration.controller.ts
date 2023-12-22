@@ -29,9 +29,15 @@ export class IntegrationController {
           user.id,
           createIntegrationDto
         );
-      return createdIntegrationResult;
+      return {
+        ok: true,
+        integration: createdIntegrationResult
+      };
     } catch (error) {
-      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+      throw new HttpException(
+        { ok: false, error: error.message },
+        HttpStatus.BAD_REQUEST
+      );
     }
   }
 }

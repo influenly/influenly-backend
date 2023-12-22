@@ -142,13 +142,8 @@ export class IntegrationService {
         `Integration id: ${newIntegration.id} and Credential id: ${newCredential.id} created successfully`
       );
 
-      return {
-        error: false,
-        networkIntegratedId: newNetwork.id,
-        message: 'Integration created successfully'
-      };
+      return newIntegration;
     } catch (err) {
-      console.log(err);
       Logger.error(`Integration creation transaction has failed.`);
       await queryRunner.rollbackTransaction();
       throw new Error(err.message);

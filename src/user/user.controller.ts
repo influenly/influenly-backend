@@ -39,7 +39,7 @@ export class UserController {
       };
     } catch (error) {
       throw new HttpException(
-        { error: true, message: error.message },
+        { ok: false, error: error.message },
         HttpStatus.BAD_REQUEST
       );
     }
@@ -52,9 +52,15 @@ export class UserController {
       if (!user) {
         throw new Error(`User with id ${userId} not found`);
       }
-      return user;
+      return {
+        ok: true,
+        user
+      };
     } catch (error) {
-      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+      throw new HttpException(
+        { ok: false, error: error.message },
+        HttpStatus.BAD_REQUEST
+      );
     }
   }
 
@@ -76,7 +82,10 @@ export class UserController {
         }
       };
     } catch (error) {
-      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+      throw new HttpException(
+        { ok: false, error: error.message },
+        HttpStatus.BAD_REQUEST
+      );
     }
   }
 
@@ -102,7 +111,10 @@ export class UserController {
         }
       };
     } catch (error) {
-      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+      throw new HttpException(
+        { ok: false, error: error.message },
+        HttpStatus.BAD_REQUEST
+      );
     }
   }
 }

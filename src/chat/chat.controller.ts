@@ -28,9 +28,15 @@ export class ChatController {
     try {
       const conversationsResult =
         await this.chatService.getConversationsByUserId(id, type);
-      return conversationsResult;
+      return {
+        ok: true,
+        conversations: conversationsResult
+      };
     } catch (error) {
-      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+      throw new HttpException(
+        { ok: false, error: error.message },
+        HttpStatus.BAD_REQUEST
+      );
     }
   }
 
@@ -42,9 +48,15 @@ export class ChatController {
       const messagesResult = await this.chatService.getMessagesByConversationId(
         conversationId
       );
-      return messagesResult;
+      return {
+        ok: true,
+        messages: messagesResult
+      };
     } catch (error) {
-      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+      throw new HttpException(
+        { ok: false, error: error.message },
+        HttpStatus.BAD_REQUEST
+      );
     }
   }
 
@@ -60,9 +72,15 @@ export class ChatController {
           ...createConversationDto,
           advertiserUserId: id
         });
-      return createdConversationResult;
+      return {
+        ok: true,
+        conversation: createdConversationResult
+      };
     } catch (error) {
-      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+      throw new HttpException(
+        { ok: false, error: error.message },
+        HttpStatus.BAD_REQUEST
+      );
     }
   }
 
@@ -76,9 +94,15 @@ export class ChatController {
         conversationId,
         updateConversationDto
       );
-      return updatedConversationResult;
+      return {
+        ok: true,
+        conversation: updatedConversationResult
+      };
     } catch (error) {
-      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+      throw new HttpException(
+        { ok: false, error: error.message },
+        HttpStatus.BAD_REQUEST
+      );
     }
   }
 }

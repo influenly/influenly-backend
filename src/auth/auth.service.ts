@@ -27,7 +27,7 @@ export class AuthService {
       const token = this.getJwtToken({ userId, userType: type });
 
       return {
-        ...newUser,
+        user: newUser,
         token
       };
     } catch (error) {
@@ -61,7 +61,7 @@ export class AuthService {
       delete user.password;
 
       return {
-        ...user,
+        user,
         token
       };
     } catch (error) {
