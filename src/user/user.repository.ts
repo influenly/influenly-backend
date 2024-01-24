@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { User } from 'src/entities';
 import { Repository, DataSource, QueryRunner } from 'typeorm';
 import { ICreateUserInput, IUpdateUserInput } from './interfaces';
+import { UserTypes } from 'src/common/constants';
 
 @Injectable()
 export class UserRepository extends Repository<User> {
@@ -22,6 +23,17 @@ export class UserRepository extends Repository<User> {
       .returning('*')
       .execute();
     return queryResult.raw[0];
+  }
+
+  async findAllCreators(queryRunner?: QueryRunner): Promise<User[]> {
+    const queryResult = await this.createQueryBuilder(
+      'findAllCreators',
+      queryRunner
+    )
+      .where({ type: UserTypes.CREATOR })
+      .getMany();
+
+    return queryResult;
   }
 
   async findById(id: number, queryRunner?: QueryRunner): Promise<User> {

@@ -13,11 +13,11 @@ export const networksGenerator = (networksInput: INetworks, userId: number) => {
   )) {
     platformNetworks.forEach((url) => {
       newNetworksInfo.push({
+        userId,
         url,
+        platform: Platforms[platformName.toUpperCase()],
         profileImg: 'default',
         name: url.split('.com/')[1],
-        platform: Platforms[platformName.toUpperCase()],
-        userId
       });
     });
   }
@@ -32,8 +32,8 @@ export const youtubeNetworksGenerator = (
     .filter((channelInfo) => channelInfo.id != integratedNetwork.channelId)
     .map((channelInfo) => ({
       ...channelInfo,
-      url: `https://www.youtube.com/channel/${channelInfo.channelId}`,
       userId: integratedNetwork.userId,
+      url: `https://www.youtube.com/channel/${channelInfo.channelId}`,
       platform: Platforms.YOUTUBE
     }));
   return newYoutubeNetworksInfo;

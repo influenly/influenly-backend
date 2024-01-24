@@ -7,7 +7,8 @@ import {
   Param,
   ParseIntPipe,
   Patch,
-  Post
+  Post,
+  Query
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { UserService } from './user.service';
@@ -109,6 +110,27 @@ export class UserController {
           ...profileResult.user,
           networks: profileResult.networks
         }
+      };
+    } catch (error) {
+      throw new HttpException(
+        { ok: false, error: error.message },
+        HttpStatus.BAD_REQUEST
+      );
+    }
+  }
+
+  @Get('creator')
+  async getCreators(
+    @GetUser() user: User
+    // @Query('limit', ParseIntPipe) limit: number,
+    // @Query('id', ParseIntPipe) userId: number
+  ) {
+    try {
+      const creatorsResult = await this.userService.getCreators();
+
+      return {
+        ok: true,
+        data: creatorsResult
       };
     } catch (error) {
       throw new HttpException(

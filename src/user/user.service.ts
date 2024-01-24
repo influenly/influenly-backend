@@ -36,13 +36,37 @@ export class UserService {
     return user;
   }
 
+  async getCreators() {
+    const creators = await this.userRepository.findAllCreators();
+    const creatorsWithNetworksInfo = await Promise.all(
+      creators.map(async (creator) => {
+        const creatorNetworks = await this.networkService.getByUserId(
+          creator.id
+        );
+        const creatorNetworksWithBA = await this.getBAForNetworks(
+          creatorNetworks
+        );
+        return {
+          ...creator,
+          networks: creatorNetworksWithBA
+        };
+      })
+    );
+  }
+
   async getProfileByUserId(id: number) {
     const [user, userNetworks] = await Promise.all([
       this.userRepository.findById(id),
       this.networkService.getByUserId(id)
     ]);
 
-    const userNetworksWithBasicAnalytics = await Promise.all(
+    const userNetworksWithBA = await this.getBAForNetworks(userNetworks);
+
+    return { user, networks: userNetworksWithBA };
+  }
+
+  async getBAForNetworks(userNetworks: Network[]) {
+    const userNetworksWithBA = await Promise.all(
       userNetworks.map(async (network) => {
         if (network.integrated) {
           const integration = await this.integrationService.getByNetworkId(
@@ -60,8 +84,7 @@ export class UserService {
         return network;
       })
     );
-
-    return { user, networks: userNetworksWithBasicAnalytics };
+    return userNetworksWithBA;
   }
 
   async create(signUpRequestDto: SignUpRequestDto): Promise<User> {
