@@ -12,11 +12,10 @@ const CONFIG_KEYS = [
 ];
 
 const stringRequired = Joi.string().required();
-const numberRequired = Joi.number().required();
 
 const schema = Joi.object().keys({
   DATABASE_HOST: stringRequired,
-  DATABASE_PORT: numberRequired,
+  DATABASE_PORT: stringRequired,
   DATABASE_USERNAME: stringRequired,
   DATABASE_PASSWORD: stringRequired,
   DATABASE_NAME: stringRequired

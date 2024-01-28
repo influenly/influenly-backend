@@ -2,7 +2,8 @@ version: '3.1'
 
 services:
   postgres-db:
-    image: postgres:15.1
+    image: postgres:16.1
+    container_name: influenly-database
     restart: always
     environment:
       - POSTGRES_USER=${DATABASE_USERNAME}
@@ -12,3 +13,18 @@ services:
       - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
       - 5432:5432
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: influenly-backend
+    environment:
+      - API_PORT=${API_PORT}
+      - DATABASE_HOST=influenly-database
+      - DATABASE_PORT=${DATABASE_PORT}
+    ports:
+      - 3000:3000
+    depends_on:
+      - postgres-db
+    volumes:
+      - ./src:/app/src

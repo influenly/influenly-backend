@@ -52,6 +52,7 @@ export class UserService {
         };
       })
     );
+    return creatorsWithNetworksInfo;
   }
 
   async getProfileByUserId(id: number) {
