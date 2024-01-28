@@ -36,8 +36,11 @@ export class UserService {
     return user;
   }
 
-  async getCreators() {
-    const creators = await this.userRepository.findAllCreators();
+  async getCreators({ minFollowers, maxFollowers, contentTagsArr }) {
+    const creators = await this.userRepository.findAllCreators({
+      contentTagsArr
+    });
+
     const creatorsWithNetworksInfo = await Promise.all(
       creators.map(async (creator) => {
         const creatorNetworks = await this.networkService.getByUserId(

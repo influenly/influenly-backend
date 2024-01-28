@@ -121,12 +121,31 @@ export class UserController {
 
   @Get('creator')
   async getCreators(
-    @GetUser() user: User
-    // @Query('limit', ParseIntPipe) limit: number,
-    // @Query('id', ParseIntPipe) userId: number
+    @GetUser() user: User,
+    @Query('followers_range') followersRange: string,
+    @Query('content_tags') contentTags: string
   ) {
     try {
-      const creatorsResult = await this.userService.getCreators();
+      let minFollowers, maxFollowers, contentTagsArr;
+
+      if (followersRange) {
+        let [min, max] = followersRange.split('-');
+
+        minFollowers = parseInt(min);
+        maxFollowers = max === '*' ? undefined : parseInt(max);
+      }
+
+      if (contentTags) {
+        contentTagsArr = contentTags.split(';');
+      }
+
+      const filters = {
+        minFollowers,
+        maxFollowers,
+        contentTagsArr
+      };
+
+      const creatorsResult = await this.userService.getCreators(filters);
 
       return {
         ok: true,
