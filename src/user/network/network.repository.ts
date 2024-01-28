@@ -1,4 +1,9 @@
-import { DataSource, Repository, QueryRunner } from 'typeorm';
+import {
+  DataSource,
+  Repository,
+  QueryRunner,
+  SelectQueryBuilder
+} from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { Network } from 'src/entities';
 
@@ -33,11 +38,25 @@ export class NetworkRepository extends Repository<Network> {
 
   async findByUserId(
     userId: number,
+    filter?,
     queryRunner?: QueryRunner
   ): Promise<Network[]> {
-    const queryResult = await this.createQueryBuilder('network', queryRunner)
-      .where({ userId })
-      .getMany();
+    const { integrated } = filter;
+
+    let queryBuilder: SelectQueryBuilder<Network> =
+      this.createQueryBuilder('user');
+
+    queryBuilder = queryBuilder.where({
+      userId
+    });
+
+    if (integrated !== undefined) {
+      queryBuilder = queryBuilder.andWhere({
+        integrated
+      });
+    }
+
+    const queryResult = await queryBuilder.getMany();
 
     return queryResult;
   }

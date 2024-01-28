@@ -36,26 +36,57 @@ export class UserService {
     return user;
   }
 
+  /*
+   DISCOVERY ORIENTED ! ! !
+   Obtenemos los creadores aplicando filtros y ordenamientos, solo tenemos en cuenta redes integradas.
+  */
   async getCreators({ minFollowers, maxFollowers, contentTagsArr }) {
-    const creators = await this.userRepository.findAllCreators({
+    const userCreators = await this.userRepository.findAllCreators({
       contentTagsArr
     });
 
-    const creatorsWithNetworksInfo = await Promise.all(
-      creators.map(async (creator) => {
+    const creatorsWithIntegratedNetworksInfo = await Promise.all(
+      userCreators.map(async (userCreator) => {
         const creatorNetworks = await this.networkService.getByUserId(
-          creator.id
+          userCreator.id,
+          {
+            integrated: true
+          }
         );
-        const creatorNetworksWithBA = await this.getBAForNetworks(
+        const creatorNetworksWithBA = await this.getBAForIntegratedNetworks(
           creatorNetworks
         );
         return {
-          ...creator,
+          ...userCreator,
           networks: creatorNetworksWithBA
         };
       })
     );
-    return creatorsWithNetworksInfo;
+
+    //Se calcula y agrega seguidores total a cada creador
+    const creatorsWithTotalFollowers = creatorsWithIntegratedNetworksInfo.map(
+      (creator) => {
+        let totalFollowers = 0;
+        creator.networks.reduce((acc, network) => {
+          totalFollowers = network.basicAnalytics.totalSubs || 0;
+          return acc + totalFollowers;
+        }, totalFollowers);
+        return {
+          ...creator,
+          totalFollowers
+        };
+      }
+    );
+
+    if (minFollowers !== undefined || maxFollowers !== undefined) {
+      const creatorsWithFollowersFiltered = creatorsWithTotalFollowers.filter(
+        (creator) =>
+          (creator.totalFollowers > minFollowers || 0) &&
+          (creator.totalFollowers < maxFollowers || Infinity)
+      );
+      return creatorsWithFollowersFiltered;
+    }
+    return creatorsWithTotalFollowers;
   }
 
   async getProfileByUserId(id: number) {
@@ -64,28 +95,32 @@ export class UserService {
       this.networkService.getByUserId(id)
     ]);
 
-    const userNetworksWithBA = await this.getBAForNetworks(userNetworks);
+    const userNetworksWithBA = await this.getBAForIntegratedNetworks(
+      userNetworks
+    );
 
     return { user, networks: userNetworksWithBA };
   }
 
-  async getBAForNetworks(userNetworks: Network[]) {
+  async getBAForIntegratedNetworks(userNetworks: Network[]) {
     const userNetworksWithBA = await Promise.all(
       userNetworks.map(async (network) => {
-        if (network.integrated) {
-          const integration = await this.integrationService.getByNetworkId(
-            network.id
+        const integration = await this.integrationService.getByNetworkId(
+          network.id
+        );
+        if (!integration) {
+          throw new Error(
+            'Network must be integrated to obtain Basic Analytics'
           );
-          const { totalSubs, totalVideos } =
-            await this.analyticsService.getBasicAnalyticsByIntegrationId(
-              integration.id
-            );
-          return {
-            ...network,
-            basicAnalytics: { totalSubs, totalVideos }
-          };
         }
-        return network;
+        const { totalSubs, totalVideos } =
+          await this.analyticsService.getBasicAnalyticsByIntegrationId(
+            integration.id
+          );
+        return {
+          ...network,
+          basicAnalytics: { totalSubs, totalVideos }
+        };
       })
     );
     return userNetworksWithBA;

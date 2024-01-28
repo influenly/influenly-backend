@@ -25,10 +25,12 @@ export class NetworkService {
 
   async getByUserId(
     userId: number,
+    filter?,
     queryRunner?: QueryRunner
   ): Promise<Network[]> {
     const networks = await this.networkRepository.findByUserId(
       userId,
+      filter,
       queryRunner
     );
     return networks;
