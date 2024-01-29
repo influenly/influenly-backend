@@ -114,9 +114,7 @@ export class UserService {
           );
         }
         const { totalSubs, totalVideos } =
-          await this.analyticsService.getBasicAnalyticsByIntegrationId(
-            integration.id
-          );
+          await this.analyticsService.getBAByIntegrationId(integration.id);
         return {
           ...network,
           basicAnalytics: { totalSubs, totalVideos }

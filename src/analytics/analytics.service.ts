@@ -9,7 +9,7 @@ export class AnalyticsService {
     private readonly analyticsYoutubeRepository: AnalyticsYoutubeRepository
   ) {}
 
-  async createBasicAnalytics(
+  async createBA(
     createAnalyticsYoutubeInput: ICreateAnalyticsYoutubeInput,
     queryRunner?: QueryRunner
   ) {
@@ -21,7 +21,7 @@ export class AnalyticsService {
     return createdAnalyticsYoutube;
   }
 
-  async getBasicAnalyticsByUserId(userId: number, queryRunner?: QueryRunner) {
+  async getBAByUserId(userId: number, queryRunner?: QueryRunner) {
     const analyticsYoutube = await this.analyticsYoutubeRepository.findByUserId(
       userId,
       queryRunner

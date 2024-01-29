@@ -7,6 +7,7 @@ import { IntegrationRepository } from './integration.repository';
 import { CredentialService } from './credential/credential.service';
 import { NetworkService } from 'src/user/network/network.service';
 import { AnalyticsService } from 'src/analytics/analytics.service';
+import { Platforms } from 'src/common/constants/enums';
 
 @Injectable()
 export class IntegrationService {
@@ -90,7 +91,7 @@ export class IntegrationService {
 
       const newNetwork = await this.networkService.create(
         {
-          channelId: channelInfo.id,
+          channelId: platform === Platforms.YOUTUBE ? channelInfo.id : null,
           name: channelInfo.name,
           platform,
           integrated: true,
@@ -115,7 +116,7 @@ export class IntegrationService {
 
       const { totalSubs, totalVideos } = channelInfo;
 
-      await this.analyticsService.createBasicAnalytics(
+      await this.analyticsService.createBA(
         {
           integrationId,
           totalSubs: parseInt(totalSubs),
