@@ -39,6 +39,7 @@ export class AnalyticsYoutubeRepository extends Repository<AnalyticsYoutube> {
   }
 
   async findByIntegrationId(integrationId: number, queryRunner?: QueryRunner) {
+    // should check/return in redis cache
     const queryResult = await this.createQueryBuilder(
       'analytics_youtube',
       queryRunner

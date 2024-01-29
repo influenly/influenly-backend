@@ -154,7 +154,7 @@ export class UserService {
     // If a user already have networks to update means that is not onboarding.
     const userNetworks = await this.networkService.getByUserId(user.id);
 
-    if (inputNetworks) {
+    if (Object.keys(inputNetworks).length) {
       const inputNetworksUrls = [].concat(...Object.values(inputNetworks));
 
       const networksToDelete = userNetworks.filter(
@@ -250,12 +250,6 @@ export class UserService {
 
       const integration = await this.integrationService.getByUserId(user.id);
 
-      if (isCreator && integration.length !== 1) {
-        throw new Error(
-          `Problem getting creator integrations. Should be 1 but there are ${integration.length}`
-        );
-      }
-
       const integratedNetwork = await this.networkService.getById(
         networkIntegratedId
       );
@@ -267,7 +261,8 @@ export class UserService {
       );
 
       const existingYoutubeChannelsInfo = youtubeChannelsInfo.filter(
-        (c) => c !== 'NOT FOUND' && c.channelId != integratedNetwork.channelId
+        (channel) =>
+          channel !== 'NOT FOUND' && channel.id != integratedNetwork.channelId
       );
 
       const newYoutubeNetworksInfo = youtubeNetworksGenerator(
@@ -287,7 +282,7 @@ export class UserService {
       }
 
       const { totalSubs, totalVideos } =
-        await this.analyticsService.getBasicAnalyticsByIntegrationId(
+        await this.analyticsService.getBAByIntegrationId(
           integration[0].id,
           queryRunner
         );

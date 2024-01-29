@@ -58,14 +58,7 @@ export class YoutubeService {
       this.httpService.get(url).pipe(
         map((response: AxiosResponse<string>) => {
           try {
-            const data = response.data;
-            // const regexVideos = /"videosCountText":{"runs":\[{"text":"([^"]+)"}/;
-            // const totalVideos = channelInfo.match(regexVideos)[1];
-
-            // const regexSubs =
-            //   /"subscriberCountText":{"accessibility":{"accessibilityData":{"label":"[^"]+"}},"simpleText":"([^"]+)"}/;
-            // const matchSubs = channelInfo.match(regexSubs);
-            // const totalSubs = matchSubs ? matchSubs[1] : '0';
+            const { data } = response;
 
             const regexChannelId = /"channelId":"([^"]+)"/;
             const channelId = data.match(regexChannelId)[1];
@@ -73,13 +66,9 @@ export class YoutubeService {
             const regexChannelName = /"title":"([^"]+)"/;
             const channelName = data.match(regexChannelName)[1];
 
-            const regexChannelImg = /"thumbnails":\[\{"url":"([^"]*s48[^"]*)"/;
-            const channelImg = data.match(regexChannelImg)[1];
-
             return {
-              channelId,
-              name: channelName,
-              profileImg: channelImg
+              id: channelId,
+              name: channelName
             };
           } catch (error) {
             Logger.log(error);

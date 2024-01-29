@@ -16,8 +16,9 @@ export const networksGenerator = (networksInput: INetworks, userId: number) => {
         userId,
         url,
         platform: Platforms[platformName.toUpperCase()],
+        // should return the img url to each corresponding platform
         profileImg: 'default',
-        name: url.split('.com/')[1],
+        name: url.split('.com/')[1]
       });
     });
   }
@@ -27,13 +28,20 @@ export const networksGenerator = (networksInput: INetworks, userId: number) => {
 export const youtubeNetworksGenerator = (
   youtubeChannelsInfo,
   integratedNetwork: Network
-) => {
+): {
+  channelId: string;
+  name: string;
+  userId: number;
+  url: string;
+  platform: Platforms.YOUTUBE;
+}[] => {
   const newYoutubeNetworksInfo = youtubeChannelsInfo
     .filter((channelInfo) => channelInfo.id != integratedNetwork.channelId)
     .map((channelInfo) => ({
-      ...channelInfo,
+      channelId: channelInfo.id,
+      name: channelInfo.name,
       userId: integratedNetwork.userId,
-      url: `https://www.youtube.com/channel/${channelInfo.channelId}`,
+      url: `https://www.youtube.com/channel/${channelInfo.id}`,
       platform: Platforms.YOUTUBE
     }));
   return newYoutubeNetworksInfo;

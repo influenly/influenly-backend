@@ -29,10 +29,7 @@ export class AnalyticsService {
     return analyticsYoutube;
   }
 
-  async getBasicAnalyticsByIntegrationId(
-    integrationId: number,
-    queryRunner?: QueryRunner
-  ) {
+  async getBAByIntegrationId(integrationId: number, queryRunner?: QueryRunner) {
     const analyticsYoutube =
       await this.analyticsYoutubeRepository.findByIntegrationId(
         integrationId,
