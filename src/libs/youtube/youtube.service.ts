@@ -63,7 +63,8 @@ export class YoutubeService {
             const regexChannelId = /"channelId":"([^"]+)"/;
             const channelId = data.match(regexChannelId)[1];
 
-            const regexChannelName = /"title":"([^"]+)"/;
+            const regexChannelName =
+              /<meta\s+property="og:title"\s+content="([^"]+)">/;
             const channelName = data.match(regexChannelName)[1];
 
             return {
