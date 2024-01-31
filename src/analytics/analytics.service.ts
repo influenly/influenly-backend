@@ -15,9 +15,9 @@ export class AnalyticsService {
   async createBA(
     createBAYoutubeInput: ICreateBAYoutubeInput,
     queryRunner?: QueryRunner
-  ) {
+  ): Promise<void> {
     const { integrationId, totalSubs, totalVideos } = createBAYoutubeInput;
-    const redisResult = await this.cacheManager.set(
+    await this.cacheManager.set(
       integrationId.toString(),
       {
         totalSubs,
@@ -25,12 +25,6 @@ export class AnalyticsService {
       },
       86400000
     );
-    // const createdAnalyticsYoutube =
-    //   await this.analyticsYoutubeRepository.createAndSave(
-    //     createAnalyticsYoutubeInput,
-    //     queryRunner
-    //   );
-    return redisResult;
   }
 
   async getBAByUserId(userId: number, queryRunner?: QueryRunner) {
@@ -42,11 +36,10 @@ export class AnalyticsService {
   }
 
   async getBAByIntegrationId(integrationId: number, queryRunner?: QueryRunner) {
-    const analyticsYoutube =
-      await this.analyticsYoutubeRepository.findByIntegrationId(
-        integrationId,
-        queryRunner
-      );
-    return analyticsYoutube;
+    const basicAnalytics = await this.cacheManager.get<{
+      totalSubs: number;
+      totalVideos: number;
+    } | null>(integrationId.toString());
+    return basicAnalytics;
   }
 }
