@@ -1,4 +1,6 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Cache } from 'cache-manager';
 import { SignUpRequestDto } from 'src/auth/dto';
 import { Network, User } from 'src/entities';
 import { DataSource } from 'typeorm';
@@ -23,7 +25,8 @@ export class UserService {
     private readonly analyticsService: AnalyticsService,
     private readonly integrationService: IntegrationService,
     private readonly youtubeService: YoutubeService,
-    private readonly dataSource: DataSource
+    private readonly dataSource: DataSource,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache
   ) {}
 
   async getUserById(id: number): Promise<User> {

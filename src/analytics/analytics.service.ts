@@ -1,24 +1,36 @@
-import { Injectable } from '@nestjs/common';
-import { AnalyticsYoutubeRepository } from './analytics-youtube/analytics-youtube.repository';
+import { Inject, Injectable } from '@nestjs/common';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Cache } from 'cache-manager';
 import { QueryRunner } from 'typeorm';
-import { ICreateAnalyticsYoutubeInput } from './analytics-youtube/interfaces/create-analytics-youtube-input.interface';
+import { AnalyticsYoutubeRepository } from './analytics-youtube/analytics-youtube.repository';
+import { ICreateBAYoutubeInput } from './analytics-youtube/interfaces/create-analytics-youtube-input.interface';
 
 @Injectable()
 export class AnalyticsService {
   constructor(
-    private readonly analyticsYoutubeRepository: AnalyticsYoutubeRepository
+    private readonly analyticsYoutubeRepository: AnalyticsYoutubeRepository,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache
   ) {}
 
   async createBA(
-    createAnalyticsYoutubeInput: ICreateAnalyticsYoutubeInput,
+    createBAYoutubeInput: ICreateBAYoutubeInput,
     queryRunner?: QueryRunner
   ) {
-    const createdAnalyticsYoutube =
-      await this.analyticsYoutubeRepository.createAndSave(
-        createAnalyticsYoutubeInput,
-        queryRunner
-      );
-    return createdAnalyticsYoutube;
+    const { integrationId, totalSubs, totalVideos } = createBAYoutubeInput;
+    const redisResult = await this.cacheManager.set(
+      integrationId.toString(),
+      {
+        totalSubs,
+        totalVideos
+      },
+      86400000
+    );
+    // const createdAnalyticsYoutube =
+    //   await this.analyticsYoutubeRepository.createAndSave(
+    //     createAnalyticsYoutubeInput,
+    //     queryRunner
+    //   );
+    return redisResult;
   }
 
   async getBAByUserId(userId: number, queryRunner?: QueryRunner) {

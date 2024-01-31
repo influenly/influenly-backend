@@ -1,7 +1,6 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import type { RedisClientOptions } from 'redis';
 import { CacheModule } from '@nestjs/cache-manager';
 import { APP_GUARD } from '@nestjs/core';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
@@ -58,7 +57,8 @@ import { ChatModule } from './chat/chat.module';
           host,
           port
         };
-      }
+      },
+      isGlobal: true
     }),
     ThrottlerModule.forRoot({
       ttl: 60,
