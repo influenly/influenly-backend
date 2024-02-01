@@ -1,7 +1,7 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ScheduleModule } from '@nestjs/schedule';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { CacheModule } from '@nestjs/cache-manager';
 import { APP_GUARD } from '@nestjs/core';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import entities from './entities';
@@ -12,15 +12,16 @@ import { UserModule } from './user/user.module';
 import APP_CONFIG from './config/app';
 import DATABASE_CONFIG from './config/database';
 import GOOGLE_CONFIG from './config/google';
-import REDIS_CONFIG from './config/redis';
 import { LoggerMiddleware } from './middlewares/logger.middleware';
 import { ChatModule } from './chat/chat.module';
+import { CronModule } from './cron/cron.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
-      load: [APP_CONFIG, DATABASE_CONFIG, GOOGLE_CONFIG, REDIS_CONFIG],
+      load: [APP_CONFIG, DATABASE_CONFIG, GOOGLE_CONFIG],
       isGlobal: true
     }),
+    ScheduleModule.forRoot(),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => {
@@ -50,16 +51,6 @@ import { ChatModule } from './chat/chat.module';
       },
       inject: [ConfigService]
     }),
-    CacheModule.register({
-      useFactory: (configService: ConfigService) => {
-        const { host, port } = configService.get('redis');
-        return {
-          host,
-          port
-        };
-      },
-      isGlobal: true
-    }),
     ThrottlerModule.forRoot({
       ttl: 60,
       limit: 10
@@ -68,7 +59,8 @@ import { ChatModule } from './chat/chat.module';
     IntegrationModule,
     AuthModule,
     UserModule,
-    ChatModule
+    ChatModule,
+    CronModule
   ],
   providers: [
     {

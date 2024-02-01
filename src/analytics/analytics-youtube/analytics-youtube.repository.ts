@@ -1,7 +1,8 @@
 import { DataSource, Repository, QueryRunner } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { AnalyticsYoutube } from 'src/entities';
-import { ICreateAnalyticsYoutubeInput } from './interfaces/create-analytics-youtube-input.interface';
+import { ICreateBAYoutubeInput, IUpdateBAYoutubeInput } from './interfaces';
+import { NumberSchema } from 'joi';
 
 @Injectable()
 export class AnalyticsYoutubeRepository extends Repository<AnalyticsYoutube> {
@@ -9,7 +10,7 @@ export class AnalyticsYoutubeRepository extends Repository<AnalyticsYoutube> {
     super(AnalyticsYoutube, dataSource.createEntityManager());
   }
   async createAndSave(
-    createAnalyticsYoutubeInput: ICreateAnalyticsYoutubeInput,
+    createAnalyticsYoutubeInput: ICreateBAYoutubeInput,
     queryRunner?: QueryRunner
   ): Promise<AnalyticsYoutube> {
     const newAnalyticsYoutube = this.create(createAnalyticsYoutubeInput);
@@ -46,6 +47,23 @@ export class AnalyticsYoutubeRepository extends Repository<AnalyticsYoutube> {
     )
       .where({ integrationId })
       .getOne();
+
+    return queryResult;
+  }
+
+  async updateByIntegrationId(
+    integrationId: number,
+    udateBAYoutubeInput: IUpdateBAYoutubeInput,
+    queryRunner?: QueryRunner
+  ) {
+    const queryResult = await this.createQueryBuilder(
+      'analytics_youtube',
+      queryRunner
+    )
+      .update(udateBAYoutubeInput)
+      .where({ integrationId })
+      .returning('*')
+      .execute();
 
     return queryResult;
   }

@@ -1,30 +1,41 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { CACHE_MANAGER } from '@nestjs/cache-manager';
-import { Cache } from 'cache-manager';
+import { Injectable } from '@nestjs/common';
 import { QueryRunner } from 'typeorm';
 import { AnalyticsYoutubeRepository } from './analytics-youtube/analytics-youtube.repository';
-import { ICreateBAYoutubeInput } from './analytics-youtube/interfaces/create-analytics-youtube-input.interface';
+import {
+  ICreateBAYoutubeInput,
+  IUpdateBAYoutubeInput
+} from './analytics-youtube/interfaces';
 
 @Injectable()
 export class AnalyticsService {
   constructor(
-    private readonly analyticsYoutubeRepository: AnalyticsYoutubeRepository,
-    @Inject(CACHE_MANAGER) private cacheManager: Cache
+    private readonly analyticsYoutubeRepository: AnalyticsYoutubeRepository
   ) {}
 
   async createBA(
     createBAYoutubeInput: ICreateBAYoutubeInput,
     queryRunner?: QueryRunner
-  ): Promise<void> {
-    const { integrationId, totalSubs, totalVideos } = createBAYoutubeInput;
-    await this.cacheManager.set(
-      integrationId.toString(),
-      {
-        totalSubs,
-        totalVideos
-      },
-      86400000
-    );
+  ) {
+    const createdBAYoutube =
+      await this.analyticsYoutubeRepository.createAndSave(
+        createBAYoutubeInput,
+        queryRunner
+      );
+    return createdBAYoutube;
+  }
+
+  async updateBAByIntegrationId(
+    integrationId: number,
+    updateBAYoutubeInput: IUpdateBAYoutubeInput,
+    queryRunner?: QueryRunner
+  ) {
+    const updatedBAYoutube =
+      await this.analyticsYoutubeRepository.updateByIntegrationId(
+        integrationId,
+        updateBAYoutubeInput,
+        queryRunner
+      );
+    return updatedBAYoutube;
   }
 
   async getBAByUserId(userId: number, queryRunner?: QueryRunner) {
@@ -36,10 +47,11 @@ export class AnalyticsService {
   }
 
   async getBAByIntegrationId(integrationId: number, queryRunner?: QueryRunner) {
-    const basicAnalytics = await this.cacheManager.get<{
-      totalSubs: number;
-      totalVideos: number;
-    } | null>(integrationId.toString());
-    return basicAnalytics;
+    const analyticsYoutube =
+      await this.analyticsYoutubeRepository.findByIntegrationId(
+        integrationId,
+        queryRunner
+      );
+    return analyticsYoutube;
   }
 }
