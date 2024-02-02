@@ -89,7 +89,8 @@ export class YoutubeService {
       startDate: '2023-01-01',
       endDate: '2024-01-01',
       ids: 'channel==MINE',
-      metrics: 'views,comments,likes,averageViewDuration'
+      metrics: 'views,comments,likes,averageViewDuration',
+      dimensions: 'month'
     });
     return result.data;
   }
