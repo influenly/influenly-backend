@@ -81,17 +81,16 @@ export class YoutubeService {
     );
   }
 
-  // async getAnalytics() {
-  //   const service = google.youtubeAnalytics('v2');
+  async getMonthlyAA() {
+    const service = google.youtubeAnalytics('v2');
 
-  //   const a = await service.reports.query({
-  //     auth: this.oAuth2Client,
-  //     startDate: '1990-01-01',
-  //     endDate: '2023-09-11',
-  //     ids: 'channel==MINE',
-  //     metrics:
-  //       'views,comments,likes,dislikes,estimatedMinutesWatched,averageViewDuration'
-  //   });
-  //   return a.data;
-  // }
+    const result = await service.reports.query({
+      auth: this.oAuth2Client,
+      startDate: '2023-01-01',
+      endDate: '2024-01-01',
+      ids: 'channel==MINE',
+      metrics: 'views,comments,likes,averageViewDuration'
+    });
+    return result.data;
+  }
 }
