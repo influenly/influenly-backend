@@ -17,8 +17,7 @@ import { NetworkRepository } from 'src/user/network/network.repository';
 @Module({
   imports: [
     TypeOrmModule.forFeature([AnalyticsYoutube]),
-    forwardRef(() => IntegrationModule),
-    HttpModule
+    forwardRef(() => IntegrationModule)
   ],
   controllers: [AnalyticsController],
   providers: [

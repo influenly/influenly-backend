@@ -19,6 +19,11 @@ export class CredentialService {
     return newCredential;
   }
 
+  async getAll() {
+    const credentials = await this.credentialRepository.find();
+    return credentials;
+  }
+
   async getByIntegrationId(
     integrationId: number,
     queryRunner?: QueryRunner

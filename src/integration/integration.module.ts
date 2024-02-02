@@ -20,7 +20,12 @@ import { AnalyticsService } from 'src/analytics/analytics.service';
 import { AnalyticsYoutubeRepository } from 'src/analytics/analytics-youtube/analytics-youtube.repository';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Integration]), HttpModule, AuthModule, UserModule],
+  imports: [
+    TypeOrmModule.forFeature([Integration]),
+    HttpModule,
+    AuthModule,
+    UserModule
+  ],
   controllers: [IntegrationController],
   providers: [
     AnalyticsService,
@@ -37,7 +42,9 @@ import { AnalyticsYoutubeRepository } from 'src/analytics/analytics-youtube/anal
     IntegrationService,
     IntegrationRepository,
     CredentialService,
-    AuthModule
+    CredentialRepository,
+    AuthModule,
+    HttpModule
   ]
 })
 export class IntegrationModule {}

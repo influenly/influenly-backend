@@ -26,7 +26,7 @@ export class YoutubeService {
     return tokens;
   }
 
-  async getChannelInfo(accessToken: string) {
+  async getChannelInfo(accessToken: string, integrationId?: number) {
     const service = google.youtube('v3');
 
     const oAuth2Client = this.oAuth2Client;
@@ -49,7 +49,8 @@ export class YoutubeService {
       name: channelInfo.snippet.title,
       profileImg: channelInfo.snippet.thumbnails.default.url,
       totalSubs: channelInfo.statistics.subscriberCount,
-      totalVideos: channelInfo.statistics.videoCount
+      totalVideos: channelInfo.statistics.videoCount,
+      integrationId
     };
   }
 
