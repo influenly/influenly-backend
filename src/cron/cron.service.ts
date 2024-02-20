@@ -11,7 +11,7 @@ export class CronService {
     private readonly youtubeService: YoutubeService,
     private readonly credentialService: CredentialService
   ) {}
-  @Cron(CronExpression.EVERY_MINUTE)
+  @Cron(CronExpression.EVERY_DAY_AT_11PM)
   async updateBAYoutube() {
     try {
       const credentials = await this.credentialService.getAll();
@@ -40,7 +40,7 @@ export class CronService {
     }
   }
 
-  @Cron(CronExpression.EVERY_5_MINUTES)
+  @Cron(CronExpression.EVERY_DAY_AT_11PM)
   async updateAAYoutube() {
     try {
       const credentials = await this.credentialService.getAll();
