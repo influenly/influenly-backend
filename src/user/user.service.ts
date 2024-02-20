@@ -162,7 +162,7 @@ export class UserService {
     // If a user already have networks to update means that is not onboarding.
     const userNetworks = await this.networkService.getByUserId(user.id);
 
-    if (Object.keys(inputNetworks).length) {
+    if (inputNetworks && Object.keys(inputNetworks).length) {
       const inputNetworksUrls = [].concat(...Object.values(inputNetworks));
 
       const networksToDelete = userNetworks.filter(
