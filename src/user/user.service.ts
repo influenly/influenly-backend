@@ -159,7 +159,7 @@ export class UserService {
 
     await queryRunner.connect();
     await queryRunner.startTransaction();
-    // If a user already have networks to update means that is not onboarding.
+    // If a user already has networks to update it means that is not onboarding.
     const userNetworks = await this.networkService.getByUserId(user.id);
 
     if (inputNetworks && Object.keys(inputNetworks).length) {
