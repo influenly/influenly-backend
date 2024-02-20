@@ -153,71 +153,80 @@ export class UserService {
   }
 
   async updateById(user: User, updateUserDto: IUpdateUserInput) {
-    const inputNetworks = updateUserDto.networks;
-
     const queryRunner = this.dataSource.createQueryRunner();
 
     await queryRunner.connect();
     await queryRunner.startTransaction();
-    // If a user already has networks to update it means that is not onboarding.
-    const userNetworks = await this.networkService.getByUserId(user.id);
+    try {
+      const inputNetworks = updateUserDto.networks;
 
-    if (inputNetworks && Object.keys(inputNetworks).length) {
-      const inputNetworksUrls = [].concat(...Object.values(inputNetworks));
+      // If a user already has networks to update it means that is not onboarding.
+      const userNetworks = await this.networkService.getByUserId(user.id);
 
-      const networksToDelete = userNetworks.filter(
-        (network) => !inputNetworksUrls.includes(network.url)
-      );
+      if (inputNetworks && Object.keys(inputNetworks).length) {
+        const inputNetworksUrls = [].concat(...Object.values(inputNetworks));
 
-      await Promise.all(
-        networksToDelete.map((network) =>
-          this.networkService.deleteNetwork(network.id, queryRunner)
-        )
-      );
+        const networksToDelete = userNetworks.filter(
+          (network) => !inputNetworksUrls.includes(network.url)
+        );
 
-      const userNetworksUrls = userNetworks.map((network) => network.url);
+        await Promise.all(
+          networksToDelete.map((network) =>
+            this.networkService.deleteNetwork(network.id, queryRunner)
+          )
+        );
 
-      const integratedNetwork = userNetworks.filter(
-        (network) => network.integrated
-      )[0];
+        const userNetworksUrls = userNetworks.map((network) => network.url);
 
-      const { youtube } = inputNetworks;
+        const integratedNetwork = userNetworks.filter(
+          (network) => network.integrated
+        )[0];
 
-      const youtubeChannelsInfo = await Promise.all(
-        youtube.map((url) => this.youtubeService.getChannelInfoFromUrl(url))
-      );
+        const { youtube } = inputNetworks;
 
-      const existingYoutubeChannelsInfo = youtubeChannelsInfo.filter(
-        (c) => c !== 'NOT FOUND'
-      );
+        const youtubeChannelsInfo = await Promise.all(
+          youtube.map((url) => this.youtubeService.getChannelInfoFromUrl(url))
+        );
 
-      const newYoutubeNetworksInfo = youtubeNetworksGenerator(
-        existingYoutubeChannelsInfo,
-        integratedNetwork
-      );
+        const existingYoutubeChannelsInfo = youtubeChannelsInfo.filter(
+          (c) => c !== 'NOT FOUND'
+        );
 
-      const newNetworksInfo: Partial<Network>[] = networksGenerator(
-        inputNetworks,
-        user.id
-      );
+        const newYoutubeNetworksInfo = youtubeNetworksGenerator(
+          existingYoutubeChannelsInfo,
+          integratedNetwork
+        );
 
-      const newNetworks = [
-        ...newYoutubeNetworksInfo,
-        ...newNetworksInfo
-      ].filter((network) => !userNetworksUrls.includes(network.url));
+        const newNetworksInfo: Partial<Network>[] = networksGenerator(
+          inputNetworks,
+          user.id
+        );
 
-      if (newNetworks.length) {
-        await this.networkService.create(newNetworks, queryRunner);
+        const newNetworks = [
+          ...newYoutubeNetworksInfo,
+          ...newNetworksInfo
+        ].filter((network) => !userNetworksUrls.includes(network.url));
+
+        if (newNetworks.length) {
+          await this.networkService.create(newNetworks, queryRunner);
+        }
+        delete updateUserDto['networks'];
       }
-      delete updateUserDto['networks'];
-    }
-    const updatedUser = await this.userRepository.updateById(
-      user.id,
-      updateUserDto,
-      queryRunner
-    );
+      const updatedUser = await this.userRepository.updateById(
+        user.id,
+        updateUserDto,
+        queryRunner
+      );
 
-    return { user: updatedUser, networks: userNetworks };
+      await queryRunner.commitTransaction();
+
+      return { user: updatedUser, networks: userNetworks };
+    } catch (err) {
+      await queryRunner.rollbackTransaction();
+      throw new Error(err.message);
+    } finally {
+      await queryRunner.release();
+    }
   }
 
   async completeOnboarding(
