@@ -95,11 +95,17 @@ export class UserService {
       this.networkService.getByUserId(id)
     ]);
 
-    const userNetworksWithBA = await this.getBAForIntegratedNetworks(
-      userNetworks
+    const integratedUserNetworks = userNetworks.filter(
+      (network) => network.integrated
+    );
+    const integratedUserNetworksWithBA = await this.getBAForIntegratedNetworks(
+      integratedUserNetworks
     );
 
-    return { user, networks: userNetworksWithBA };
+    return {
+      user,
+      networks: [...userNetworks, ...integratedUserNetworksWithBA]
+    };
   }
 
   async getBAForIntegratedNetworks(userNetworks: Network[]) {
