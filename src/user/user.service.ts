@@ -98,13 +98,17 @@ export class UserService {
     const integratedUserNetworks = userNetworks.filter(
       (network) => network.integrated
     );
+
+    const nonIntegratedUserNetworks = userNetworks.filter(
+      (network) => !network.integrated
+    );
     const integratedUserNetworksWithBA = await this.getBAForIntegratedNetworks(
       integratedUserNetworks
     );
 
     return {
       user,
-      networks: [...userNetworks, ...integratedUserNetworksWithBA]
+      networks: [...nonIntegratedUserNetworks, ...integratedUserNetworksWithBA]
     };
   }
 
