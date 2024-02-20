@@ -41,8 +41,6 @@ export class NetworkRepository extends Repository<Network> {
     filter?,
     queryRunner?: QueryRunner
   ): Promise<Network[]> {
-    const { integrated } = filter;
-
     let queryBuilder: SelectQueryBuilder<Network> =
       this.createQueryBuilder('user');
 
@@ -50,9 +48,9 @@ export class NetworkRepository extends Repository<Network> {
       userId
     });
 
-    if (integrated !== undefined) {
+    if (filter?.integrated !== undefined) {
       queryBuilder = queryBuilder.andWhere({
-        integrated
+        integrated: filter.integrated
       });
     }
 
