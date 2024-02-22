@@ -78,11 +78,12 @@ export class UserService {
       }
     );
 
-    if (minFollowers !== undefined || maxFollowers !== undefined) {
+    if (minFollowers !== undefined && maxFollowers !== undefined) {
+      const maxFollowersFilter = maxFollowers === '*' ? Infinity : maxFollowers;
       const creatorsWithFollowersFiltered = creatorsWithTotalFollowers.filter(
         (creator) =>
-          (creator.totalFollowers > minFollowers || 0) &&
-          (creator.totalFollowers < maxFollowers || Infinity)
+          creator.totalFollowers > minFollowers &&
+          creator.totalFollowers < maxFollowersFilter
       );
       return creatorsWithFollowersFiltered;
     }
