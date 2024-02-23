@@ -7,11 +7,13 @@ import {
   UpdateDateColumn,
   ManyToOne,
   JoinColumn,
+  OneToOne,
   Unique
 } from 'typeorm';
 import { User } from './user.entity';
 import { PlatformType } from 'src/common/constants/types/platform.type';
 import { Platforms } from 'src/common/constants/enums';
+import { Integration } from './integration.entity';
 @Unique(['userId', 'url'])
 @Entity('network')
 export class Network extends BaseEntity {
@@ -48,4 +50,7 @@ export class Network extends BaseEntity {
   @ManyToOne(() => User)
   @JoinColumn({ name: 'userId' })
   user: User;
+
+  @OneToOne(() => Integration, (integration) => integration.network)
+  integration: Integration;
 }

@@ -37,7 +37,7 @@ import { CronModule } from './cron/cron.module';
           database,
           entities: entities,
           migrationsRun: false,
-          logging: true,
+          logging: false,
           migrationsTableName: 'migration',
           migrations: [
             __dirname + '/migration/**/*.ts',

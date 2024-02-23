@@ -34,8 +34,6 @@ export class AnalyticsYoutubeRepository extends Repository<AnalyticsYoutube> {
       .where('integration.userId = :userId', { userId })
       .getMany();
 
-    console.log(queryResult);
-
     return queryResult;
   }
 
@@ -64,6 +62,19 @@ export class AnalyticsYoutubeRepository extends Repository<AnalyticsYoutube> {
       .where({ integrationId })
       .returning('*')
       .execute();
+
+    return queryResult;
+  }
+
+  async getBAByUserIds(userIds: number[], queryRunner?: QueryRunner) {
+    const queryResult = await this.createQueryBuilder(
+      'analytics_youtube',
+      queryRunner
+    )
+      .leftJoinAndSelect('analytics_youtube.integration', 'integration')
+      .leftJoinAndSelect('integration.network', 'network')
+      .where('network.userId IN (:...userIds)', { userIds })
+      .getMany();
 
     return queryResult;
   }

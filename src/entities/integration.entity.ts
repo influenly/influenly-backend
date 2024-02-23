@@ -9,6 +9,7 @@ import {
   JoinColumn
 } from 'typeorm';
 import { Network } from './network.entity';
+import { AnalyticsYoutube } from './analytics-youtube.entity';
 
 @Entity('integration')
 export class Integration extends BaseEntity {
@@ -30,4 +31,10 @@ export class Integration extends BaseEntity {
   @OneToOne(() => Network)
   @JoinColumn({ name: 'networkId' })
   network: Network;
+
+  @OneToOne(
+    () => AnalyticsYoutube,
+    (analyticsYoutube) => analyticsYoutube.integration
+  )
+  analyticsYoutube: AnalyticsYoutube;
 }

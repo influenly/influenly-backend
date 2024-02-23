@@ -32,7 +32,6 @@ export class IntegrationRepository extends Repository<Integration> {
       .where({ userId })
       .getMany();
 
-    console.log(queryResult);
 
     return queryResult;
   }

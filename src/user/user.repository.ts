@@ -7,7 +7,6 @@ import {
   SelectQueryBuilder
 } from 'typeorm';
 import { ICreateUserInput, IUpdateUserInput } from './interfaces';
-import { UserTypes } from 'src/common/constants';
 
 @Injectable()
 export class UserRepository extends Repository<User> {
@@ -37,21 +36,29 @@ export class UserRepository extends Repository<User> {
       this.createQueryBuilder('user');
 
     // Aplica filtro de tags
-    // Ordena segun cantidad de tags coincidentes
-    if (contentTagsArr && contentTagsArr.length) {
+    if (contentTagsArr?.length) {
       queryBuilder = queryBuilder.andWhere(
-        'user.content_tags && :contentTagsArr',
+        'user.contentTags && :contentTagsArr',
         {
           contentTagsArr
         }
       );
-      if (contentTagsArr.length > 1) {
-        queryBuilder = queryBuilder.addOrderBy(
-          `array_length(ARRAY(SELECT unnest(user.content_tags) INTERSECT :contentTagsArr), 1)`,
-          'DESC'
-        );
-      }
     }
+    // queryBuilder.innerJoin('u')
+    // if (contentTagsArr.length > 1) {
+    //   queryBuilder = queryBuilder
+    //     .addOrderBy(
+    //       `array_length(ARRAY(SELECT public.unnest(user.contentTags) INTERSECT SELECT public.unnest(:contentTagsArr)), 1)`,
+    //       'DESC'
+    //     )
+    //     .setParameter('contentTagsArr', contentTagsArr);
+    // }
+    queryBuilder.leftJoinAndSelect('user.networks', 'networks');
+    queryBuilder.leftJoinAndSelect('networks.integration', 'integration');
+    queryBuilder.leftJoinAndSelect(
+      'integration.analyticsYoutube',
+      'analyticsYoutube'
+    );
 
     const queryResult = await queryBuilder.getMany();
 
@@ -79,7 +86,7 @@ export class UserRepository extends Repository<User> {
 
   async updateById(
     id: number,
-    updateUserInput: IUpdateUserInput,
+    updateUserInput,
     queryRunner?: QueryRunner
   ): Promise<User> {
     const queryResult = await this.createQueryBuilder('updateById', queryRunner)

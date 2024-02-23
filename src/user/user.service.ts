@@ -14,6 +14,7 @@ import {
   networksGenerator,
   youtubeNetworksGenerator
 } from 'src/utils/generateNetworks';
+import { NetworkRepository } from './network/network.repository';
 
 @Injectable()
 export class UserService {
@@ -23,6 +24,7 @@ export class UserService {
     private readonly analyticsService: AnalyticsService,
     private readonly integrationService: IntegrationService,
     private readonly youtubeService: YoutubeService,
+    private readonly networkRepository: NetworkRepository,
     private readonly dataSource: DataSource
   ) {}
 
@@ -45,95 +47,90 @@ export class UserService {
       contentTagsArr
     });
 
-    const creatorsWithIntegratedNetworksInfo = await Promise.all(
-      userCreators.map(async (userCreator) => {
-        const creatorNetworks = await this.networkService.getByUserId(
-          userCreator.id,
-          {
-            integrated: true
-          }
-        );
-        const creatorNetworksWithBA = await this.getBAForIntegratedNetworks(
-          creatorNetworks
-        );
-        return {
-          ...userCreator,
-          networks: creatorNetworksWithBA
-        };
-      })
-    );
+    console.log(userCreators[2].networks[0].integration);
+
+    const userIds = userCreators.map((user) => user.id);
+
+    const usersWithBA = await this.analyticsService.getBAByUserIds(userIds);
+
+    // const userCreatorsWithBA = userCreators.map(userCreator => {
+    //   return {
+    //     ...userCreator,
+    //     networks: usersWithBA.
+    //   }
+    // })
+
+    // console.log('usersWithBA', usersWithBA);
 
     //Se calcula y agrega seguidores total a cada creador
-    const creatorsWithTotalFollowers = creatorsWithIntegratedNetworksInfo.map(
-      (creator) => {
-        let totalFollowers = 0;
-        creator.networks.reduce((acc, network) => {
-          totalFollowers = network.basicAnalytics.totalSubs || 0;
-          return acc + totalFollowers;
-        }, totalFollowers);
-        return {
-          ...creator,
-          totalFollowers
-        };
-      }
-    );
+    // const creatorsWithTotalFollowers = usersWithBA.map((basicAnalytics) => {
+    //   let totalFollowers = 0;
+    //   basicAnalytics.integration.networks.reduce((acc, network) => {
+    //     totalFollowers = network.basicAnalytics.totalSubs || 0;
+    //     return acc + totalFollowers;
+    //   }, totalFollowers);
+    //   return {
+    //     ...creator,
+    //     totalFollowers
+    //   };
+    // });
 
-    if (minFollowers !== undefined && maxFollowers !== undefined) {
-      const maxFollowersFilter = maxFollowers === '*' ? Infinity : maxFollowers;
-      const creatorsWithFollowersFiltered = creatorsWithTotalFollowers.filter(
-        (creator) =>
-          creator.totalFollowers > minFollowers &&
-          creator.totalFollowers < maxFollowersFilter
-      );
-      return creatorsWithFollowersFiltered;
-    }
-    return creatorsWithTotalFollowers;
+    // if (minFollowers !== undefined && maxFollowers !== undefined) {
+    //   const maxFollowersFilter = maxFollowers === '*' ? Infinity : maxFollowers;
+    //   const creatorsWithFollowersFiltered = creatorsWithTotalFollowers.filter(
+    //     (creator) =>
+    //       creator.totalFollowers > minFollowers &&
+    //       creator.totalFollowers < maxFollowersFilter
+    //   );
+    //   return creatorsWithFollowersFiltered;
+    // }
+    // return creatorsWithTotalFollowers;
   }
 
-  async getProfileByUserId(id: number) {
-    const [user, userNetworks] = await Promise.all([
-      this.userRepository.findById(id),
-      this.networkService.getByUserId(id)
-    ]);
+  // async getProfileByUserId(id: number) {
+  //   const [user, userNetworks] = await Promise.all([
+  //     this.userRepository.findById(id),
+  //     this.networkService.getByUserId(id)
+  //   ]);
 
-    const integratedUserNetworks = userNetworks.filter(
-      (network) => network.integrated
-    );
+  //   const integratedUserNetworks = userNetworks.filter(
+  //     (network) => network.integrated
+  //   );
 
-    const nonIntegratedUserNetworks = userNetworks.filter(
-      (network) => !network.integrated
-    );
-    const integratedUserNetworksWithBA = await this.getBAForIntegratedNetworks(
-      integratedUserNetworks
-    );
+  //   const nonIntegratedUserNetworks = userNetworks.filter(
+  //     (network) => !network.integrated
+  //   );
+  //   const integratedUserNetworksWithBA = await this.getBAForIntegratedNetworks(
+  //     integratedUserNetworks
+  //   );
 
-    return {
-      user,
-      networks: [...nonIntegratedUserNetworks, ...integratedUserNetworksWithBA]
-    };
-  }
+  //   return {
+  //     user,
+  //     networks: [...nonIntegratedUserNetworks, ...integratedUserNetworksWithBA]
+  //   };
+  // }
 
-  async getBAForIntegratedNetworks(userNetworks: Network[]) {
-    const userNetworksWithBA = await Promise.all(
-      userNetworks.map(async (network) => {
-        const integration = await this.integrationService.getByNetworkId(
-          network.id
-        );
-        if (!integration) {
-          throw new Error(
-            'Network must be integrated to obtain Basic Analytics'
-          );
-        }
-        const { totalSubs, totalVideos } =
-          await this.analyticsService.getBAByIntegrationId(integration.id);
-        return {
-          ...network,
-          basicAnalytics: { totalSubs, totalVideos }
-        };
-      })
-    );
-    return userNetworksWithBA;
-  }
+  // async getBAForIntegratedNetworks(userNetworks: Network[]) {
+  //   const userNetworksWithBA = await Promise.all(
+  //     userNetworks.map(async (network) => {
+  //       const integratßion = await this.integrationService.getByNetworkId(
+  //         network.id
+  //       );
+  //       if (!integration) {
+  //         throw new Error(
+  //           'Network must be integrated to obtain Basic Analytics'
+  //         );
+  //       }
+  //       const { totalSubs, totalVideos } =
+  //         await this.analyticsService.getBAByIntegrationId(integration.id);
+  //       return {
+  //         ...network,
+  //         basicAnalytics: { totalSubs, totalVideos }
+  //       };
+  //     })
+  //   );
+  //   return userNetworksWithBA;
+  // }
 
   async create(signUpRequestDto: SignUpRequestDto): Promise<User> {
     try {

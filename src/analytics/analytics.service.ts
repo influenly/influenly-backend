@@ -54,4 +54,14 @@ export class AnalyticsService {
       );
     return analyticsYoutube;
   }
+
+  async getBAByUserIds(userIds: number[], queryRunner?: QueryRunner) {
+    const analyticsYoutube =
+      await this.analyticsYoutubeRepository.getBAByUserIds(
+        userIds,
+        queryRunner
+      );
+
+    return analyticsYoutube;
+  }
 }

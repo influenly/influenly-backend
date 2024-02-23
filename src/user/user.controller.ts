@@ -16,7 +16,7 @@ import { CompleteOnboardingDto, UpdateUserDto } from './dto';
 import { Auth, GetUser } from 'src/auth/decorators';
 import { User } from 'src/entities';
 
-@Auth()
+// @Auth()
 @ApiTags('user')
 @Controller('user')
 export class UserController {
@@ -37,6 +37,45 @@ export class UserController {
           ...completeOnboardingResult.updatedUser,
           networks: completeOnboardingResult.networks
         }
+      };
+    } catch (error) {
+      throw new HttpException(
+        { ok: false, error: error.message },
+        HttpStatus.BAD_REQUEST
+      );
+    }
+  }
+
+  @Get('/creator')
+  async getCreators(
+    @Query('followers_range') followersRange: string,
+    @Query('content_tags') contentTags: string
+  ) {
+    try {
+      let minFollowers, maxFollowers, contentTagsArr;
+
+      if (followersRange) {
+        let [min, max] = followersRange.split('-');
+
+        minFollowers = parseInt(min);
+        maxFollowers = max === '*' ? undefined : parseInt(max);
+      }
+
+      if (contentTags) {
+        contentTagsArr = contentTags.split(';');
+      }
+
+      const filters = {
+        minFollowers,
+        maxFollowers,
+        contentTagsArr
+      };
+
+      const creatorsResult = await this.userService.getCreators(filters);
+
+      return {
+        ok: true,
+        data: creatorsResult
       };
     } catch (error) {
       throw new HttpException(
@@ -90,72 +129,32 @@ export class UserController {
     }
   }
 
-  @Get(':id/profile')
-  async getUserProfile(
-    @GetUser() { onboardingCompleted }: User,
-    @Param('id', ParseIntPipe) userId: number
-  ) {
-    try {
-      if (!onboardingCompleted)
-        throw new Error(
-          `User with id ${userId} has not completed the onboarding`
-        );
-      const profileResult = await this.userService.getProfileByUserId(userId);
-      if (!profileResult) {
-        throw new Error(`User with id ${userId} not found`);
-      }
-      return {
-        ok: true,
-        user: {
-          ...profileResult.user,
-          networks: profileResult.networks
-        }
-      };
-    } catch (error) {
-      throw new HttpException(
-        { ok: false, error: error.message },
-        HttpStatus.BAD_REQUEST
-      );
-    }
-  }
-
-  @Get('creator')
-  async getCreators(
-    @GetUser() user: User,
-    @Query('followers_range') followersRange: string,
-    @Query('content_tags') contentTags: string
-  ) {
-    try {
-      let minFollowers, maxFollowers, contentTagsArr;
-
-      if (followersRange) {
-        let [min, max] = followersRange.split('-');
-
-        minFollowers = parseInt(min);
-        maxFollowers = max === '*' ? undefined : parseInt(max);
-      }
-
-      if (contentTags) {
-        contentTagsArr = contentTags.split(';');
-      }
-
-      const filters = {
-        minFollowers,
-        maxFollowers,
-        contentTagsArr
-      };
-
-      const creatorsResult = await this.userService.getCreators(filters);
-
-      return {
-        ok: true,
-        data: creatorsResult
-      };
-    } catch (error) {
-      throw new HttpException(
-        { ok: false, error: error.message },
-        HttpStatus.BAD_REQUEST
-      );
-    }
-  }
+  // @Get(':id/profile')
+  // async getUserProfile(
+  //   @GetUser() { onboardingCompleted }: User,
+  //   @Param('id', ParseIntPipe) userId: number
+  // ) {
+  //   try {
+  //     if (!onboardingCompleted)
+  //       throw new Error(
+  //         `User with id ${userId} has not completed the onboarding`
+  //       );
+  //     const profileResult = await this.userService.getProfileByUserId(userId);
+  //     if (!profileResult) {
+  //       throw new Error(`User with id ${userId} not found`);
+  //     }
+  //     return {
+  //       ok: true,
+  //       user: {
+  //         ...profileResult.user,
+  //         networks: profileResult.networks
+  //       }
+  //     };
+  //   } catch (error) {
+  //     throw new HttpException(
+  //       { ok: false, error: error.message },
+  //       HttpStatus.BAD_REQUEST
+  //     );
+  //   }
+  // }
 }

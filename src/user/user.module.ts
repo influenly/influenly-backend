@@ -12,6 +12,7 @@ import { NetworkRepository } from './network/network.repository';
 import { NetworkService } from './network/network.service';
 import { YoutubeService } from 'src/libs/youtube/youtube.service';
 import { HttpModule } from '@nestjs/axios';
+import { AnalyticsYoutubeRepository } from 'src/analytics/analytics-youtube/analytics-youtube.repository';
 
 @Module({
   imports: [
@@ -28,7 +29,8 @@ import { HttpModule } from '@nestjs/axios';
     NetworkRepository,
     IntegrationService,
     AnalyticsService,
-    YoutubeService
+    YoutubeService,
+    AnalyticsYoutubeRepository
   ],
   exports: [UserService, UserRepository, AnalyticsService, IntegrationService]
 })

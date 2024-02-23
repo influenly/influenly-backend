@@ -29,8 +29,6 @@ export class ConversationRepository extends Repository<Conversation> {
       .where(`conversation.${field} = :userId`, { userId })
       .getMany();
 
-    console.log(queryResult);
-
     return queryResult;
   }
 
@@ -55,7 +53,6 @@ export class ConversationRepository extends Repository<Conversation> {
     updateConversationInput: IUpdateConversationInput,
     queryRunner?: QueryRunner
   ): Promise<Conversation> {
-    console.log(updateConversationInput);
     const queryResult = await this.createQueryBuilder(
       'conversation-updateById',
       queryRunner

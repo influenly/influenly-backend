@@ -63,8 +63,6 @@ export class ChatService {
 
       await queryRunner.commitTransaction();
 
-      console.log(createdMessage);
-
       return createdConversation;
     } catch (err) {
       Logger.error(`Conversation and initial message creation has failed.`);

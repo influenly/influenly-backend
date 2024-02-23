@@ -4,9 +4,12 @@ import {
   CreateDateColumn,
   Entity,
   PrimaryGeneratedColumn,
-  UpdateDateColumn
+  UpdateDateColumn,
+  OneToMany,
+  JoinColumn
 } from 'typeorm';
 import { UserRoles, UserType } from 'src/common/constants';
+import { Network } from './network.entity';
 
 @Entity('user')
 export class User extends BaseEntity {
@@ -51,4 +54,7 @@ export class User extends BaseEntity {
 
   @UpdateDateColumn({ type: 'timestamp' })
   updatedAt: Date;
+
+  @OneToMany(() => Network, (network) => network.user)
+  networks: Network[];
 }
