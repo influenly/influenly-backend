@@ -46,8 +46,6 @@ export class UserService {
       integrated: true
     });
 
-    // return userCreators;
-
     // Se calcula y agrega seguidores total a cada creador
     const creatorsWithTotalFollowers = userCreators.map((userCreator) => {
       let accFollowers = 0;
@@ -61,6 +59,7 @@ export class UserService {
       };
     });
 
+    // Filtra por cantidad de followers
     if (minFollowers !== undefined && maxFollowers !== undefined) {
       const maxFollowersFilter = maxFollowers === '*' ? Infinity : maxFollowers;
       const creatorsWithFollowersFiltered = creatorsWithTotalFollowers.filter(

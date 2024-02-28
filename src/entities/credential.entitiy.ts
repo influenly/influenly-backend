@@ -33,10 +33,10 @@ export class Credential extends BaseEntity {
   @Column({ type: 'varchar', nullable: true })
   idToken: string;
 
-  @CreateDateColumn({ type: 'timestamp' })
+  @CreateDateColumn({ type: 'timestamp', select: false })
   createdAt: Date;
 
-  @UpdateDateColumn({ type: 'timestamp' })
+  @UpdateDateColumn({ type: 'timestamp', select: false })
   updatedAt: Date;
 
   @OneToOne(() => Integration)
