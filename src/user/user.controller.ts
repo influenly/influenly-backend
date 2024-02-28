@@ -33,10 +33,7 @@ export class UserController {
 
       return {
         ok: true,
-        user: {
-          ...completeOnboardingResult.updatedUser,
-          networks: completeOnboardingResult.networks
-        }
+        data: { user: completeOnboardingResult }
       };
     } catch (error) {
       throw new HttpException(
@@ -88,13 +85,13 @@ export class UserController {
   @Get(':id')
   async getUser(@Param('id', ParseIntPipe) userId: number) {
     try {
-      const user = await this.userService.getUserById(userId);
+      const user = await this.userService.getUserById(userId, false);
       if (!user) {
         throw new Error(`User with id ${userId} not found`);
       }
       return {
         ok: true,
-        user
+        data: { user }
       };
     } catch (error) {
       throw new HttpException(
@@ -116,10 +113,7 @@ export class UserController {
       );
       return {
         ok: true,
-        user: {
-          ...updatedUserResult.user,
-          networks: updatedUserResult.networks
-        }
+        data: { user: updatedUserResult }
       };
     } catch (error) {
       throw new HttpException(
@@ -129,32 +123,29 @@ export class UserController {
     }
   }
 
-  // @Get(':id/profile')
-  // async getUserProfile(
-  //   @GetUser() { onboardingCompleted }: User,
-  //   @Param('id', ParseIntPipe) userId: number
-  // ) {
-  //   try {
-  //     if (!onboardingCompleted)
-  //       throw new Error(
-  //         `User with id ${userId} has not completed the onboarding`
-  //       );
-  //     const profileResult = await this.userService.getProfileByUserId(userId);
-  //     if (!profileResult) {
-  //       throw new Error(`User with id ${userId} not found`);
-  //     }
-  //     return {
-  //       ok: true,
-  //       user: {
-  //         ...profileResult.user,
-  //         networks: profileResult.networks
-  //       }
-  //     };
-  //   } catch (error) {
-  //     throw new HttpException(
-  //       { ok: false, error: error.message },
-  //       HttpStatus.BAD_REQUEST
-  //     );
-  //   }
-  // }
+  @Get(':id/profile')
+  async getUserProfile(
+    @GetUser() { onboardingCompleted }: User,
+    @Param('id', ParseIntPipe) userId: number
+  ) {
+    try {
+      if (!onboardingCompleted)
+        throw new Error(
+          `User with id ${userId} has not completed the onboarding`
+        );
+      const user = await this.userService.getUserById(userId, true);
+      if (!user) {
+        throw new Error(`User with id ${userId} not found`);
+      }
+      return {
+        ok: true,
+        data: { user }
+      };
+    } catch (error) {
+      throw new HttpException(
+        { ok: false, error: error.message },
+        HttpStatus.BAD_REQUEST
+      );
+    }
+  }
 }

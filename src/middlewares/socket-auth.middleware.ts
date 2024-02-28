@@ -20,7 +20,7 @@ export const WSAuthMiddleware = (
       const jwtPayload = jwtService.verify(
         socket.handshake.headers.authorization ?? ''
       ) as IJwtPayload;
-      const user = await userService.getUserById(jwtPayload.userId);
+      const user = await userService.getUserById(jwtPayload.userId, false);
       if (user) {
         socket.user = user;
         next();

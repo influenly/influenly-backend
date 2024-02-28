@@ -61,10 +61,25 @@ export class UserRepository extends Repository<User> {
     return queryResult;
   }
 
-  async findById(id: number, queryRunner?: QueryRunner): Promise<User> {
-    const queryResult = await this.createQueryBuilder('findById', queryRunner)
-      .where({ id })
-      .getOne();
+  async findById(
+    id: number,
+    withNetworksInfo: Boolean,
+    queryRunner?: QueryRunner
+  ): Promise<User> {
+    let queryBuilder = await this.createQueryBuilder('user', queryRunner);
+
+    if (withNetworksInfo) {
+      queryBuilder.leftJoinAndSelect('user.networks', 'network');
+      queryBuilder.leftJoinAndSelect('network.integration', 'integration');
+      queryBuilder.leftJoinAndSelect(
+        'integration.analyticsYoutube',
+        'analyticsYoutube'
+      );
+    }
+
+    queryBuilder.where({ id });
+
+    const queryResult = await queryBuilder.getOne();
 
     return queryResult;
   }

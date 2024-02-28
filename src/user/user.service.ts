@@ -1,4 +1,4 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { SignUpRequestDto } from 'src/auth/dto';
 import { Network, User } from 'src/entities';
 import { DataSource } from 'typeorm';
@@ -14,7 +14,6 @@ import {
   networksGenerator,
   youtubeNetworksGenerator
 } from 'src/utils/generateNetworks';
-import { NetworkRepository } from './network/network.repository';
 
 @Injectable()
 export class UserService {
@@ -24,12 +23,11 @@ export class UserService {
     private readonly analyticsService: AnalyticsService,
     private readonly integrationService: IntegrationService,
     private readonly youtubeService: YoutubeService,
-    private readonly networkRepository: NetworkRepository,
     private readonly dataSource: DataSource
   ) {}
 
-  async getUserById(id: number): Promise<User> {
-    const user = await this.userRepository.findById(id);
+  async getUserById(id: number, withNetworksInfo: Boolean): Promise<User> {
+    const user = await this.userRepository.findById(id, withNetworksInfo);
     return user;
   }
 
@@ -70,55 +68,10 @@ export class UserService {
           userCreator.totalFollowers > minFollowers &&
           userCreator.totalFollowers < maxFollowersFilter
       );
-      return creatorsWithFollowersFiltered;
+      return { users: creatorsWithFollowersFiltered };
     }
-    return creatorsWithTotalFollowers;
+    return { users: creatorsWithTotalFollowers };
   }
-
-  // async getProfileByUserId(id: number) {
-  //   const [user, userNetworks] = await Promise.all([
-  //     this.userRepository.findById(id),
-  //     this.networkService.getByUserId(id)
-  //   ]);
-
-  //   const integratedUserNetworks = userNetworks.filter(
-  //     (network) => network.integrated
-  //   );
-
-  //   const nonIntegratedUserNetworks = userNetworks.filter(
-  //     (network) => !network.integrated
-  //   );
-  //   const integratedUserNetworksWithBA = await this.getBAForIntegratedNetworks(
-  //     integratedUserNetworks
-  //   );
-
-  //   return {
-  //     user,
-  //     networks: [...nonIntegratedUserNetworks, ...integratedUserNetworksWithBA]
-  //   };
-  // }
-
-  // async getBAForIntegratedNetworks(userNetworks: Network[]) {
-  //   const userNetworksWithBA = await Promise.all(
-  //     userNetworks.map(async (network) => {
-  //       const integratßion = await this.integrationService.getByNetworkId(
-  //         network.id
-  //       );
-  //       if (!integration) {
-  //         throw new Error(
-  //           'Network must be integrated to obtain Basic Analytics'
-  //         );
-  //       }
-  //       const { totalSubs, totalVideos } =
-  //         await this.analyticsService.getBAByIntegrationId(integration.id);
-  //       return {
-  //         ...network,
-  //         basicAnalytics: { totalSubs, totalVideos }
-  //       };
-  //     })
-  //   );
-  //   return userNetworksWithBA;
-  // }
 
   async create(signUpRequestDto: SignUpRequestDto): Promise<User> {
     try {
@@ -206,7 +159,7 @@ export class UserService {
 
       await queryRunner.commitTransaction();
 
-      return { user: updatedUser, networks: userNetworks };
+      return { ...updatedUser, networks: userNetworks };
     } catch (err) {
       await queryRunner.rollbackTransaction();
       throw new Error(err.message);
@@ -316,7 +269,7 @@ export class UserService {
       newNetworks.push(integratedNetworkWithBasicAnalytics);
 
       return {
-        updatedUser,
+        ...updatedUser,
         networks: newNetworks
       };
     } catch (err) {

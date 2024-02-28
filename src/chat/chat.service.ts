@@ -30,7 +30,8 @@ export class ChatService {
     }
   ): Promise<Conversation> {
     const targetUser = await this.userService.getUserById(
-      createConversationInput.creatorUserId
+      createConversationInput.creatorUserId,
+      false
     );
     if (targetUser.type !== UserTypes.CREATOR) {
       throw new Error('Invalid creator user id');
