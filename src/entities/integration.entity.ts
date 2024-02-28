@@ -22,10 +22,10 @@ export class Integration extends BaseEntity {
   @Column({ type: 'int' })
   userId: number;
 
-  @CreateDateColumn({ type: 'timestamp' })
+  @CreateDateColumn({ type: 'timestamp', select: false })
   createdAt: Date;
 
-  @UpdateDateColumn({ type: 'timestamp' })
+  @UpdateDateColumn({ type: 'timestamp', select: false })
   updatedAt: Date;
 
   @OneToOne(() => Network)

@@ -41,10 +41,10 @@ export class Network extends BaseEntity {
   @Column('varchar', { length: 200, nullable: true })
   profileImg: string;
 
-  @CreateDateColumn({ type: 'timestamp' })
+  @CreateDateColumn({ type: 'timestamp', select: false })
   createdAt: Date;
 
-  @UpdateDateColumn({ type: 'timestamp' })
+  @UpdateDateColumn({ type: 'timestamp', select: false })
   updatedAt: Date;
 
   @ManyToOne(() => User)

@@ -44,47 +44,35 @@ export class UserService {
   */
   async getCreators({ minFollowers, maxFollowers, contentTagsArr }) {
     const userCreators = await this.userRepository.findAllCreators({
-      contentTagsArr
+      contentTagsArr,
+      integrated: true
     });
 
-    console.log(userCreators[2].networks[0].integration);
+    // return userCreators;
 
-    const userIds = userCreators.map((user) => user.id);
+    // Se calcula y agrega seguidores total a cada creador
+    const creatorsWithTotalFollowers = userCreators.map((userCreator) => {
+      let accFollowers = 0;
+      const totalFollowers = userCreator.networks.reduce((acc, network) => {
+        accFollowers = network.integration.analyticsYoutube.totalSubs || 0;
+        return acc + accFollowers;
+      }, accFollowers);
+      return {
+        ...userCreator,
+        totalFollowers
+      };
+    });
 
-    const usersWithBA = await this.analyticsService.getBAByUserIds(userIds);
-
-    // const userCreatorsWithBA = userCreators.map(userCreator => {
-    //   return {
-    //     ...userCreator,
-    //     networks: usersWithBA.
-    //   }
-    // })
-
-    // console.log('usersWithBA', usersWithBA);
-
-    //Se calcula y agrega seguidores total a cada creador
-    // const creatorsWithTotalFollowers = usersWithBA.map((basicAnalytics) => {
-    //   let totalFollowers = 0;
-    //   basicAnalytics.integration.networks.reduce((acc, network) => {
-    //     totalFollowers = network.basicAnalytics.totalSubs || 0;
-    //     return acc + totalFollowers;
-    //   }, totalFollowers);
-    //   return {
-    //     ...creator,
-    //     totalFollowers
-    //   };
-    // });
-
-    // if (minFollowers !== undefined && maxFollowers !== undefined) {
-    //   const maxFollowersFilter = maxFollowers === '*' ? Infinity : maxFollowers;
-    //   const creatorsWithFollowersFiltered = creatorsWithTotalFollowers.filter(
-    //     (creator) =>
-    //       creator.totalFollowers > minFollowers &&
-    //       creator.totalFollowers < maxFollowersFilter
-    //   );
-    //   return creatorsWithFollowersFiltered;
-    // }
-    // return creatorsWithTotalFollowers;
+    if (minFollowers !== undefined && maxFollowers !== undefined) {
+      const maxFollowersFilter = maxFollowers === '*' ? Infinity : maxFollowers;
+      const creatorsWithFollowersFiltered = creatorsWithTotalFollowers.filter(
+        (userCreator) =>
+          userCreator.totalFollowers > minFollowers &&
+          userCreator.totalFollowers < maxFollowersFilter
+      );
+      return creatorsWithFollowersFiltered;
+    }
+    return creatorsWithTotalFollowers;
   }
 
   // async getProfileByUserId(id: number) {

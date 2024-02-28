@@ -49,10 +49,10 @@ export class User extends BaseEntity {
   @Column('date', { nullable: true })
   birthDate: Date;
 
-  @CreateDateColumn({ type: 'timestamp' })
+  @CreateDateColumn({ type: 'timestamp', select: false })
   createdAt: Date;
 
-  @UpdateDateColumn({ type: 'timestamp' })
+  @UpdateDateColumn({ type: 'timestamp', select: false })
   updatedAt: Date;
 
   @OneToMany(() => Network, (network) => network.user)
