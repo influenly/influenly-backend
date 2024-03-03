@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable, Logger, forwardRef } from '@nestjs/common';
 import { DataSource, QueryRunner } from 'typeorm';
 import { Credential, Integration } from 'src/entities';
 import { YoutubeService } from 'src/libs/youtube/youtube.service';
@@ -8,6 +8,7 @@ import { CredentialService } from './credential/credential.service';
 import { NetworkService } from 'src/user/network/network.service';
 import { AnalyticsService } from 'src/analytics/analytics.service';
 import { Platforms } from 'src/common/constants/enums';
+import { UserService } from 'src/user/user.service';
 
 @Injectable()
 export class IntegrationService {
@@ -17,6 +18,8 @@ export class IntegrationService {
     private readonly analyticsService: AnalyticsService,
     private readonly credentialService: CredentialService,
     private readonly youtubeService: YoutubeService,
+    @Inject(forwardRef(() => UserService))
+    private readonly userService: UserService,
     private readonly dataSource: DataSource
   ) {}
 
@@ -78,6 +81,8 @@ export class IntegrationService {
           'Both permission should be accepted to create integration'
         );
 
+      const user = await this.userService.getUserById(userId, false);
+
       const channelInfo = await this.youtubeService.getChannelInfo(accessToken);
 
       const userNetworks = await this.networkService.getByUserId(userId);
@@ -124,6 +129,10 @@ export class IntegrationService {
         },
         queryRunner
       );
+
+      await this.userService.updateById(userId, {
+        totalFollowers: user.totalFollowers + parseInt(totalSubs)
+      });
 
       const newCredential = await this.credentialService.create(
         {

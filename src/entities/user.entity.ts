@@ -46,6 +46,9 @@ export class User extends BaseEntity {
   @Column('varchar', { length: 60, array: true, nullable: true })
   contentTags: string[];
 
+  @Column('int', { nullable: true })
+  totalFollowers: number;
+
   @Column('date', { nullable: true })
   birthDate: Date;
 

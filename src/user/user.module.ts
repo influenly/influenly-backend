@@ -11,14 +11,13 @@ import { AnalyticsService } from 'src/analytics/analytics.service';
 import { NetworkRepository } from './network/network.repository';
 import { NetworkService } from './network/network.service';
 import { YoutubeService } from 'src/libs/youtube/youtube.service';
-import { HttpModule } from '@nestjs/axios';
+import { IntegrationRepository } from 'src/integration/integration.repository';
 import { AnalyticsYoutubeRepository } from 'src/analytics/analytics-youtube/analytics-youtube.repository';
 
 @Module({
   imports: [
-    HttpModule,
     TypeOrmModule.forFeature([User]),
-    forwardRef(() => AnalyticsModule),
+    AnalyticsModule,
     forwardRef(() => IntegrationModule)
   ],
   controllers: [UserController],
@@ -28,10 +27,11 @@ import { AnalyticsYoutubeRepository } from 'src/analytics/analytics-youtube/anal
     NetworkService,
     NetworkRepository,
     IntegrationService,
+    IntegrationRepository,
     AnalyticsService,
-    YoutubeService,
-    AnalyticsYoutubeRepository
+    AnalyticsYoutubeRepository,
+    YoutubeService
   ],
-  exports: [UserService, UserRepository, AnalyticsService, IntegrationService]
+  exports: [UserService, UserRepository]
 })
 export class UserModule {}

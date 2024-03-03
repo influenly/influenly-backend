@@ -30,18 +30,9 @@ export class UserRepository extends Repository<User> {
   }
 
   async findAllCreators(filter?, queryRunner?: QueryRunner): Promise<User[]> {
-    let queryBuilder: SelectQueryBuilder<User> =
-      this.createQueryBuilder('user');
-
-    // Aplica filtro de tags
-    if (filter?.contentTagsArr?.length) {
-      queryBuilder = queryBuilder.andWhere(
-        'user.contentTags && :contentTagsArr',
-        {
-          contentTagsArr: filter.contentTagsArr
-        }
-      );
-    }
+    let queryBuilder: SelectQueryBuilder<User> = this.createQueryBuilder(
+      'user'
+    ).setParameters({ contentTagsArr: filter.contentTagsArr });
 
     queryBuilder.leftJoinAndSelect(
       'user.networks',
@@ -55,6 +46,59 @@ export class UserRepository extends Repository<User> {
       'integration.analyticsYoutube',
       'analyticsYoutube'
     );
+
+    queryBuilder.where(`ARRAY_LENGTH(ARRAY(
+      SELECT UNNEST("user"."contentTags")
+      INTERSECT
+      SELECT UNNEST(:cc::text[])
+      ), 1) IS NOT NULL`);
+
+    // Aplica filtro de tags
+    if (filter?.contentTagsArr?.length) {
+      queryBuilder = queryBuilder.where('user.contentTags && :contentTagsArr', {
+        contentTagsArr: filter.contentTagsArr
+      });
+    }
+
+    // queryBuilder.leftJoinAndSelect(
+    //   'user.networks',
+    //   'network',
+    //   filter?.integrated === undefined
+    //     ? undefined
+    //     : `network.integrated = ${filter.integrated}`
+    // );
+    // queryBuilder.leftJoinAndSelect('network.integration', 'integration');
+    // queryBuilder.leftJoinAndSelect(
+    //   'integration.analyticsYoutube',
+    //   'analyticsYoutube'
+    // );
+    // queryBuilder
+    //   .addSelect(
+    //     'array(SELECT UNNEST(user.contentTags) INTERSECT array(:contentTagsArr))',
+    //     'interseccion'
+    //   )
+    // .orderBy(
+    //   'ARRAY_LENGTH(ARRAY(SELECT UNNEST(user.contentTags) INTERSECT ARRAY(:contentTagsArr)))',
+    //   'DESC'
+    // )
+    // .setParameter('contentTagsArr', filter.contentTagsArr);
+
+    //   let queryResult = await this.query(
+    //     `
+    // SELECT *
+    // FROM "user"
+    // LEFT JOIN "network" ON "user".id="network"."userId"
+    // LEFT JOIN "integration" ON "network".id="integration"."networkId"
+    // LEFT JOIN "analytics_youtube" ON "integration".id="analytics_youtube"."integrationId"
+
+    // WHERE )
+
+    // ORDER BY ARRAY_LENGTH(ARRAY(
+    //     SELECT UNNEST("user"."contentTags")
+    //     INTERSECT
+    //     SELECT UNNEST($1::text[])
+    // ),1) DESC`,[['hola', 'chau']]
+    //   );
 
     const queryResult = await queryBuilder.getMany();
 

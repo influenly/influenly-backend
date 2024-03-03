@@ -6,8 +6,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
   OneToOne,
-  JoinColumn,
-  Unique
+  JoinColumn
 } from 'typeorm';
 import { Integration } from './integration.entity';
 

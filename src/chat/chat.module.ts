@@ -13,12 +13,16 @@ import { ChatController } from './chat.controller';
 import { AuthModule } from '../auth/auth.module';
 import { NetworkService } from 'src/user/network/network.service';
 import { NetworkRepository } from 'src/user/network/network.repository';
+import { AnalyticsService } from '../analytics/analytics.service';
+import { AnalyticsYoutubeRepository } from 'src/analytics/analytics-youtube/analytics-youtube.repository';
+import { IntegrationService } from 'src/integration/integration.service';
+import { IntegrationRepository } from 'src/integration/integration.repository';
+import { CredentialService } from 'src/integration/credential/credential.service';
 import { YoutubeService } from 'src/libs/youtube/youtube.service';
-import { HttpModule } from '@nestjs/axios';
+import { CredentialRepository } from 'src/integration/credential/credential.repository';
 
 @Module({
   imports: [
-    HttpModule,
     AuthModule,
     UserModule,
     TypeOrmModule.forFeature([Conversation, Message])
@@ -27,14 +31,20 @@ import { HttpModule } from '@nestjs/axios';
   providers: [
     SocketGateway,
     ChatService,
-    UserService,
     NetworkService,
     NetworkRepository,
+    AnalyticsService,
+    AnalyticsYoutubeRepository,
+    IntegrationService,
+    IntegrationRepository,
+    CredentialService,
+    CredentialRepository,
+    YoutubeService,
+    UserService,
     MessageService,
     MessageRepository,
     ConversationRepository,
-    ConversationService,
-    YoutubeService
+    ConversationService
   ]
 })
 export class ChatModule {}

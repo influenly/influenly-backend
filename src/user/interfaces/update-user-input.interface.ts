@@ -1,4 +1,4 @@
-import { INetworks } from "src/common/interfaces";
+import { INetworks } from 'src/common/interfaces';
 
 export interface IUpdateUserInput {
   password?: string;
@@ -6,9 +6,10 @@ export interface IUpdateUserInput {
   country?: string;
   onboardingCompleted?: boolean;
   username?: string;
-  networks?: INetworks
+  networks?: INetworks;
   profileImg?: string;
   description?: string;
   contentTags?: string[];
   birthDate?: string;
+  totalFollowers?: number;
 }

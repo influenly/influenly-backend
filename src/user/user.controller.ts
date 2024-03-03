@@ -68,7 +68,12 @@ export class UserController {
         contentTagsArr
       };
 
-      const creatorsResult = await this.userService.getCreators(filters);
+      const sorting = 'ORDER_BY_RELEVANCE';
+
+      const creatorsResult = await this.userService.getCreators(
+        filters,
+        sorting
+      );
 
       return {
         ok: true,
@@ -108,7 +113,7 @@ export class UserController {
   ) {
     try {
       const updatedUserResult = await this.userService.updateById(
-        user,
+        user.id,
         updateUserDto
       );
       return {

@@ -15,6 +15,7 @@ import GOOGLE_CONFIG from './config/google';
 import { LoggerMiddleware } from './middlewares/logger.middleware';
 import { ChatModule } from './chat/chat.module';
 import { CronModule } from './cron/cron.module';
+import { GlobalHttpModule } from './http/http.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -56,11 +57,12 @@ import { CronModule } from './cron/cron.module';
       limit: 10
     }),
     AnalyticsModule,
+    UserModule,
     IntegrationModule,
     AuthModule,
-    UserModule,
     ChatModule,
-    CronModule
+    CronModule,
+    GlobalHttpModule
   ],
   providers: [
     {

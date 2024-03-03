@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable, Logger, forwardRef } from '@nestjs/common';
 import { SignUpRequestDto } from 'src/auth/dto';
 import { Network, User } from 'src/entities';
 import { DataSource } from 'typeorm';
@@ -21,6 +21,7 @@ export class UserService {
     private readonly userRepository: UserRepository,
     private readonly networkService: NetworkService,
     private readonly analyticsService: AnalyticsService,
+    @Inject(forwardRef(() => IntegrationService))
     private readonly integrationService: IntegrationService,
     private readonly youtubeService: YoutubeService,
     private readonly dataSource: DataSource
@@ -40,12 +41,13 @@ export class UserService {
    DISCOVERY ORIENTED ! ! !
    Obtenemos los creadores aplicando filtros y ordenamientos, solo tenemos en cuenta redes integradas.
   */
-  async getCreators({ minFollowers, maxFollowers, contentTagsArr }) {
+  async getCreators({ minFollowers, maxFollowers, contentTagsArr }, orderBy) {
     const userCreators = await this.userRepository.findAllCreators({
       contentTagsArr,
       integrated: true
     });
 
+    // return userCreators
     // Se calcula y agrega seguidores total a cada creador
     const creatorsWithTotalFollowers = userCreators.map((userCreator) => {
       let accFollowers = 0;
@@ -59,17 +61,17 @@ export class UserService {
       };
     });
 
-    // Filtra por cantidad de followers
-    if (minFollowers !== undefined && maxFollowers !== undefined) {
-      const maxFollowersFilter = maxFollowers === '*' ? Infinity : maxFollowers;
-      const creatorsWithFollowersFiltered = creatorsWithTotalFollowers.filter(
-        (userCreator) =>
-          userCreator.totalFollowers > minFollowers &&
-          userCreator.totalFollowers < maxFollowersFilter
-      );
-      return { users: creatorsWithFollowersFiltered };
-    }
-    return { users: creatorsWithTotalFollowers };
+    // // Filtra por cantidad de followers
+    // if (minFollowers !== undefined && maxFollowers !== undefined) {
+    //   const maxFollowersFilter = maxFollowers === '*' ? Infinity : maxFollowers;
+    //   const creatorsWithFollowersFiltered = creatorsWithTotalFollowers.filter(
+    //     (userCreator) =>
+    //       userCreator.totalFollowers > minFollowers &&
+    //       userCreator.totalFollowers < maxFollowersFilter
+    //   );
+    //   return { users: creatorsWithFollowersFiltered };
+    // }
+    // return { users: creatorsWithTotalFollowers };
   }
 
   async create(signUpRequestDto: SignUpRequestDto): Promise<User> {
@@ -90,7 +92,7 @@ export class UserService {
     }
   }
 
-  async updateById(user: User, updateUserDto: IUpdateUserInput) {
+  async updateById(userId: number, updateUserDto: IUpdateUserInput) {
     const queryRunner = this.dataSource.createQueryRunner();
 
     await queryRunner.connect();
@@ -99,7 +101,7 @@ export class UserService {
       const inputNetworks = updateUserDto.networks;
 
       // If a user already has networks to update it means that is not onboarding.
-      const userNetworks = await this.networkService.getByUserId(user.id);
+      const userNetworks = await this.networkService.getByUserId(userId);
 
       if (inputNetworks && Object.keys(inputNetworks).length) {
         const inputNetworksUrls = [].concat(...Object.values(inputNetworks));
@@ -137,7 +139,7 @@ export class UserService {
 
         const newNetworksInfo: Partial<Network>[] = networksGenerator(
           inputNetworks,
-          user.id
+          userId
         );
 
         const newNetworks = [
@@ -151,7 +153,7 @@ export class UserService {
         delete updateUserDto['networks'];
       }
       const updatedUser = await this.userRepository.updateById(
-        user.id,
+        userId,
         updateUserDto,
         queryRunner
       );
