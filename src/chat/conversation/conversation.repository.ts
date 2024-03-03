@@ -16,16 +16,6 @@ export class ConversationRepository extends Repository<Conversation> {
     const queryResult = await this.createQueryBuilder('conversation')
 
       .leftJoinAndSelect(`conversation.${userType}`, 'user')
-      .leftJoinAndSelect('user.profile', 'profile')
-      .select([
-        'conversation.id',
-        'conversation.advertiserUserId',
-        'conversation.creatorUserId',
-        'conversation.status',
-        'user.id',
-        'profile.username',
-        'profile.profileImg'
-      ])
       .where(`conversation.${field} = :userId`, { userId })
       .getMany();
 
