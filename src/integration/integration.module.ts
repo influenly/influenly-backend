@@ -22,7 +22,7 @@ import { AnalyticsYoutubeRepository } from 'src/analytics/analytics-youtube/anal
 @Module({
   imports: [
     TypeOrmModule.forFeature([Integration]),
-    forwardRef(() => UserModule),
+    forwardRef(() => UserModule)
   ],
   controllers: [IntegrationController],
   providers: [

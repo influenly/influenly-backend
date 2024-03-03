@@ -16,7 +16,7 @@ import { CompleteOnboardingDto, UpdateUserDto } from './dto';
 import { Auth, GetUser } from 'src/auth/decorators';
 import { User } from 'src/entities';
 
-// @Auth()
+@Auth()
 @ApiTags('user')
 @Controller('user')
 export class UserController {

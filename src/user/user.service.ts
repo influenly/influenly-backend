@@ -146,7 +146,7 @@ export class UserService {
         }
         delete updateUserDto['networks'];
       }
-      const updatedUser = await this.userRepository.updateById(
+      await this.userRepository.updateById(
         userId,
         updateUserDto,
         queryRunner
@@ -154,7 +154,9 @@ export class UserService {
 
       await queryRunner.commitTransaction();
 
-      return { ...updatedUser, networks: userNetworks };
+      const updatedUser = await this.userRepository.findById(userId, true)
+
+      return updatedUser;
     } catch (err) {
       await queryRunner.rollbackTransaction();
       throw new Error(err.message);

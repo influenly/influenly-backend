@@ -13,12 +13,14 @@ import { NetworkService } from './network/network.service';
 import { YoutubeService } from 'src/libs/youtube/youtube.service';
 import { IntegrationRepository } from 'src/integration/integration.repository';
 import { AnalyticsYoutubeRepository } from 'src/analytics/analytics-youtube/analytics-youtube.repository';
+import { AuthModule } from 'src/auth/auth.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([User]),
     AnalyticsModule,
-    forwardRef(() => IntegrationModule)
+    forwardRef(() => IntegrationModule),
+    AuthModule
   ],
   controllers: [UserController],
   providers: [

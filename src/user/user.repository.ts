@@ -136,7 +136,7 @@ export class UserRepository extends Repository<User> {
     updateUserInput,
     queryRunner?: QueryRunner
   ): Promise<User> {
-    const queryResult = await this.createQueryBuilder('updateById', queryRunner)
+    const queryResult = await this.createQueryBuilder('user', queryRunner)
       .update(updateUserInput)
       .where({
         id
