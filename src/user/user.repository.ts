@@ -45,11 +45,6 @@ export class UserRepository extends Repository<User> {
         ? `network.integrated = ${filters.integrated.value}`
         : undefined
     );
-    queryBuilder.leftJoinAndSelect('network.integration', 'integration');
-    queryBuilder.leftJoinAndSelect(
-      'integration.analyticsYoutube',
-      'analyticsYoutube'
-    );
 
     // Aplica filtro de tags
     if (filters.contentTags.active) {
@@ -95,7 +90,7 @@ export class UserRepository extends Repository<User> {
     ),1) DESC`);
     }
 
-    queryBuilder.andWhere("user.type = 'CREATOR'")
+    queryBuilder.andWhere("user.type = 'CREATOR'");
 
     const queryResult = await queryBuilder.getMany();
 
