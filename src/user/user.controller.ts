@@ -46,7 +46,8 @@ export class UserController {
   @Get('/creator')
   async getCreators(
     @Query('followers_range') followersRange: string,
-    @Query('content_tags') contentTags: string
+    @Query('content_tags') contentTags: string,
+    @Query('order_by') orderBy: string
   ) {
     try {
       let minFollowers, maxFollowers, contentTagsArr;
@@ -55,7 +56,7 @@ export class UserController {
         let [min, max] = followersRange.split('-');
 
         minFollowers = parseInt(min);
-        maxFollowers = max === '*' ? undefined : parseInt(max);
+        maxFollowers = max === '*' ? Infinity : parseInt(max);
       }
 
       if (contentTags) {
@@ -63,20 +64,21 @@ export class UserController {
       }
 
       const filters = {
-        minFollowers,
-        maxFollowers,
+        followersRange: {
+          minFollowers,
+          maxFollowers
+        },
         contentTagsArr
       };
 
-      const sorting = 'ORDER_BY_RELEVANCE';
-
       const creatorsResult = await this.userService.getCreators(
         filters,
-        sorting
+        orderBy
       );
 
       return {
         ok: true,
+        count: creatorsResult.length,
         data: creatorsResult
       };
     } catch (error) {

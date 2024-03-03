@@ -7,6 +7,7 @@ import {
   SelectQueryBuilder
 } from 'typeorm';
 import { ICreateUserInput, IUpdateUserInput } from './interfaces';
+import { IFindAllCreatorsFilters } from './interfaces/find-all-creators-filters';
 
 @Injectable()
 export class UserRepository extends Repository<User> {
@@ -29,17 +30,20 @@ export class UserRepository extends Repository<User> {
     return queryResult.raw[0];
   }
 
-  async findAllCreators(filter?, queryRunner?: QueryRunner): Promise<User[]> {
-    let queryBuilder: SelectQueryBuilder<User> = this.createQueryBuilder(
-      'user'
-    ).setParameters({ contentTagsArr: filter.contentTagsArr });
+  async findAllCreators(
+    filters: IFindAllCreatorsFilters,
+    orderBy,
+    queryRunner?: QueryRunner
+  ): Promise<User[]> {
+    let queryBuilder: SelectQueryBuilder<User> =
+      this.createQueryBuilder('user');
 
     queryBuilder.leftJoinAndSelect(
       'user.networks',
       'network',
-      filter?.integrated === undefined
-        ? undefined
-        : `network.integrated = ${filter.integrated}`
+      filters.integrated.active
+        ? `network.integrated = ${filters.integrated.value}`
+        : undefined
     );
     queryBuilder.leftJoinAndSelect('network.integration', 'integration');
     queryBuilder.leftJoinAndSelect(
@@ -47,58 +51,51 @@ export class UserRepository extends Repository<User> {
       'analyticsYoutube'
     );
 
-    queryBuilder.where(`ARRAY_LENGTH(ARRAY(
-      SELECT UNNEST("user"."contentTags")
-      INTERSECT
-      SELECT UNNEST(:cc::text[])
-      ), 1) IS NOT NULL`);
-
     // Aplica filtro de tags
-    if (filter?.contentTagsArr?.length) {
-      queryBuilder = queryBuilder.where('user.contentTags && :contentTagsArr', {
-        contentTagsArr: filter.contentTagsArr
-      });
+    if (filters.contentTags.active) {
+      queryBuilder = queryBuilder.andWhere(
+        'user.contentTags && :contentTagsParam',
+        {
+          contentTagsParam: filters.contentTags.value
+        }
+      );
     }
 
-    // queryBuilder.leftJoinAndSelect(
-    //   'user.networks',
-    //   'network',
-    //   filter?.integrated === undefined
-    //     ? undefined
-    //     : `network.integrated = ${filter.integrated}`
-    // );
-    // queryBuilder.leftJoinAndSelect('network.integration', 'integration');
-    // queryBuilder.leftJoinAndSelect(
-    //   'integration.analyticsYoutube',
-    //   'analyticsYoutube'
-    // );
-    // queryBuilder
-    //   .addSelect(
-    //     'array(SELECT UNNEST(user.contentTags) INTERSECT array(:contentTagsArr))',
-    //     'interseccion'
-    //   )
-    // .orderBy(
-    //   'ARRAY_LENGTH(ARRAY(SELECT UNNEST(user.contentTags) INTERSECT ARRAY(:contentTagsArr)))',
-    //   'DESC'
-    // )
-    // .setParameter('contentTagsArr', filter.contentTagsArr);
+    // Aplica filtro de followers
+    if (filters.followersRange.active) {
+      if (filters.followersRange.value.maxFollowers === Infinity) {
+        queryBuilder = queryBuilder.andWhere(
+          'user.totalFollowers >= :minFollowersParam',
+          {
+            minFollowersParam: filters.followersRange.value.minFollowers
+          }
+        );
+      } else {
+        queryBuilder = queryBuilder.andWhere(
+          'user.totalFollowers >= :minFollowersParam AND user.totalFollowers <= :maxFollowersParam',
+          {
+            minFollowersParam: filters.followersRange.value.minFollowers,
+            maxFollowersParam: filters.followersRange.value.maxFollowers
+          }
+        );
+      }
+    }
 
-    //   let queryResult = await this.query(
-    //     `
-    // SELECT *
-    // FROM "user"
-    // LEFT JOIN "network" ON "user".id="network"."userId"
-    // LEFT JOIN "integration" ON "network".id="integration"."networkId"
-    // LEFT JOIN "analytics_youtube" ON "integration".id="analytics_youtube"."integrationId"
+    if (orderBy === 'ORDER_BY_FOLLOWERS') {
+      queryBuilder.orderBy('user.totalFollowers', 'DESC');
+    }
 
-    // WHERE )
+    // TODO tomar en cuenta los tags del anunciante que hace la req para determinar relevancia
 
-    // ORDER BY ARRAY_LENGTH(ARRAY(
-    //     SELECT UNNEST("user"."contentTags")
-    //     INTERSECT
-    //     SELECT UNNEST($1::text[])
-    // ),1) DESC`,[['hola', 'chau']]
-    //   );
+    if (orderBy === 'ORDER_BY_RELEVANCE') {
+      queryBuilder.orderBy(`ARRAY_LENGTH(ARRAY(
+        SELECT UNNEST("user"."contentTags")
+        INTERSECT
+        SELECT UNNEST(params.param_array)
+    ),1) DESC`);
+    }
+
+    queryBuilder.andWhere("user.type = 'CREATOR'")
 
     const queryResult = await queryBuilder.getMany();
 

@@ -41,37 +41,31 @@ export class UserService {
    DISCOVERY ORIENTED ! ! !
    Obtenemos los creadores aplicando filtros y ordenamientos, solo tenemos en cuenta redes integradas.
   */
-  async getCreators({ minFollowers, maxFollowers, contentTagsArr }, orderBy) {
-    const userCreators = await this.userRepository.findAllCreators({
-      contentTagsArr,
-      integrated: true
-    });
+  async getCreators({ followersRange, contentTagsArr }, orderBy) {
+    if (contentTagsArr?.length) {
+    }
+    const userCreators = await this.userRepository.findAllCreators(
+      {
+        followersRange: {
+          active: Boolean(followersRange.maxFollowers),
+          value: {
+            minFollowers: followersRange.minFollowers,
+            maxFollowers: followersRange.maxFollowers
+          }
+        },
+        contentTags: {
+          active: Boolean(contentTagsArr?.length),
+          value: contentTagsArr
+        },
+        integrated: {
+          active: true,
+          value: true
+        }
+      },
+      orderBy === 'relevance' ? 'ORDER_BY_RELEVANCE' : 'ORDER_BY_FOLLOWERS'
+    );
 
-    // return userCreators
-    // Se calcula y agrega seguidores total a cada creador
-    const creatorsWithTotalFollowers = userCreators.map((userCreator) => {
-      let accFollowers = 0;
-      const totalFollowers = userCreator.networks.reduce((acc, network) => {
-        accFollowers = network.integration.analyticsYoutube.totalSubs || 0;
-        return acc + accFollowers;
-      }, accFollowers);
-      return {
-        ...userCreator,
-        totalFollowers
-      };
-    });
-
-    // // Filtra por cantidad de followers
-    // if (minFollowers !== undefined && maxFollowers !== undefined) {
-    //   const maxFollowersFilter = maxFollowers === '*' ? Infinity : maxFollowers;
-    //   const creatorsWithFollowersFiltered = creatorsWithTotalFollowers.filter(
-    //     (userCreator) =>
-    //       userCreator.totalFollowers > minFollowers &&
-    //       userCreator.totalFollowers < maxFollowersFilter
-    //   );
-    //   return { users: creatorsWithFollowersFiltered };
-    // }
-    // return { users: creatorsWithTotalFollowers };
+    return userCreators;
   }
 
   async create(signUpRequestDto: SignUpRequestDto): Promise<User> {
