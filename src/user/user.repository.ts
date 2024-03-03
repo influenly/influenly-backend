@@ -86,8 +86,8 @@ export class UserRepository extends Repository<User> {
       queryBuilder.orderBy(`ARRAY_LENGTH(ARRAY(
         SELECT UNNEST("user"."contentTags")
         INTERSECT
-        SELECT UNNEST(params.param_array)
-    ),1) DESC`);
+        SELECT UNNEST(:contentTagsParam::text[])
+    ),1)`, 'DESC');
     }
 
     queryBuilder.andWhere("user.type = 'CREATOR'");
