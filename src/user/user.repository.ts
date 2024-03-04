@@ -6,7 +6,7 @@ import {
   QueryRunner,
   SelectQueryBuilder
 } from 'typeorm';
-import { ICreateUserInput, IUpdateUserInput } from './interfaces';
+import { ICreateUserInput } from './interfaces';
 import { IFindAllCreatorsFilters } from './interfaces/find-all-creators-filters';
 
 @Injectable()
@@ -83,11 +83,14 @@ export class UserRepository extends Repository<User> {
     // TODO tomar en cuenta los tags del anunciante que hace la req para determinar relevancia
 
     if (orderBy === 'ORDER_BY_RELEVANCE') {
-      queryBuilder.orderBy(`ARRAY_LENGTH(ARRAY(
+      queryBuilder.orderBy(
+        `ARRAY_LENGTH(ARRAY(
         SELECT UNNEST("user"."contentTags")
         INTERSECT
         SELECT UNNEST(:contentTagsParam::text[])
-    ),1)`, 'DESC');
+    ),1)`,
+        'DESC'
+      );
     }
 
     queryBuilder.andWhere("user.type = 'CREATOR'");

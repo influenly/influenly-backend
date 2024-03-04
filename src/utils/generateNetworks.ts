@@ -36,7 +36,10 @@ export const youtubeNetworksGenerator = (
   platform: Platforms.YOUTUBE;
 }[] => {
   const newYoutubeNetworksInfo = youtubeChannelsInfo
-    .filter((channelInfo) => channelInfo.id != integratedNetwork.channelId)
+    .filter(
+      (channelInfo) =>
+        channelInfo.id != integratedNetwork?.channelId || Math.random()
+    )
     .map((channelInfo) => ({
       channelId: channelInfo.id,
       name: channelInfo.name,
