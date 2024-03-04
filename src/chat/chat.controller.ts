@@ -17,7 +17,7 @@ import { CreateConversationDto } from './conversation/dto/create-conversation.dt
 import { UpdateConversationDto } from './conversation/dto/update-conversation.dto';
 import { ChatService } from './chat.service';
 
-@Auth()
+// @Auth()
 @ApiTags('chat')
 @Controller('chat')
 export class ChatController {
