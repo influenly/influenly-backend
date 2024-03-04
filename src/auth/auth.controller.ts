@@ -17,7 +17,7 @@ import { Response } from 'express';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @Post('/sign-up')
+  @Post('/signup')
   async signUp(
     @Res({ passthrough: true })
     res: Response,
@@ -45,7 +45,7 @@ export class AuthController {
     }
   }
 
-  @Post('/sign-in')
+  @Post('/login')
   async signIn(
     @Res({ passthrough: true })
     res: Response,
@@ -60,6 +60,27 @@ export class AuthController {
       return {
         ok: true,
         user: signInResult.user
+      };
+    } catch (error) {
+      throw new HttpException(
+        { ok: false, error: error.message },
+        HttpStatus.BAD_REQUEST
+      );
+    }
+  }
+
+  @Post('/logout')
+  async logout(
+    @Res({ passthrough: true })
+    res: Response
+  ) {
+    try {
+      res.cookie('access_token', '', {
+        expires: new Date(Date.now()),
+        httpOnly: true
+      });
+      return {
+        ok: true
       };
     } catch (error) {
       throw new HttpException(
