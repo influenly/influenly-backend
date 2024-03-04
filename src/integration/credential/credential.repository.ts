@@ -29,8 +29,6 @@ export class CredentialRepository extends Repository<Credential> {
       .where({ integrationId })
       .getOne();
 
-    console.log(queryResult);
-
     return queryResult;
   }
 }
