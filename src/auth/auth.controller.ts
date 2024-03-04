@@ -4,11 +4,13 @@ import {
   Controller,
   HttpException,
   HttpStatus,
-  Post
+  Post,
+  Res
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { SignInRequestDto, SignUpRequestDto } from './dto';
+import { Response } from 'express';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -17,6 +19,8 @@ export class AuthController {
 
   @Post('/sign-up')
   async signUp(
+    @Res({ passthrough: true })
+    res: Response,
     @Body()
     signUpRequestDto: SignUpRequestDto
   ) {
@@ -25,10 +29,13 @@ export class AuthController {
       Logger.log(
         `User ${signUpResult.user.email} created succesfully. Type: ${signUpResult.user.type}`
       );
+      res.cookie('access_token', signUpResult.token, {
+        expires: new Date(Date.now() + 60000),
+        httpOnly: true
+      });
       return {
         ok: true,
-        user: signUpResult.user,
-        token: signUpResult.token
+        user: signUpResult.user
       };
     } catch (error) {
       throw new HttpException(
@@ -39,13 +46,20 @@ export class AuthController {
   }
 
   @Post('/sign-in')
-  async signIn(@Body() signInRequestDto: SignInRequestDto) {
+  async signIn(
+    @Res({ passthrough: true })
+    res: Response,
+    @Body() signInRequestDto: SignInRequestDto
+  ) {
     try {
       const signInResult = await this.authService.signIn(signInRequestDto);
+      res.cookie('access_token', signInResult.token, {
+        expires: new Date(Date.now() + 60000),
+        httpOnly: true
+      });
       return {
         ok: true,
-        user: signInResult.user,
-        token: signInResult.token
+        user: signInResult.user
       };
     } catch (error) {
       throw new HttpException(

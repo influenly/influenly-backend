@@ -6,7 +6,9 @@ import {
   Req
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+import { Auth } from 'src/auth/decorators';
 
+@Auth()
 @ApiTags('echo')
 @Controller('echo')
 export class EchoController {

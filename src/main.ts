@@ -11,7 +11,7 @@ import { SpelunkerModule } from 'nestjs-spelunker';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  console.log(SpelunkerModule.explore(app));
+  // console.log(SpelunkerModule.explore(app));
 
   const {
     api: { port }
