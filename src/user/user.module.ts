@@ -15,6 +15,7 @@ import { IntegrationRepository } from 'src/integration/integration.repository';
 import { AnalyticsYoutubeRepository } from 'src/analytics/analytics-youtube/analytics-youtube.repository';
 import { AuthModule } from 'src/auth/auth.module';
 import { PassportModule } from '@nestjs/passport';
+import { AWSService } from 'src/libs/aws/aws.service';
 
 @Module({
   imports: [
@@ -34,8 +35,9 @@ import { PassportModule } from '@nestjs/passport';
     IntegrationRepository,
     AnalyticsService,
     AnalyticsYoutubeRepository,
-    YoutubeService
+    YoutubeService,
+    AWSService
   ],
-  exports: [UserService, UserRepository, PassportModule]
+  exports: [UserService, UserRepository, PassportModule, AWSService]
 })
 export class UserModule {}

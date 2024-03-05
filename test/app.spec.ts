@@ -5,11 +5,15 @@ import { EchoModule } from 'src/echo/echo.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserService } from 'src/user/user.service';
 import { AuthModule } from 'src/auth/auth.module';
+import { AuthGuard, PassportModule } from '@nestjs/passport';
+import { JwtStrategy } from 'src/auth/strategies/jwt-strategy';
 
 describe('AppController (e2e)', () => {
   let app: INestApplication;
 
-  @Module({})
+  @Module({
+    imports: [PassportModule.register({ defaultStrategy: 'jwt' })]
+  })
   class MockModule {}
 
   beforeEach(async () => {
@@ -17,8 +21,8 @@ describe('AppController (e2e)', () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [EchoModule]
     })
-      .overrideModule(AuthModule)
-      .useModule(MockModule)
+      .overrideGuard(AuthGuard)
+      .useValue({ CanActivate: jest.fn(() => true) })
       .compile();
 
     app = moduleFixture.createNestApplication();

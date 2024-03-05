@@ -9,13 +9,16 @@ import {
   Patch,
   Post,
   Query,
-  Req
+  Req,
+  UploadedFile,
+  UseInterceptors
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { UserService } from './user.service';
 import { CompleteOnboardingDto, UpdateUserDto } from './dto';
 import { Auth, GetUser } from 'src/auth/decorators';
 import { User } from 'src/entities';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Auth()
 @ApiTags('user')
@@ -23,6 +26,12 @@ import { User } from 'src/entities';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
+  @Post('/profileimg')
+  @UseInterceptors(FileInterceptor('file'))
+  async uploadFile(@UploadedFile() imgFile: Express.Multer.File) {
+    const uploadingResult = await this.userService.uploadProfileImage(imgFile);
+    return uploadingResult;
+  }
   @Post('/onboarding')
   async completeOnboarding(
     @GetUser() user: User,

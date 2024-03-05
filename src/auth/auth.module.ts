@@ -16,6 +16,7 @@ import { AnalyticsYoutubeRepository } from 'src/analytics/analytics-youtube/anal
 import { IntegrationRepository } from 'src/integration/integration.repository';
 import { CredentialService } from 'src/integration/credential/credential.service';
 import { CredentialRepository } from 'src/integration/credential/credential.repository';
+import { AWSService } from 'src/libs/aws/aws.service';
 @Module({
   imports: [
     forwardRef(() => UserModule),

@@ -10,6 +10,7 @@ import { IntegrationService } from 'src/integration/integration.service';
 import { AnalyticsService } from 'src/analytics/analytics.service';
 import { NetworkService } from './network/network.service';
 import { YoutubeService } from '../libs/youtube/youtube.service';
+import { AWSService } from '../libs/aws/aws.service';
 import {
   networksGenerator,
   youtubeNetworksGenerator
@@ -24,9 +25,15 @@ export class UserService {
     @Inject(forwardRef(() => IntegrationService))
     private readonly integrationService: IntegrationService,
     private readonly youtubeService: YoutubeService,
+    private readonly awsService: AWSService,
     private readonly dataSource: DataSource
   ) {}
 
+  async uploadProfileImage(file: Express.Multer.File) {
+    console.log(file);
+    const s3UploadResult = await this.awsService.uploadToS3(file, 'bucketasd');
+    return s3UploadResult;
+  }
   async getUserById(id: number, withNetworksInfo: Boolean): Promise<User> {
     const user = await this.userRepository.findById(id, withNetworksInfo);
     return user;
@@ -146,15 +153,11 @@ export class UserService {
         }
         delete updateUserDto['networks'];
       }
-      await this.userRepository.updateById(
-        userId,
-        updateUserDto,
-        queryRunner
-      );
+      await this.userRepository.updateById(userId, updateUserDto, queryRunner);
 
       await queryRunner.commitTransaction();
 
-      const updatedUser = await this.userRepository.findById(userId, true)
+      const updatedUser = await this.userRepository.findById(userId, true);
 
       return updatedUser;
     } catch (err) {
