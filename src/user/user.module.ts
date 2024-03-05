@@ -14,13 +14,15 @@ import { YoutubeService } from 'src/libs/youtube/youtube.service';
 import { IntegrationRepository } from 'src/integration/integration.repository';
 import { AnalyticsYoutubeRepository } from 'src/analytics/analytics-youtube/analytics-youtube.repository';
 import { AuthModule } from 'src/auth/auth.module';
+import { PassportModule } from '@nestjs/passport';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([User]),
     AnalyticsModule,
     forwardRef(() => IntegrationModule),
-    AuthModule
+    forwardRef(() => AuthModule),
+    PassportModule.register({ defaultStrategy: 'jwt' })
   ],
   controllers: [UserController],
   providers: [
@@ -34,6 +36,6 @@ import { AuthModule } from 'src/auth/auth.module';
     AnalyticsYoutubeRepository,
     YoutubeService
   ],
-  exports: [UserService, UserRepository]
+  exports: [UserService, UserRepository, PassportModule]
 })
 export class UserModule {}

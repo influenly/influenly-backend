@@ -1,8 +1,9 @@
 import { Module } from '@nestjs/common';
 import { EchoController } from './echo.controller';
+import { AuthModule } from 'src/auth/auth.module';
 
 @Module({
-  imports: [],
+  imports: [AuthModule],
   controllers: [EchoController],
   providers: [],
   exports: []
