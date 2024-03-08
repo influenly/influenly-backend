@@ -16,9 +16,9 @@ export class AWSService {
   }
 
   async uploadToS3(file: Express.Multer.File, bucket) {
-    const params = {
+    const params: AWS.S3.PutObjectRequest = {
       Bucket: bucket,
-      Key: file.originalname,
+      Key: `profile_images/${file.originalname}`,
       Body: file.buffer,
       ContentType: file.mimetype
     };
