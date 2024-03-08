@@ -5,8 +5,7 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
 import helmet from 'helmet';
-import { SpelunkerModule } from 'nestjs-spelunker'; 
-
+import { SpelunkerModule } from 'nestjs-spelunker';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -18,8 +17,8 @@ async function bootstrap() {
   } = app.get(ConfigService).get('app');
 
   app.use(helmet());
-  app.enableCors({ origin: '*' });
-  app.use(cookieParser())
+  app.use(cookieParser());
+  app.enableCors({ origin: 'http://localhost:4200', credentials: true });
 
   const swaggerConfig = new DocumentBuilder()
     .setTitle('influenly API')

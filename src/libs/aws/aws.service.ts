@@ -1,33 +1,28 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import * as AWS from 'aws-sdk';
+import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 
 @Injectable()
 export class AWSService {
-  private s3: AWS.S3;
+  private s3Client: S3Client;
   constructor(private readonly configService: ConfigService) {
     // this.BUCKET_NAME = 'asd';
-    this.s3 = new AWS.S3({
-      credentials: {
-        accessKeyId: 'asd',
-        secretAccessKey: 'asd'
-      }
-    });
+    const s3Client = new S3Client({});
   }
 
   async uploadToS3(file: Express.Multer.File, bucket) {
-    const params: AWS.S3.PutObjectRequest = {
+    const params = {
       Bucket: bucket,
       Key: `profile_images/${file.originalname}`,
       Body: file.buffer,
       ContentType: file.mimetype
     };
 
-    try {
-      let s3Response = await this.s3.upload(params).promise();
-      return s3Response;
-    } catch (e) {
-      console.log(e);
-    }
+    // try {
+    //   let s3Response = await this.s3.upload(params).promise();
+    //   return s3Response;
+    // } catch (e) {
+    //   console.log(e);
+    // }
   }
 }
