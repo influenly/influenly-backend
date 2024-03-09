@@ -111,17 +111,21 @@ export class UserService {
           (network) => !inputNetworksUrls.includes(network.url)
         );
 
-        await Promise.all(
-          networksToDelete.map((network) =>
-            this.networkService.deleteNetwork(network.id, queryRunner)
-          )
-        );
+        if (networksToDelete.length) {
+          await Promise.all(
+            networksToDelete.map((network) =>
+              this.networkService.deleteNetwork(network.id, queryRunner)
+            )
+          );
+        }
 
         const userNetworksUrls = userNetworks.map((network) => network.url);
 
         const integratedNetwork = userNetworks.filter(
           (network) => network.integrated
         )[0];
+
+        console.log(integratedNetwork);
 
         const { youtube } = inputNetworks;
 

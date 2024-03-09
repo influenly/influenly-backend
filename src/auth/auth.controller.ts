@@ -30,8 +30,10 @@ export class AuthController {
         `User ${signUpResult.user.email} created succesfully. Type: ${signUpResult.user.type}`
       );
       res.cookie('access_token', signUpResult.token, {
-        expires: new Date(Date.now() + 600000),
-        httpOnly: true
+        expires: new Date(Date.now() + 3600000),
+        httpOnly: true,
+        // secure: false,
+        // path: '/'
       });
       return {
         ok: true,
@@ -54,7 +56,7 @@ export class AuthController {
     try {
       const signInResult = await this.authService.signIn(signInRequestDto);
       res.cookie('access_token', signInResult.token, {
-        expires: new Date(Date.now() + 600000),
+        expires: new Date(Date.now() + 3600000),
         httpOnly: true
       });
       return {
