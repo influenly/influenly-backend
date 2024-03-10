@@ -130,8 +130,10 @@ export class IntegrationService {
         queryRunner
       );
 
+      console.log(user);
+
       await this.userService.updateById(userId, {
-        totalFollowers: user.totalFollowers || 0 + parseInt(totalSubs)
+        totalFollowers: (user.totalFollowers || 0) + parseInt(totalSubs)
       });
 
       const newCredential = await this.credentialService.create(

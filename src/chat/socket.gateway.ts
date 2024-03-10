@@ -18,9 +18,7 @@ import { SendMessageEventDto } from './dto/send-message-event.dto';
 import { Logger, UsePipes, ValidationPipe } from '@nestjs/common';
 
 @WebSocketGateway(3001, {
-  cors: {
-    origin: '*'
-  }
+  cors: { origin: 'http://localhost:4200', credentials: true }
 })
 @UsePipes(new ValidationPipe())
 export class SocketGateway implements NestGateway {

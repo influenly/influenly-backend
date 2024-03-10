@@ -125,8 +125,6 @@ export class UserService {
           (network) => network.integrated
         )[0];
 
-        console.log(integratedNetwork);
-
         const { youtube } = inputNetworks;
 
         const youtubeChannelsInfo = await Promise.all(
@@ -138,6 +136,7 @@ export class UserService {
         );
 
         const newYoutubeNetworksInfo = youtubeNetworksGenerator(
+          userId,
           existingYoutubeChannelsInfo,
           integratedNetwork
         );
@@ -216,16 +215,22 @@ export class UserService {
 
       const { youtube } = networksInput;
 
+      // if(youtube.length){
+
+      // }
+
       const youtubeChannelsInfo = await Promise.all(
         youtube.map((url) => this.youtubeService.getChannelInfoFromUrl(url))
       );
 
+
       const existingYoutubeChannelsInfo = youtubeChannelsInfo.filter(
         (channel) =>
-          channel !== 'NOT FOUND' && channel.id != integratedNetwork.channelId
+          channel !== 'NOT FOUND' && channel.id != integratedNetwork?.channelId
       );
 
       const newYoutubeNetworksInfo = youtubeNetworksGenerator(
+        user.id,
         existingYoutubeChannelsInfo,
         integratedNetwork
       );

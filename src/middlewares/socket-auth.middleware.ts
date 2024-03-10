@@ -18,9 +18,10 @@ export const WSAuthMiddleware = (
   return async (socket: AuthSocket, next) => {
     try {
       const jwtPayload = jwtService.verify(
-        socket.handshake.headers.authorization ?? ''
+        getCookieValue(socket.handshake.headers.cookie, 'access_token')
       ) as IJwtPayload;
       const user = await userService.getUserById(jwtPayload.userId, false);
+      console.log(user);
       if (user) {
         socket.user = user;
         next();
@@ -37,4 +38,15 @@ export const WSAuthMiddleware = (
       });
     }
   };
+};
+
+const getCookieValue = (cookieString, cookieName) => {
+  const cookies = cookieString.split(';');
+  for (let i = 0; i < cookies.length; i++) {
+    const cookie = cookies[i].trim();
+    if (cookie.startsWith(cookieName + '=')) {
+      return cookie.substring(cookieName.length + 1);
+    }
+  }
+  return null;
 };

@@ -26,6 +26,7 @@ export const networksGenerator = (networksInput: INetworks, userId: number) => {
 };
 
 export const youtubeNetworksGenerator = (
+  userId,
   youtubeChannelsInfo,
   integratedNetwork: Network
 ): {
@@ -43,7 +44,7 @@ export const youtubeNetworksGenerator = (
     .map((channelInfo) => ({
       channelId: channelInfo.id,
       name: channelInfo.name,
-      userId: integratedNetwork.userId,
+      userId,
       url: `https://www.youtube.com/channel/${channelInfo.id}`,
       platform: Platforms.YOUTUBE
     }));
