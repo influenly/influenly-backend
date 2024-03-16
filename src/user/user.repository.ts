@@ -140,6 +140,7 @@ export class UserRepository extends Repository<User> {
     queryRunner?: QueryRunner
   ): Promise<User> {
     const queryResult = await this.createQueryBuilder('user', queryRunner)
+      .leftJoinAndSelect('user.networks', 'network')
       .update(updateUserInput)
       .where({
         id

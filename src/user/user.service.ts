@@ -222,8 +222,6 @@ export class UserService {
           );
       }
 
-      const integration = await this.integrationService.getByUserId(user.id);
-
       const integratedNetwork = await this.networkService.getById(
         networkIntegratedId
       );
@@ -255,7 +253,8 @@ export class UserService {
       );
 
       const newNetworks = networksToCreate.filter(
-        (network) => network.valid
+        (network) =>
+          network.valid && integratedNetwork.channelId !== network.channelId
       );
 
       console.log(newNetworks);
@@ -264,21 +263,7 @@ export class UserService {
         await this.networkService.create(newNetworks, queryRunner);
       }
 
-      const { totalSubs, totalVideos } =
-        await this.analyticsService.getBAByIntegrationId(
-          integration[0].id,
-          queryRunner
-        );
-
-      const integratedNetworkWithBasicAnalytics = {
-        ...integratedNetwork,
-        basicAnalytics: {
-          totalSubs,
-          totalVideos
-        }
-      };
-
-      const updatedUser = await this.userRepository.updateById(
+      await this.userRepository.updateById(
         user.id,
         {
           description,
@@ -291,13 +276,12 @@ export class UserService {
       );
 
       await queryRunner.commitTransaction();
+
+      const userUpdated = await this.userRepository.findById(user.id, true);
+
       Logger.log(`User ${user.id} onboaring completed succesfully.`);
 
-      newNetworks.push(integratedNetworkWithBasicAnalytics);
-
-      return {
-        ...updatedUser
-      };
+      return userUpdated;
     } catch (err) {
       Logger.error(
         `Onboarding completion transaction has failed. Error: ${err}`
