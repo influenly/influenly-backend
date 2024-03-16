@@ -2,6 +2,7 @@ import { HttpService } from '@nestjs/axios';
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { AxiosResponse } from 'axios';
+import { channel } from 'diagnostics_channel';
 import { Credentials, OAuth2Client } from 'google-auth-library';
 import { google } from 'googleapis';
 import { firstValueFrom, map } from 'rxjs';
@@ -55,30 +56,31 @@ export class YoutubeService {
   }
 
   async getChannelInfoFromUrl(url: string) {
-    return firstValueFrom(
-      this.httpService.get(url).pipe(
-        map((response: AxiosResponse<string>) => {
-          try {
-            const { data } = response;
+    try {
+      const response = await firstValueFrom(this.httpService.get(url));
+      console.log(response);
+      const { data } = response;
 
-            const regexChannelId = /"channelId":"([^"]+)"/;
-            const channelId = data.match(regexChannelId)[1];
+      const regexChannelId = /"channelId":"([^"]+)"/;
+      const channelId = data.match(regexChannelId)[1];
 
-            const regexChannelName =
-              /<meta\s+property="og:title"\s+content="([^"]+)">/;
-            const channelName = data.match(regexChannelName)[1];
+      const regexChannelName =
+        /<meta\s+property="og:title"\s+content="([^"]+)">/;
+      const channelName = data.match(regexChannelName)[1];
 
-            return {
-              id: channelId,
-              name: channelName
-            };
-          } catch (error) {
-            Logger.log(error);
-            return 'NOT FOUND';
-          }
-        })
-      )
-    );
+      return {
+        valid: Boolean(channelId && channelName),
+        id: channelId,
+        name: channelName,
+        url: `https://www.youtube.com/channel/${channelId}`
+      };
+    } catch (error) {
+      console.log('hola');
+      Logger.log(error);
+      return {
+        valid: false
+      };
+    }
   }
 
   async getMonthlyAA() {

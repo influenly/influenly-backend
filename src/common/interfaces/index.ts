@@ -1,1 +1,1 @@
-export { INetworks } from './networks.interface';
+export { INetworkInput } from './networks.interface';

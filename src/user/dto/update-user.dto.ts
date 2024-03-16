@@ -11,7 +11,7 @@ import {
   IsObject,
   IsArray
 } from 'class-validator';
-import { INetworks } from 'src/common/interfaces';
+import { INetworkInput } from 'src/common/interfaces';
 
 export class UpdateUserDto {
   @ApiPropertyOptional()
@@ -57,8 +57,8 @@ export class UpdateUserDto {
   @ApiPropertyOptional()
   @IsOptional()
   @IsNotEmpty()
-  @IsObject()
-  networks?: INetworks;
+  @IsArray()
+  networks?: INetworkInput[];
 
   @ApiPropertyOptional()
   @IsOptional()

@@ -8,7 +8,7 @@ export class NetworkService {
   constructor(private readonly networkRepository: NetworkRepository) {}
 
   async create(
-    createNetworkInput,
+    createNetworkInput: Partial<Network>[],
     queryRunner?: QueryRunner
   ): Promise<Network> {
     const newNetwork = await this.networkRepository.createAndSave(

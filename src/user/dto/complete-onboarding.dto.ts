@@ -10,7 +10,7 @@ import {
   IsNumber,
   IsObject
 } from 'class-validator';
-import { INetworks } from 'src/common/interfaces';
+import { INetworkInput } from 'src/common/interfaces';
 
 export class CompleteOnboardingDto {
   @ApiProperty()
@@ -28,8 +28,8 @@ export class CompleteOnboardingDto {
 
   @ApiProperty()
   @IsNotEmpty()
-  @IsObject()
-  networks: INetworks;
+  @IsArray()
+  networks: INetworkInput[];
 
   @ApiPropertyOptional()
   @IsOptional()
