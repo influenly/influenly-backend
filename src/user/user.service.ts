@@ -92,25 +92,25 @@ export class UserService {
     }
   }
 
-  async updateById(userId: number, updateUserDto: IUpdateUserInput) {
+  async updateById(user: User, updateUserDto: IUpdateUserInput) {
     const queryRunner = this.dataSource.createQueryRunner();
 
     await queryRunner.connect();
     await queryRunner.startTransaction();
     try {
-      const inputNetworks = updateUserDto.networks;
+      const networksInput = updateUserDto.networks;
+
+      const isCreator = user.type === UserTypes.CREATOR;
 
       // If a user already has networks to update it means that is not onboarding.
-      const userNetworks = await this.networkService.getByUserId(userId);
+      const userNetworks = await this.networkService.getByUserId(user.id);
 
-      if (inputNetworks && Object.keys(inputNetworks).length) {
-        const inputNetworksUrls = [].concat(...Object.values(inputNetworks));
+      if (networksInput.length) {
+        const networksInputUrls = networksInput.map((network) => network.url);
 
         const networksToDelete = userNetworks.filter(
-          (network) => !inputNetworksUrls.includes(network.url)
+          (network) => !networksInputUrls.includes(network.url)
         );
-
-        console.log(networksToDelete);
 
         if (networksToDelete.length) {
           await Promise.all(
@@ -122,60 +122,60 @@ export class UserService {
 
         const userNetworksUrls = userNetworks.map((network) => network.url);
 
-        const networksToCreateUrls = inputNetworksUrls.filter(
-          (url) => !userNetworksUrls.includes(url)
+        const networksInputToCreate = networksInput.filter(
+          (network) => !userNetworksUrls.includes(network.url)
         );
 
-        const integratedNetwork = userNetworks.filter(
-          (network) => network.integrated
-        )[0];
-
-        for (const platform in inputNetworks) {
-          for (const url in inputNetworks[platform]) {
-            if (networksToCreateUrls.includes(url)) {
-              inputNetworks[platform];
+        const networksToCreate = await Promise.all(
+          networksInputToCreate.map(async (network) => {
+            if (network.platform === Platforms.YOUTUBE) {
+              const { valid, name, id, url } =
+                await this.youtubeService.getChannelInfoFromUrl(network.url);
+              return {
+                userId: user.id,
+                url,
+                platform: Platforms.YOUTUBE,
+                name,
+                profileImg: 'default',
+                valid,
+                channelId: id
+              };
             }
-          }
-        }
-        const { youtube } = inputNetworks;
-
-        const youtubeChannels = await Promise.all(
-          youtube.map(async (url) => {
-            const { valid, name, id } =
-              await this.youtubeService.getChannelInfoFromUrl(url);
             return {
-              url,
-              valid,
-              name,
-              id
+              userId: user.id,
+              url: network.url,
+              platform: Platforms[network.platform.toUpperCase()],
+              name: network.url.split('.com/')[1],
+              profileImg: 'default',
+              valid: true
             };
           })
         );
 
-        const validYoutubeChannels = youtubeChannels.filter(
-          (youtubeChannel) => youtubeChannel.valid
+        const integratedNetwork = isCreator
+          ? userNetworks.filter((network) => network.integrated)[0]
+          : null;
+
+        const validNetworks = networksToCreate.filter(
+          (network) => network.valid
         );
 
-        const networksToCreate = {
-          ...inputNetworks,
-          youtube: validYoutubeChannels
-        };
+        const newNetworks = isCreator
+          ? validNetworks.filter(
+              (network) => integratedNetwork.channelId !== network.channelId
+            )
+          : validNetworks;
 
-        const networks: Partial<Network>[] = networksGenerator(
-          networksToCreate,
-          userId
-        );
-
-        if (networks.length) {
-          await this.networkService.create(networks, queryRunner);
+        if (newNetworks.length) {
+          await this.networkService.create(newNetworks, queryRunner);
         }
         delete updateUserDto['networks'];
       }
-      await this.userRepository.updateById(userId, updateUserDto, queryRunner);
+      await this.userRepository.updateById(user.id, updateUserDto, queryRunner);
 
       await queryRunner.commitTransaction();
 
-      const updatedUser = await this.userRepository.findById(userId, true);
+      const updatedUser = await this.userRepository.findById(user.id, true);
 
       return updatedUser;
     } catch (err) {
@@ -222,9 +222,9 @@ export class UserService {
           );
       }
 
-      const integratedNetwork = await this.networkService.getById(
-        networkIntegratedId
-      );
+      const integratedNetwork = isCreator
+        ? await this.networkService.getById(networkIntegratedId)
+        : null;
 
       const networksToCreate = await Promise.all(
         networksInput.map(async (network) => {
@@ -252,12 +252,13 @@ export class UserService {
         })
       );
 
-      const newNetworks = networksToCreate.filter(
-        (network) =>
-          network.valid && integratedNetwork.channelId !== network.channelId
-      );
+      const validNetworks = networksToCreate.filter((network) => network.valid);
 
-      console.log(newNetworks);
+      const newNetworks = isCreator
+        ? validNetworks.filter(
+            (network) => integratedNetwork.channelId !== network.channelId
+          )
+        : validNetworks;
 
       if (newNetworks.length) {
         await this.networkService.create(newNetworks, queryRunner);

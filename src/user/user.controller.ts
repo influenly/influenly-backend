@@ -125,7 +125,7 @@ export class UserController {
   ) {
     try {
       const updatedUserResult = await this.userService.updateById(
-        user.id,
+        user,
         updateUserDto
       );
       return {
