@@ -1,8 +1,6 @@
 import { Module, forwardRef } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { AuthModule } from 'src/auth/auth.module';
-
 import { Integration } from 'src/entities';
 
 import { IntegrationController } from './integration.controller';
@@ -18,7 +16,6 @@ import { NetworkRepository } from 'src/user/network/network.repository';
 import { AnalyticsService } from 'src/analytics/analytics.service';
 import { UserService } from 'src/user/user.service';
 import { AnalyticsYoutubeRepository } from 'src/analytics/analytics-youtube/analytics-youtube.repository';
-import { AWSService } from 'src/libs/aws/aws.service';
 
 @Module({
   imports: [
