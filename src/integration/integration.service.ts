@@ -132,7 +132,7 @@ export class IntegrationService {
 
       console.log(user);
 
-      await this.userService.updateById(userId, {
+      await this.userService.updateById(user, {
         totalFollowers: (user.totalFollowers || 0) + parseInt(totalSubs)
       });
 

@@ -1,28 +1,21 @@
-import { Inject, Injectable, Logger, forwardRef } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { SignUpRequestDto } from 'src/auth/dto';
-import { Network, User } from 'src/entities';
+import { User } from 'src/entities';
 import { DataSource } from 'typeorm';
 import { UserRepository } from './user.repository';
 import { CompleteOnboardingDto } from './dto';
 import { ICreateUserInput, IUpdateUserInput } from './interfaces';
 import { UserTypes } from 'src/common/constants';
-import { IntegrationService } from 'src/integration/integration.service';
-import { AnalyticsService } from 'src/analytics/analytics.service';
 import { NetworkService } from './network/network.service';
 import { YoutubeService } from '../libs/youtube/youtube.service';
 import { AWSService } from '../libs/aws/aws.service';
-import { networksGenerator } from 'src/utils/generateNetworks';
 import { Platforms } from 'src/common/constants/enums';
-import { platform } from 'os';
 
 @Injectable()
 export class UserService {
   constructor(
     private readonly userRepository: UserRepository,
     private readonly networkService: NetworkService,
-    private readonly analyticsService: AnalyticsService,
-    @Inject(forwardRef(() => IntegrationService))
-    private readonly integrationService: IntegrationService,
     private readonly youtubeService: YoutubeService,
     private readonly awsService: AWSService,
     private readonly dataSource: DataSource
