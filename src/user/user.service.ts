@@ -10,6 +10,7 @@ import { NetworkService } from './network/network.service';
 import { YoutubeService } from '../libs/youtube/youtube.service';
 import { AWSService } from '../libs/aws/aws.service';
 import { Platforms } from 'src/common/constants/enums';
+import { INetworkInput } from 'src/common/interfaces';
 
 @Injectable()
 export class UserService {
@@ -128,30 +129,9 @@ export class UserService {
           (network) => !userNetworksUrls.includes(network.url)
         );
 
-        const networksToCreate = await Promise.all(
-          networksInputToCreate.map(async (network) => {
-            if (network.platform === Platforms.YOUTUBE) {
-              const { valid, name, id, url } =
-                await this.youtubeService.getChannelInfoFromUrl(network.url);
-              return {
-                userId: user.id,
-                url,
-                platform: Platforms.YOUTUBE,
-                name,
-                profileImg: 'default',
-                valid,
-                channelId: id
-              };
-            }
-            return {
-              userId: user.id,
-              url: network.url,
-              platform: Platforms[network.platform.toUpperCase()],
-              name: network.url.split('.com/')[1],
-              profileImg: 'default',
-              valid: true
-            };
-          })
+        const networksToCreate = await this.populateNetworksInfo(
+          networksInput,
+          user.id
         );
 
         const integratedNetwork = isCreator
@@ -232,30 +212,9 @@ export class UserService {
         ? await this.networkService.getById(networkIntegratedId)
         : null;
 
-      const networksToCreate = await Promise.all(
-        networksInput.map(async (network) => {
-          if (network.platform === Platforms.YOUTUBE) {
-            const { valid, name, id, url } =
-              await this.youtubeService.getChannelInfoFromUrl(network.url);
-            return {
-              userId: user.id,
-              url,
-              platform: Platforms.YOUTUBE,
-              name,
-              profileImg: 'default',
-              valid,
-              channelId: id
-            };
-          }
-          return {
-            userId: user.id,
-            url: network.url,
-            platform: Platforms[network.platform.toUpperCase()],
-            name: network.url.split('.com/')[1],
-            profileImg: 'default',
-            valid: true
-          };
-        })
+      const networksToCreate = await this.populateNetworksInfo(
+        networksInput,
+        user.id
       );
 
       const validNetworks = networksToCreate.filter((network) => network.valid);
@@ -311,5 +270,37 @@ export class UserService {
       .execute();
 
     return queryResult.raw[0];
+  }
+
+  private async populateNetworksInfo(
+    networks: INetworkInput[],
+    userId: number
+  ) {
+    const networksPopulated = await Promise.all(
+      networks.map(async (network) => {
+        if (network.platform === Platforms.YOUTUBE) {
+          const { valid, name, id, url } =
+            await this.youtubeService.getChannelInfoFromUrl(network.url);
+          return {
+            userId,
+            url,
+            platform: Platforms.YOUTUBE,
+            name,
+            profileImg: 'default',
+            valid,
+            channelId: id
+          };
+        }
+        return {
+          userId,
+          url: network.url,
+          platform: Platforms[network.platform.toUpperCase()],
+          name: network.url.split('.com/')[1],
+          profileImg: 'default',
+          valid: true
+        };
+      })
+    );
+    return networksPopulated;
   }
 }
