@@ -5,8 +5,6 @@ import { UserController } from './user.controller';
 import { UserRepository } from './user.repository';
 import { UserService } from './user.service';
 import { AnalyticsModule } from 'src/analytics/analytics.module';
-import { IntegrationModule } from 'src/integration/integration.module';
-import { IntegrationService } from 'src/integration/integration.service';
 import { AnalyticsService } from 'src/analytics/analytics.service';
 import { NetworkRepository } from './network/network.repository';
 import { NetworkService } from './network/network.service';
@@ -21,7 +19,6 @@ import { AWSService } from 'src/libs/aws/aws.service';
   imports: [
     TypeOrmModule.forFeature([User]),
     AnalyticsModule,
-    forwardRef(() => IntegrationModule),
     forwardRef(() => AuthModule),
     PassportModule.register({ defaultStrategy: 'jwt' })
   ],
@@ -31,8 +28,6 @@ import { AWSService } from 'src/libs/aws/aws.service';
     UserRepository,
     NetworkService,
     NetworkRepository,
-    IntegrationService,
-    IntegrationRepository,
     AnalyticsService,
     AnalyticsYoutubeRepository,
     YoutubeService,

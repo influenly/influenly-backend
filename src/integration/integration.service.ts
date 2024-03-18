@@ -1,4 +1,4 @@
-import { Inject, Injectable, Logger, forwardRef } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { DataSource, QueryRunner } from 'typeorm';
 import { Credential, Integration } from 'src/entities';
 import { YoutubeService } from 'src/libs/youtube/youtube.service';
@@ -18,7 +18,6 @@ export class IntegrationService {
     private readonly analyticsService: AnalyticsService,
     private readonly credentialService: CredentialService,
     private readonly youtubeService: YoutubeService,
-    @Inject(forwardRef(() => UserService))
     private readonly userService: UserService,
     private readonly dataSource: DataSource
   ) {}
