@@ -130,7 +130,7 @@ export class UserService {
         );
 
         const networksToCreate = await this.populateNetworksInfo(
-          networksInput,
+          networksInputToCreate,
           user.id
         );
 
