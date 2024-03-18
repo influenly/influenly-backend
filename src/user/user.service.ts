@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { SignUpRequestDto } from 'src/auth/dto';
 import { User } from 'src/entities';
-import { DataSource } from 'typeorm';
+import { DataSource, QueryRunner } from 'typeorm';
 import { UserRepository } from './user.repository';
 import { CompleteOnboardingDto } from './dto';
 import { ICreateUserInput, IUpdateUserInput } from './interfaces';
@@ -85,11 +85,17 @@ export class UserService {
     }
   }
 
-  async updateById(user: User, updateUserDto: IUpdateUserInput) {
-    const queryRunner = this.dataSource.createQueryRunner();
+  async updateById(
+    user: User,
+    updateUserDto: IUpdateUserInput,
+    queryRunner?: QueryRunner
+  ) {
+    const updateUserQueryRunner = queryRunner
+      ? queryRunner
+      : this.dataSource.createQueryRunner();
 
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
+    await updateUserQueryRunner.connect();
+    await updateUserQueryRunner.startTransaction();
     try {
       const networksInput = updateUserDto.networks;
 
@@ -108,7 +114,10 @@ export class UserService {
         if (networksToDelete.length) {
           await Promise.all(
             networksToDelete.map((network) =>
-              this.networkService.deleteNetwork(network.id, queryRunner)
+              this.networkService.deleteNetwork(
+                network.id,
+                updateUserQueryRunner
+              )
             )
           );
         }
@@ -160,22 +169,26 @@ export class UserService {
           : validNetworks;
 
         if (newNetworks.length) {
-          await this.networkService.create(newNetworks, queryRunner);
+          await this.networkService.create(newNetworks, updateUserQueryRunner);
         }
         delete updateUserDto['networks'];
       }
-      await this.userRepository.updateById(user.id, updateUserDto, queryRunner);
+      await this.userRepository.updateById(
+        user.id,
+        updateUserDto,
+        updateUserQueryRunner
+      );
 
-      await queryRunner.commitTransaction();
+      await updateUserQueryRunner.commitTransaction();
 
       const updatedUser = await this.userRepository.findById(user.id, true);
 
       return updatedUser;
     } catch (err) {
-      await queryRunner.rollbackTransaction();
+      await updateUserQueryRunner.rollbackTransaction();
       throw new Error(err.message);
     } finally {
-      await queryRunner.release();
+      await updateUserQueryRunner.release();
     }
   }
 

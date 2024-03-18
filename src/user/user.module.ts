@@ -9,7 +9,6 @@ import { AnalyticsService } from 'src/analytics/analytics.service';
 import { NetworkRepository } from './network/network.repository';
 import { NetworkService } from './network/network.service';
 import { YoutubeService } from 'src/libs/youtube/youtube.service';
-import { IntegrationRepository } from 'src/integration/integration.repository';
 import { AnalyticsYoutubeRepository } from 'src/analytics/analytics-youtube/analytics-youtube.repository';
 import { AuthModule } from 'src/auth/auth.module';
 import { PassportModule } from '@nestjs/passport';
