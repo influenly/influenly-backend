@@ -13,7 +13,7 @@ import {
   UploadedFile,
   UseInterceptors
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiQuery, ApiTags } from '@nestjs/swagger';
 import { UserService } from './user.service';
 import { CompleteOnboardingDto, UpdateUserDto } from './dto';
 import { Auth, GetUser } from 'src/auth/decorators';
@@ -102,7 +102,8 @@ export class UserController {
   @Get(':id')
   async getUser(@Param('id', ParseIntPipe) userId: number) {
     try {
-      const user = await this.userService.getUserById(userId, false);
+      console.log('hola');
+      const user = await this.userService.getUserById(userId, true);
       if (!user) {
         throw new Error(`User with id ${userId} not found`);
       }
@@ -131,32 +132,6 @@ export class UserController {
       return {
         ok: true,
         data: { user: updatedUserResult }
-      };
-    } catch (error) {
-      throw new HttpException(
-        { ok: false, error: error.message },
-        HttpStatus.BAD_REQUEST
-      );
-    }
-  }
-
-  @Get(':id/profile')
-  async getUserProfile(
-    @GetUser() { onboardingCompleted }: User,
-    @Param('id', ParseIntPipe) userId: number
-  ) {
-    try {
-      if (!onboardingCompleted)
-        throw new Error(
-          `User with id ${userId} has not completed the onboarding`
-        );
-      const user = await this.userService.getUserById(userId, true);
-      if (!user) {
-        throw new Error(`User with id ${userId} not found`);
-      }
-      return {
-        ok: true,
-        data: { user }
       };
     } catch (error) {
       throw new HttpException(
