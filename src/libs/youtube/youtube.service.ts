@@ -60,7 +60,6 @@ export class YoutubeService {
   ): Promise<{ valid: boolean; id?: string; name?: string; url?: string }> {
     try {
       const response = await firstValueFrom(this.httpService.get(url));
-      console.log(response);
       const { data } = response;
 
       const regexChannelId = /"channelId":"([^"]+)"/;

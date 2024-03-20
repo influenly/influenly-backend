@@ -105,7 +105,7 @@ export class UserService {
       // If a user already has networks to update it means that is not onboarding.
       const userNetworks = await this.networkService.getByUserId(user.id);
 
-      if (networksInput.length) {
+      if (networksInput?.length) {
         const networksInputUrls = networksInput.map((network) => network.url);
 
         const networksToDelete = userNetworks.filter(
@@ -165,6 +165,7 @@ export class UserService {
 
       return updatedUser;
     } catch (err) {
+      console.log('err', err);
       await updateUserQueryRunner.rollbackTransaction();
       throw new Error(err.message);
     } finally {
