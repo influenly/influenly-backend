@@ -32,8 +32,6 @@ export class AuthController {
       res.cookie('access_token', signUpResult.token, {
         expires: new Date(Date.now() + 3600000),
         httpOnly: true
-        // secure: false,
-        // path: '/'
       });
       return {
         ok: true,
