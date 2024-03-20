@@ -2,7 +2,6 @@ import { DataSource, Repository, QueryRunner } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { AnalyticsYoutube } from 'src/entities';
 import { ICreateBAYoutubeInput, IUpdateBAYoutubeInput } from './interfaces';
-import { NumberSchema } from 'joi';
 
 @Injectable()
 export class AnalyticsYoutubeRepository extends Repository<AnalyticsYoutube> {
