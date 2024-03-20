@@ -260,18 +260,18 @@ export class UserService {
     }
   }
 
-  async deleteUser(id: number): Promise<User> {
-    const queryResult = await this.userRepository
-      .createQueryBuilder()
-      .delete()
-      .where({
-        id
-      })
-      .returning('*')
-      .execute();
+  // async deleteUser(id: number): Promise<User> {
+  //   const queryResult = await this.userRepository
+  //     .createQueryBuilder()
+  //     .delete()
+  //     .where({
+  //       id
+  //     })
+  //     .returning('*')
+  //     .execute();
 
-    return queryResult.raw[0];
-  }
+  //   return queryResult.raw[0];
+  // }
 
   private async populateNetworksInfo(
     networks: INetworkInput[],

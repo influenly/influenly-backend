@@ -9,11 +9,10 @@ import {
   Patch,
   Post,
   Query,
-  Req,
   UploadedFile,
   UseInterceptors
 } from '@nestjs/common';
-import { ApiQuery, ApiTags } from '@nestjs/swagger';
+import { ApiTags } from '@nestjs/swagger';
 import { UserService } from './user.service';
 import { CompleteOnboardingDto, UpdateUserDto } from './dto';
 import { Auth, GetUser } from 'src/auth/decorators';
