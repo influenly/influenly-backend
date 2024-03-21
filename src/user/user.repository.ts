@@ -148,6 +148,7 @@ export class UserRepository extends Repository<User> {
       .returning('*')
       .execute();
 
+      console.log(queryResult.raw[0]);
     return queryResult.raw[0];
   }
 }

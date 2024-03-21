@@ -86,17 +86,12 @@ export class UserService {
     }
   }
 
-  async updateById(
-    user: User,
-    updateUserDto: IUpdateUserInput,
-    queryRunner?: QueryRunner
-  ) {
-    const updateUserQueryRunner = queryRunner
-      ? queryRunner
-      : this.dataSource.createQueryRunner();
+  async updateById(user: User, updateUserDto: IUpdateUserInput) {
+    const queryRunner = this.dataSource.createQueryRunner();
 
-    await updateUserQueryRunner.connect();
-    await updateUserQueryRunner.startTransaction();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
     try {
       const networksInput = updateUserDto.networks;
 
@@ -115,10 +110,7 @@ export class UserService {
         if (networksToDelete.length) {
           await Promise.all(
             networksToDelete.map((network) =>
-              this.networkService.deleteNetwork(
-                network.id,
-                updateUserQueryRunner
-              )
+              this.networkService.deleteNetwork(network.id, queryRunner)
             )
           );
         }
@@ -149,27 +141,23 @@ export class UserService {
           : validNetworks;
 
         if (newNetworks.length) {
-          await this.networkService.create(newNetworks, updateUserQueryRunner);
+          await this.networkService.create(newNetworks, queryRunner);
         }
         delete updateUserDto['networks'];
       }
-      await this.userRepository.updateById(
-        user.id,
-        updateUserDto,
-        updateUserQueryRunner
-      );
 
-      await updateUserQueryRunner.commitTransaction();
+      await this.userRepository.updateById(user.id, updateUserDto, queryRunner);
+
+      await queryRunner.commitTransaction();
 
       const updatedUser = await this.userRepository.findById(user.id, true);
-
       return updatedUser;
     } catch (err) {
       console.log('err', err);
-      await updateUserQueryRunner.rollbackTransaction();
+      await queryRunner.rollbackTransaction();
       throw new Error(err.message);
     } finally {
-      await updateUserQueryRunner.release();
+      await queryRunner.release();
     }
   }
 

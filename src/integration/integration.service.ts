@@ -57,17 +57,14 @@ export class IntegrationService {
 
   async createIntegration(
     userId: number,
-    createIntegrationDto: CreateIntegrationDto,
-    queryRunner?: QueryRunner
+    createIntegrationDto: CreateIntegrationDto
   ) {
     const { authorizationCode, platform } = createIntegrationDto;
 
-    const createIntegrationQueryRunner = queryRunner
-      ? queryRunner
-      : this.dataSource.createQueryRunner();
+    const queryRunner = this.dataSource.createQueryRunner();
 
-    await createIntegrationQueryRunner.connect();
-    await createIntegrationQueryRunner.startTransaction();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
 
     try {
       const {
@@ -106,7 +103,7 @@ export class IntegrationService {
           url: `https://www.youtube.com/channel/${channelInfo.id}`,
           userId
         },
-        createIntegrationQueryRunner
+        queryRunner
       );
 
       const networkId = newNetwork.id;
@@ -116,7 +113,7 @@ export class IntegrationService {
           networkId,
           userId
         },
-        createIntegrationQueryRunner
+        queryRunner
       );
 
       const integrationId = newIntegration.id;
@@ -129,16 +126,12 @@ export class IntegrationService {
           totalSubs: parseInt(totalSubs),
           totalVideos: parseInt(totalVideos)
         },
-        createIntegrationQueryRunner
+        queryRunner
       );
 
-      await this.userService.updateById(
-        user,
-        {
-          totalFollowers: (user.totalFollowers || 0) + parseInt(totalSubs)
-        },
-        createIntegrationQueryRunner
-      );
+      await this.userService.updateById(user, {
+        totalFollowers: (user.totalFollowers || 0) + parseInt(totalSubs)
+      });
 
       const newCredential = await this.credentialService.create(
         {
@@ -149,10 +142,10 @@ export class IntegrationService {
           scope,
           refreshToken
         },
-        createIntegrationQueryRunner
+        queryRunner
       );
 
-      await createIntegrationQueryRunner.commitTransaction();
+      await queryRunner.commitTransaction();
 
       Logger.log(
         `Integration id: ${newIntegration.id} and Credential id: ${newCredential.id} created successfully`
@@ -161,10 +154,10 @@ export class IntegrationService {
       return newIntegration;
     } catch (err) {
       Logger.error(`Integration creation transaction has failed.`);
-      await createIntegrationQueryRunner.rollbackTransaction();
+      await queryRunner.rollbackTransaction();
       throw new Error(err.message);
     } finally {
-      await createIntegrationQueryRunner.release();
+      await queryRunner.release();
     }
   }
 }
