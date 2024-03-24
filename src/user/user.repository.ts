@@ -94,6 +94,7 @@ export class UserRepository extends Repository<User> {
     }
 
     queryBuilder.andWhere("user.type = 'CREATOR'");
+    queryBuilder.andWhere("user.onboardingCompleted = true");
 
     const queryResult = await queryBuilder.getMany();
 
