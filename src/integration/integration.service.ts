@@ -1,6 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { DataSource, QueryRunner } from 'typeorm';
-import { Credential, Integration } from 'src/entities';
+import { DataSource } from 'typeorm';
 import { YoutubeService } from 'src/libs/youtube/youtube.service';
 import { CreateIntegrationDto } from './dto';
 import { IntegrationRepository } from './integration.repository';
@@ -21,39 +20,6 @@ export class IntegrationService {
     private readonly userService: UserService,
     private readonly dataSource: DataSource
   ) {}
-
-  async getByUserId(
-    userId: number,
-    queryRunner?: QueryRunner
-  ): Promise<Integration[]> {
-    const integration = await this.integrationRepository.findByUserId(
-      userId,
-      queryRunner
-    );
-    return integration;
-  }
-
-  async getByNetworkId(
-    networkId: number,
-    queryRunner?: QueryRunner
-  ): Promise<Integration> {
-    const integration = await this.integrationRepository.findByNetworkId(
-      networkId,
-      queryRunner
-    );
-    return integration;
-  }
-
-  async getCredentialByIntegrationId(
-    integrationId: number,
-    queryRunner?: QueryRunner
-  ): Promise<Credential> {
-    const credential = await this.credentialService.getByIntegrationId(
-      integrationId,
-      queryRunner
-    );
-    return credential;
-  }
 
   async createIntegration(
     userId: number,
@@ -80,17 +46,21 @@ export class IntegrationService {
           'Both permission should be accepted to create integration'
         );
 
-      const user = await this.userService.getUserById(userId, false);
+      const user = await this.userService.getUserById(userId, true);
 
       const channelInfo = await this.youtubeService.getChannelInfo(accessToken);
 
-      const userNetworks = await this.networkService.getByUserId(userId);
+      const userNetworks = user.networks;
 
-      const isIntegrated = (network) =>
-        network.integrated && network.channelId === channelInfo.id;
+      const integratedNetwork = userNetworks.find(
+        (network) => network.integrated && network.channelId === channelInfo.id
+      );
 
-      if (userNetworks.some(isIntegrated)) {
-        throw new Error('Network already integrated');
+      if (integratedNetwork) {
+        return {
+          networkId: integratedNetwork.id,
+          userId: integratedNetwork.userId
+        };
       }
 
       const newNetwork = await this.networkService.create(
