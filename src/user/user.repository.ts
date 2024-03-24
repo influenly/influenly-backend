@@ -94,7 +94,7 @@ export class UserRepository extends Repository<User> {
     }
 
     queryBuilder.andWhere("user.type = 'CREATOR'");
-    queryBuilder.andWhere("user.onboardingCompleted = true");
+    queryBuilder.andWhere('user.onboardingCompleted = true');
 
     const queryResult = await queryBuilder.getMany();
 
@@ -124,13 +124,23 @@ export class UserRepository extends Repository<User> {
     return queryResult;
   }
 
-  async findByEmail(email: string, queryRunner?: QueryRunner): Promise<User> {
-    const queryResult = await this.createQueryBuilder(
-      'findByEmail',
-      queryRunner
-    )
-      .where({ email })
-      .getOne();
+  async findByEmail(
+    email: string,
+    withNetworksInfo: boolean,
+    queryRunner?: QueryRunner
+  ): Promise<User> {
+    let queryBuilder = await this.createQueryBuilder('user', queryRunner);
+
+    if (withNetworksInfo) {
+      queryBuilder.leftJoinAndSelect('user.networks', 'network');
+      queryBuilder.leftJoinAndSelect('network.integration', 'integration');
+      queryBuilder.leftJoinAndSelect(
+        'integration.analyticsYoutube',
+        'analyticsYoutube'
+      );
+    }
+    queryBuilder.where({ email });
+    const queryResult = await queryBuilder.getOne();
 
     return queryResult;
   }
@@ -149,7 +159,7 @@ export class UserRepository extends Repository<User> {
       .returning('*')
       .execute();
 
-      console.log(queryResult.raw[0]);
+    console.log(queryResult.raw[0]);
     return queryResult.raw[0];
   }
 }
