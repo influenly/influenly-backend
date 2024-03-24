@@ -13,7 +13,6 @@ import { User } from './user.entity';
 import { ConversationType } from 'src/common/constants/types';
 import { ConversationTypes } from 'src/common/constants/enums';
 
-@Unique(['advertiserUserId', 'creatorUserId'])
 @Entity('conversation')
 export class Conversation extends BaseEntity {
   @PrimaryGeneratedColumn({ type: 'int' })
