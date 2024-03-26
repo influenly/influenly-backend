@@ -10,13 +10,10 @@ export class ConversationRepository extends Repository<Conversation> {
     super(Conversation, dataSource.createEntityManager());
   }
 
-  async findByUserId(userId: number, field: string, queryRunner?: QueryRunner) {
-    const userType =
-      field === 'creatorUserId' ? 'advertiserUser' : 'creatorUser';
+  async findByUserId(userId: number, field: string) {
     const queryResult = await this.createQueryBuilder('conversation')
 
-      .leftJoinAndSelect(`conversation.${userType}`, 'user')
-      .where(`conversation.${field} = :userId`, { userId })
+      .where(`${field} = :userId`, { userId })
       .getMany();
 
     return queryResult;
