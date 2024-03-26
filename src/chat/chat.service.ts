@@ -28,7 +28,7 @@ export class ChatService {
     createConversationInput: Omit<ICreateConversationInput, 'status'> & {
       message: string;
     }
-  ): Promise<any> {
+  ): Promise<Conversation> {
     const creatorUserId = createConversationInput.creatorUserId;
     const advertiserUserId = createConversationInput.advertiserUserId;
 
