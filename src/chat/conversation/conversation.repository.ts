@@ -13,7 +13,7 @@ export class ConversationRepository extends Repository<Conversation> {
   async findByUserId(userId: number, field: string) {
     const queryResult = await this.createQueryBuilder('conversation')
 
-      .where(`${field} = :userId`, { userId })
+      .where(`conversation.${field} = :userId`, { userId })
       .getMany();
 
     return queryResult;

@@ -28,14 +28,24 @@ export class ChatService {
     createConversationInput: Omit<ICreateConversationInput, 'status'> & {
       message: string;
     }
-  ): Promise<Conversation> {
-    const targetUser = await this.userService.getUserById(
-      createConversationInput.creatorUserId,
+  ): Promise<any> {
+    const creatorUserId = createConversationInput.creatorUserId;
+
+    const creatorUser = await this.userService.getUserById(
+      creatorUserId,
       false
     );
-    if (targetUser.type !== UserTypes.CREATOR) {
+
+    if (creatorUser.type !== UserTypes.CREATOR) {
       throw new Error('Invalid creator user id');
     }
+
+    const userConversations = await this.getConversationsByUserId(
+      creatorUserId,
+      UserTypes.CREATOR
+    );
+
+    return userConversations;
 
     const queryRunner = this.dataSource.createQueryRunner();
 
@@ -76,7 +86,7 @@ export class ChatService {
 
   async getConversationsByUserId(
     userId: number,
-    type: string
+    type: UserTypes
   ): Promise<Conversation[]> {
     const fieldToSearchFor =
       type === UserTypes.CREATOR ? 'creatorUserId' : 'advertiserUserId';
