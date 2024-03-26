@@ -30,6 +30,7 @@ export class ChatService {
     }
   ): Promise<any> {
     const creatorUserId = createConversationInput.creatorUserId;
+    const advertiserUserId = createConversationInput.advertiserUserId;
 
     const creatorUser = await this.userService.getUserById(
       creatorUserId,
@@ -45,12 +46,25 @@ export class ChatService {
       UserTypes.CREATOR
     );
 
-    return userConversations;
+    const existingConversation = userConversations.filter(
+      (conversation) => conversation.advertiserUserId === advertiserUserId
+    )[0];
 
     const queryRunner = this.dataSource.createQueryRunner();
 
     await queryRunner.connect();
     await queryRunner.startTransaction();
+
+    if (existingConversation) {
+      if (existingConversation.status !== ConversationTypes.FINISHED)
+        throw new Error('Conversation must end before starting a new one.');
+      const updatedConversation = await this.updateById(
+        existingConversation.id,
+        { status: ConversationTypes.INIT_APPROVAL_PENDING }
+      );
+
+      return updatedConversation;
+    }
 
     try {
       const newConversation = {
